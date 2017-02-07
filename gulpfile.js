@@ -1,6 +1,3 @@
-const elixir = require('laravel-elixir');
-elixir.config.sourcemaps = false;
-require('laravel-elixir-vue-2');
 var gulp = require('gulp');
 var path = require('path');
 var util = require("gulp-util");
@@ -16,22 +13,7 @@ var del = require('del');
 var map = require('map-stream');
 var sourcemaps = require('gulp-sourcemaps');
 var stylish = require('jshint-stylish');
-/*
- |--------------------------------------------------------------------------
- | Elixir Asset Management
- |--------------------------------------------------------------------------
- |
- | Elixir provides a clean, fluent API for defining some basic Gulp tasks
- | for your Laravel application. By default, we are compiling the Sass
- | file for our application, as well as publishing vendor resources.
- |
- */
 
-elixir(mix => {
-    mix.sass('app.scss', './static/css')
-    .webpack('app.js', './static/js');
-    mix.task('watch-static'); //run my task
-});
 
 // 分散压缩
 gulp.task('watch-static', function() {
@@ -100,4 +82,4 @@ gulp.task('watch-static', function() {
     });
 });
 // 默认任务
-//gulp.task('default', [ 'watch-static']);
+gulp.task('default', [ 'watch-static']);

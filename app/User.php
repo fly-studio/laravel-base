@@ -1,19 +1,19 @@
 <?php
 namespace App;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Builder;
-use Addons\Core\Models\CacheTrait;
-use Addons\Core\Models\CallTrait;
-use Addons\Core\Models\PolyfillTrait;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Addons\Entrust\Traits\UserTrait;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use App\Role;
-use App\CatalogCastTrait;
 use App\Logable;
+use App\CatalogCastTrait;
+use Addons\Core\Models\CallTrait;
+use Addons\Core\Models\CacheTrait;
+use Addons\Entrust\Traits\UserTrait;
+use Addons\Core\Models\PolyfillTrait;
 use Addons\Elasticsearch\Scout\Searchable;
 
 class User extends Authenticatable

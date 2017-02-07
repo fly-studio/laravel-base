@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'My Application',
+    'name' => 'Laravel',
 
     /*
     |--------------------------------------------------------------------------
@@ -166,9 +166,13 @@ return [
 		Illuminate\Translation\TranslationServiceProvider::class,
 		Illuminate\Validation\ValidationServiceProvider::class,
 		Illuminate\View\ViewServiceProvider::class,
+		
+		/*
+		 * Package Service Providers...
+		 */
+		Laravel\Tinker\TinkerServiceProvider::class,
 
-		//Smarty注入模块
-		Addons\Smarty\ServiceProvider::class,
+
 		//Core before RouteServiceProvider
 		Addons\Core\ServiceProvider::class,
 
@@ -176,10 +180,13 @@ return [
 		 * Application Service Providers...
 		 */
 		App\Providers\AppServiceProvider::class,
-		// App\Providers\BroadcastServiceProvider::class,
 		App\Providers\AuthServiceProvider::class,
+		// App\Providers\BroadcastServiceProvider::class,
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
+
+		//Smarty注入模块
+		Addons\Smarty\ServiceProvider::class,
 		//Debuger
 		Barryvdh\Debugbar\ServiceProvider::class,
 		//验证码
@@ -220,6 +227,8 @@ return [
 		'Artisan'   => Illuminate\Support\Facades\Artisan::class,
 		'Auth'      => Illuminate\Support\Facades\Auth::class,
 		'Blade'     => Illuminate\Support\Facades\Blade::class,
+		'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
+		'Bus' => Illuminate\Support\Facades\Bus::class,
 		'Cache'     => Illuminate\Support\Facades\Cache::class,
 		'Config'    => Illuminate\Support\Facades\Config::class,
 		'Cookie'    => Illuminate\Support\Facades\Cookie::class,
