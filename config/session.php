@@ -122,7 +122,7 @@ return [
     |
     */
 
-    'cookie' => substr(md5(env('APP_URL')), 16, 16).'_session',
+    'cookie' => substr(md5(env('APP_URL')), 16, 8).'_session',
 
     /*
     |--------------------------------------------------------------------------

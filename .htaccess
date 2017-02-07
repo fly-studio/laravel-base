@@ -14,7 +14,7 @@
 	RewriteRule ^(\.env|\.git|artisan)$ - [F]
 
 	# Handle Front Controller...
-	RewriteCond %{REQUEST_FILENAME} -f
+	RewriteCond %{REQUEST_FILENAME} -f [OR]
 	RewriteCond %{REQUEST_FILENAME} -d
 	RewriteRule .* - [S=2]
 	RewriteRule ^static/(?!common/)(.*)$ static/common/$1 [L]

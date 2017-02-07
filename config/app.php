@@ -172,7 +172,8 @@ return [
 		 */
 		Laravel\Tinker\TinkerServiceProvider::class,
 
-
+		//Smarty注入模块
+		Addons\Smarty\ServiceProvider::class,
 		//Core before RouteServiceProvider
 		Addons\Core\ServiceProvider::class,
 
@@ -185,8 +186,6 @@ return [
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
 
-		//Smarty注入模块
-		Addons\Smarty\ServiceProvider::class,
 		//Debuger
 		Barryvdh\Debugbar\ServiceProvider::class,
 		//验证码
