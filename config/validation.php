@@ -39,7 +39,7 @@ return [
 			],
 			'idcard' => [
 				'name' => '身份证',
-				'rules' => 'idcard|unique:users,{{attribute}},{{id}}',
+				'rules' => 'id_card|unique:users,{{attribute}},{{id}}',
 			],
 			'email' => [
 				'name' => 'E-Mail',
