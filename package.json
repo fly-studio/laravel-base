@@ -1,6 +1,6 @@
 {
-  "name": "l+",
-  "version": "5.3.0",
+  "name": "laravel-plus",
+  "version": "5.4.0",
   "private": true,
   "scripts": {
     "dev": "node node_modules/cross-env/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -27,7 +27,6 @@
     "gulp-sourcemaps": "^2.2.0",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
-    "jquery": "^3.1.0",
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
     "laravel-mix": "^0.6.0",

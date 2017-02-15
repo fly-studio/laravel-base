@@ -7,15 +7,10 @@
 		if (typeof method.cacheData[key] != 'undefined')
 			$dfd.resolve(method.cacheData[key]);
 		else {
-			$.POST(url, params).done(function(json, textStatus, jqXHR){
-				if (json.result == 'success' || json.result == 'api') {
-					var items = json.data.data;
-					method.cacheData[key] = items;
-					$dfd.resolve(method.cacheData[key]);
-				} else {
-					var args = arguments;
-					$dfd.reject.apply($dfd, args);
-				}
+			LP.post(url, params).done(function(json, textStatus, jqXHR){
+				var items = json.data.data;
+				method.cacheData[key] = items;
+				$dfd.resolve(method.cacheData[key]);
 			}).fail(function(){
 				var args = arguments;
 				$dfd.reject.apply($dfd, args);

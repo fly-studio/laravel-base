@@ -29,5 +29,5 @@ $.ueditor_default_setting = {
 	]},complete: {toolbars: typeof window.UEDITOR_CONFIG != 'undefined' ? window.UEDITOR_CONFIG.toolbars : []
 	}
 };
-window.UEDITOR_CONFIG.serverUrl = $.baseuri + 'attachment/ueditor_upload_query?of=json&_token=' + $.csrf;
+window.UEDITOR_CONFIG.serverUrl = LP.baseuri + 'attachment/ueditor_upload_query?of=json&_token=' + LP.csrf;
 })(jQuery);

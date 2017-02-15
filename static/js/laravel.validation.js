@@ -38,7 +38,7 @@
 		},
 		submitHandler:function(form){
 			var $form = $(form);
-			$.query($form.attr('action'), $form.serializeArray(), $form.attr('method'), function(json) {
+			LP.query($form.attr('method'), $form.attr('action'), $form.serializeArray()).done(function(json) {
 				$form.triggerHandler('query', [json, form]);
 			});
 			return false;
