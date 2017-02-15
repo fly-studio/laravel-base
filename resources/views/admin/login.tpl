@@ -44,7 +44,7 @@
 
 					<!-- Footer -->
 					<footer class="text-muted push-top-bottom">
-						<small><span id="year-copy"></span> &copy; <a href="javascript:void(0)" target="_blank">L+ 1.0</a></small>
+						<small><span id="year-copy"></span> &copy; <a href="javascript:void(0)" target="_blank">L+ 3.0</a></small>
 					</footer>
 					<!-- END Footer -->
 				</div>

@@ -1,5 +1,5 @@
 <{block "head-scripts-laravel"}>
-	<script>var Laravel = { csrfToken: '<{csrf_token()}>' };</script>
+	<script>var Laravel = { csrfToken: '<{csrf_token()}>', baseuri: '<{""|url nofilter}>' };</script>
 <{/block}>
 <{block "head-scripts-debug"}>
 	<script src="<{'js/debug/eruda.debug.js'|static}>"></script>
