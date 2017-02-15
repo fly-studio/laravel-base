@@ -294,7 +294,7 @@ $().ready(function(){
 			renderer: 'bootstrap',
 
 			ajax: {
-				url: $.baseuri + config.namespace+'/'+config.name+'/data/json',
+				url: LP.baseuri + config.namespace+'/'+config.name+'/data/json',
 				timeout: 20 * 1000,
 				type: 'POST',
 				data: function(d){

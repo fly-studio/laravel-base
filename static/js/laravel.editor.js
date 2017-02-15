@@ -18,7 +18,7 @@ $.kindeditor_default_setting = {
 	extraFileUploadParams : {
 	   "PHPSESSID" : "<{''|@session_id|encrypt}>"
 	},
-	uploadJson : $.baseuri+'attachment/kindeditor_upload_query?of=json',
+	uploadJson : LP.baseuri+'attachment/kindeditor_upload_query?of=json',
 	filePostName : 'Filedata'
 };
 $.ueditor_default_setting = {

@@ -5,7 +5,7 @@ $.fn.extend({tags: function(params){
 		var _config = {
 			language: "zh-CN",
 			ajax: {
-				url: $.baseuri +'tag/data',
+				url: LP.baseuri +'tag/data',
 				dataType: 'json',
 				type: 'post',
 				delay: 250,

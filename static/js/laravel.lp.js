@@ -19,7 +19,7 @@ var QUERY_LANGUAGE = {
 		var scripts = document.getElementsByTagName("script");
 		thiscript = scripts[ scripts.length - 1 ];
 	}
-	window.baseuri = thiscript.src.toString().match(/[^\/:](\/.*)static\/js\/laravel\.lp\.js/i) ? thiscript.src.toString().match(/[^\/:](\/.*)static\/js\/laravel\.lp\.js/i)[1] : thiscript.src.toString().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '') + '/';
+	window.baseuri = thiscript.src.toString().match(/[^\/:](\/.*)static\/js\/laravel\.lp(\.min)?\.js/i) ? thiscript.src.toString().match(/[^\/:](\/.*)static\/js\/laravel\.lp(\.min)?\.js/i)[1] : thiscript.src.toString().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '') + '/';
 	if (!window.baseuri) window.baseuri = '/';
 	LP.baseuri = window.baseuri;
 })();
