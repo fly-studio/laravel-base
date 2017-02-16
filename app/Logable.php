@@ -21,7 +21,7 @@ trait Logable
      */
     public function audits()
     {
-        return $this->log();
+        return $this->logs();
     }
 
 	/**
