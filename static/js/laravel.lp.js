@@ -156,28 +156,34 @@ var QUERY_LANGUAGE = {
 			success : function(json, textStatus, jqXHR) {
 				var args = arguments;
 				if (typeof json != 'undefined' && typeof json.result != 'undefined' && (json.result == 'success' || json.result == 'api'))
-					$dfd.resolve.apply($dfd, args);
+					$dfd.resolve.apply(_this, args);
 				else
-					$dfd.reject.apply($dfd, args);
+					$dfd.reject.apply(_this, args);
 			},
 			error : function(XMLHttpRequest, textStatus, errorThrown) {
 				var args = arguments;
-				$dfd.reject.apply($dfd, args);
+				$dfd.reject.apply(_this, args);
 			}
 		});
 		return $dfd.promise();
 	};
 
+	
+
 	$.each(['get', 'post', 'head', 'patch', 'put', 'delete'], function(index, method) {
 		LP[method] = LP[method.toUpperCase()] = function(url, data, callback) {
-			var $dtd = LP.query(method, url, data);
-			if (callback && $.isFunction(callback)) $dtd.done(callback);
+			var _this = this;
+			var $dtd = LP.query.call(_this, method, url, data);
+			if (callback && $.isFunction(callback)) $dtd.done(function(){
+				var args = arguments;
+				callback.apply(_this, args);
+			});
 			return $dtd;
 		};
 	});
 
 	LP.tip = function(result, message, tipType, tipConfig) {
-		if (typeof message == 'undefined') return;
+		if (typeof message == 'undefined' || typeof tipType != 'object') return;
 		else if (typeof message == 'string') message = {content: message};
 
 		if (typeof $.lptip_interface != 'undefined') {
@@ -206,14 +212,17 @@ var QUERY_LANGUAGE = {
 	LP.queryTip = function(method, url, data, tipConfig)
 	{
 		tipConfig = typeof tipConfig == 'undefined' ? {} : tipConfig;
-
-		var $dtd = LP.query(method, url, data);
+		var _this = this;
+		var $dtd = LP.query.call(_this, method, url, data);
 		if (tipConfig !== false)
 			$dtd.done(function(json){
-				LP.tip(json.result, json.message, json.tipType, tipConfig);
+				LP.tip.call(_this, json.result, json.message, json.tipType, tipConfig);
 			}).fail(function(XMLHttpRequest, textStatus){
 				if (typeof XMLHttpRequest == 'object' && typeof XMLHttpRequest.result != 'undefined')
-					LP.tip(json.result, json.message, json.tipType, tipConfig);
+				{
+					var json = XMLHttpRequest;
+					LP.tip.call(_this, json.result, json.message, json.tipType, tipConfig);
+				}
 				else
 					switch(textStatus) {
 						case 'timeout':

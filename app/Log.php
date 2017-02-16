@@ -97,6 +97,11 @@ class Log extends Auditing
 		return $data;
 	}
 
+	public function scopeOfType(Builder $builder, $type)
+	{
+		return $builder->where('type', $type);
+	}
+
 	public function scope_all(Builder $builder, $keywords)
 	{
 		if (empty($keywords)) return;

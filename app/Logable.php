@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use app\Log;
 use OwenIt\Auditing\Auditable;
 
 trait Logable
@@ -20,7 +21,7 @@ trait Logable
      */
     public function audits()
     {
-        return $this->morphMany(Log::class, 'auditable');
+        return $this->log();
     }
 
 	/**
@@ -30,4 +31,25 @@ trait Logable
     {
         return $this->morphMany(Log::class, 'auditable');
     }
+
+    /**
+     * hit a model
+     * 
+     * @return
+     */
+    public function viewing($user_id = null, $extraData = null)
+    {
+        $this->logs()->create([
+            'type' => Log::VIEW,
+            'new' => $extraData,
+            'user_id' => $user_id,
+            'created_at' => Carbon::now(),
+        ]);
+    }
+
+    public function views()
+    {
+        return $this->logs()->where('type', Log::VIEW);
+    }
+
 }
