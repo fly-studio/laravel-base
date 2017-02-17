@@ -34,6 +34,7 @@
 						<li><i class="fa fa-arrow-down fa-li text-success"></i> Router 路由</li>
 						<li><i class="fa fa-arrow-down fa-li text-success"></i> Middleware 中间件</li>
 						<li><i class="fa fa-arrow-down fa-li text-success"></i> Controller 控制器</li>
+						<li><i class="fa fa-arrow-down fa-li text-success"></i> Event 事件</li>
 						<li><i class="fa fa-arrow-down fa-li text-success"></i> Model 数据库</li>
 						<li><i class="fa fa-arrow-down fa-li text-success"></i> Cache 缓存</li>
 						<li><i class="fa fa-arrow-down fa-li text-success"></i> View 视图</li>
@@ -44,7 +45,7 @@
 
 					<!-- Footer -->
 					<footer class="text-muted push-top-bottom">
-						<small><span id="year-copy"></span> &copy; <a href="javascript:void(0)" target="_blank">L+ 3.0</a></small>
+						<small><span id="year-copy"></span> &copy; <a href="https://git.load-page.com/r/lp/" target="_blank">Laravel plus (L+) v4.0</a></small>
 					</footer>
 					<!-- END Footer -->
 				</div>

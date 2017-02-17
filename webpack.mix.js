@@ -13,5 +13,5 @@ mix.config.publicPath = './';
  |
  */
 
-mix.js('resources/assets/js/app.js', 'static/js')
-   .sass('resources/assets/sass/app.scss', 'static/css');
+/*mix.js('resources/assets/js/app.js', 'static/js')
+   .sass('resources/assets/sass/app.scss', 'static/css');*/

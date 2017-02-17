@@ -1,10 +1,10 @@
 <?php
 namespace App;
 
+use App\Logable;
+use Illuminate\Support\Arr;
 use Addons\Entrust\Role as BaseRole;
 use Addons\Core\Models\TreeCacheTrait;
-use Illuminate\Support\Arr;
-use App\Logable;
 use Addons\Elasticsearch\Scout\Searchable;
 
 class Role extends BaseRole

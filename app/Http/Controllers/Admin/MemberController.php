@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Addons\Core\Controllers\ApiTrait;
+
 use App\User;
 use App\Role;
-use Addons\Core\Controllers\ApiTrait;
-use DB;
 
 class MemberController extends Controller
 {
