@@ -1,5 +1,7 @@
 const { mix } = require('laravel-mix');
-
+mix.autoload({});
+mix.config.publicDir = './';
+mix.config.publicPath = './';
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
