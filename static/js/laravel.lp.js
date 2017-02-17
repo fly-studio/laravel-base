@@ -248,10 +248,14 @@ var QUERY_LANGUAGE = {
 		return this.each(function() {
 			var $this = $(this);
 			var is_form = $this.is('form');
-			show_loading = typeof show_loading != 'undefined' ? show_loading : true;
+			var on = $this.data('lp-query');
+			if (on)
+				$this.off(is_form ? 'submit': 'click', on);
+			if (callback == 'destroy') return;
+			//bind
 			var validator = is_form ? $this.data('validator') : null;
 			if (validator) validator.settings.submitHandler = function(f, e) {};
-			$this.on(is_form ? 'submit': 'click', function(e) {
+			on = function(e) {
 				var selector = $this.attr('selector');
 				if ($this.is('.disabled,[disabled]')) return false;
 				var $selector = is_form ? $this.add(selector) : $(selector);
@@ -290,7 +294,8 @@ var QUERY_LANGUAGE = {
 					query.call(this);
 				e.stopImmediatePropagation();
 				return false;
-			});
+			};
+			$this.on(is_form ? 'submit': 'click', on).data({'lp-query': on});
 		});
 	}
 	});
