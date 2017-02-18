@@ -84,7 +84,7 @@ class MemberController extends Controller
 
 		$role_ids = array_pull($data, 'role_ids');
 		$data = array_except($data, array_merge($extraKeys, $multipleKeys));
-		DB::transaction(function() use ($data, $extra, $multiples, $role_ids){
+		$user = DB::transaction(function() use ($data, $extra, $multiples, $role_ids){
 			$user = (new User)->add($data);
 			$user->extra()->create($extra);
 			foreach((array)$multiples as $k => $v)
@@ -93,6 +93,7 @@ class MemberController extends Controller
 				$game->$k()->attach($v, ['parent_cid' => $catalog['id']]);
 			}
 			$user->roles()->sync($role_ids);
+			return $user;
 		});
 		return $this->success('', url('admin/member'));
 	}
@@ -132,7 +133,7 @@ class MemberController extends Controller
 
 		$role_ids = array_pull($data, 'role_ids');
 		$data = array_except($data, array_merge($extraKeys, $multipleKeys));
-		DB::transaction(function() use ($user, $extra, $multiples, $data, $role_ids){
+		$user = DB::transaction(function() use ($user, $extra, $multiples, $data, $role_ids){
 			$user->update($data);
 			$user->extra()->update($extra);
 			foreach((array)$multiples as $k => $v)
@@ -142,6 +143,7 @@ class MemberController extends Controller
 				$game->$k()->attach($v, ['parent_cid' => $catalog['id']]);
 			}
 			$user->roles()->sync($role_ids);
+			return $user;
 		});
 		return $this->success();
 	}
@@ -149,10 +151,11 @@ class MemberController extends Controller
 	public function destroy(Request $request, $id)
 	{
 		empty($id) && !empty($request->input('id')) && $id = $request->input('id');
-		$id = (array) $id;
+		$ids = array_wrap($id);
 		
-		foreach ($id as $v)
-			$user = User::destroy($v);
+		DB::transaction(function() use ($ids) {
+			User::destroy($ids);
+		});
 		return $this->success('', count($id) > 5, compact('id'));
 	}
 }

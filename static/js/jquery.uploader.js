@@ -70,7 +70,7 @@ var UPLOADER_LANGUAGE = {
 				var progresses_id = uploader_id + '-progresses', thumbnails_id = uploader_id + '-thumbnails', input_id = uploader_id + '-input';
 				//添加容器到input下
 				flex_uploader.$container = $('<div class="uploader-container" id="'+ uploader_id +'">'+
-					'<div class="drop-tip text-info"><h2>'+ UPLOADER_LANGUAGE.drop_container +'</h2><br /><br /><div class="btn btn-info" onclick="javascript:jQuery(this).parent().hide().parent(\'.uploader-container\').removeClass(\'webuploader-dnd-over\');"><i class="glyphicon glyphicon-remove"></i> '+UPLOADER_LANGUAGE.close+'</div></div>' +
+					'<div class="drop-tips text-info"><h2>'+ UPLOADER_LANGUAGE.drop_container +'</h2><br /><br /><div class="btn btn-info" onclick="javascript:jQuery(this).parent().hide().parent(\'.uploader-container\').removeClass(\'webuploader-dnd-over\');"><i class="glyphicon glyphicon-remove"></i> '+UPLOADER_LANGUAGE.close+'</div></div>' +
 					'<div class="pull-left"><span id="'+ pick_id +'">'+ UPLOADER_LANGUAGE.select_file +'(≤ '+ bytesToSize(options.filesize) +')</span></div>' +
 					'<div class="pull-left tags">&nbsp;<span class="label label-success">.' + options.filetype.replace(/,/g,'</span>&nbsp;<span class="label label-success">.') + '</span>' +
 					'&nbsp;<!--<span class="label label-warning enable-tooltip" data-placement="top" title="'+ UPLOADER_LANGUAGE.ctrl_v_tip +'"><small class="glyphicon glyphicon-info-sign"></small> '+ UPLOADER_LANGUAGE.ctrl_v_button +'</span>&nbsp;--><span class="label label-warning enable-tooltip" data-placement="top" title="'+ UPLOADER_LANGUAGE.drop_container +'"><small class="glyphicon glyphicon-info-sign"></small> '+ UPLOADER_LANGUAGE.drop_button +'</span>' +
