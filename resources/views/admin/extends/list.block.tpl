@@ -2,7 +2,7 @@
 
 <{block "head-scripts-common"}>
 <script src="<{'js/jsencrypt.min.js'|static}>"></script>
-<script src="<{'js/common.js'|static}>"></script>
+<script src="<{'js/common-2.0.js'|static}>"></script>
 <{/block}>
 <{block "head-styles-plus"}>
 <link rel="stylesheet" href="<{'css/proui/datatable.min.css'|static}>">

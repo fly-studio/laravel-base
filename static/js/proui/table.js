@@ -357,10 +357,10 @@ $().ready(function(){
 	};
 
 	//初始化
+	$('#tools-contrainer').appendTo('#toolbar');
 	method.bindMethods('body');
 	method.make();
 
-	$('#tools-contrainer').appendTo('#toolbar');
 	$('#reload').on('click', function(){
 		method.datatable.ajax.reload(null, false);
 	});
