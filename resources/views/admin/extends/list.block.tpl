@@ -166,15 +166,15 @@
 			<{block "table-td"}>
 				<{block "table-td-before"}><{/block}>
 				<{block "table-td-id"}>
-				<td class="text-left" data-from="id"><input type="checkbox" name="id[]" value="{{data}}">{{data}}</td>
+				<td class="text-left" data-from="id" data-order-sequence='["desc", "asc"]'><input type="checkbox" name="id[]" value="{{data}}">{{data}}</td>
 				<{/block}>
 				<{block "table-td-plus"}><{/block}>
 				<{block "table-td-timestamps"}>
 					<{block "table-td-timestamps-created_at"}>
-				<td data-from="created_at">{{data}}</td>
+				<td data-from="created_at" data-order-sequence='["desc", "asc"]'>{{data}}</td>
 					<{/block}>
 					<{block "table-td-timestamps-updated_at"}>
-				<td data-from="updated_at">{{data}}</td>
+				<td data-from="updated_at" data-order-sequence='["desc", "asc"]'>{{data}}</td>
 					<{/block}>
 				<{/block}>
 				<{block "table-td-options"}>
