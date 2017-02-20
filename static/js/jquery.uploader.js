@@ -24,7 +24,7 @@ var UPLOADER_LANGUAGE = {
 	'duplicate' : '上传队列中有重复文件!'
 };
 (function($){
-	if(typeof $.LP == 'undefined')
+	if(typeof LP == 'undefined')
 		throw('this javascript file need behind \'laravel.lp.js\'');
 	
 	$.fn.extend({
@@ -66,14 +66,14 @@ var UPLOADER_LANGUAGE = {
 				var nonce = function(){
 					return rand(10000,99999);
 				};
-				var uploader_id = 'uploader-id-' + nonce(), pick_id = 'pick-id-' + nonce();
+				var id = nonce();
+				var uploader_id = 'uploader-id-' + id, pick_id = 'pick-id-' + id;
 				var progresses_id = uploader_id + '-progresses', thumbnails_id = uploader_id + '-thumbnails', input_id = uploader_id + '-input';
 				//添加容器到input下
 				flex_uploader.$container = $('<div class="uploader-container" id="'+ uploader_id +'">'+
-					'<div class="drop-tips text-info"><h2>'+ UPLOADER_LANGUAGE.drop_container +'</h2><br /><br /><div class="btn btn-info" onclick="javascript:jQuery(this).parent().hide().parent(\'.uploader-container\').removeClass(\'webuploader-dnd-over\');"><i class="glyphicon glyphicon-remove"></i> '+UPLOADER_LANGUAGE.close+'</div></div>' +
-					'<div class="pull-left"><span id="'+ pick_id +'">'+ UPLOADER_LANGUAGE.select_file +'(≤ '+ bytesToSize(options.filesize) +')</span></div>' +
+					'<div class="pull-left"><div id="'+ pick_id +'">'+ UPLOADER_LANGUAGE.select_file +'(≤ '+ bytesToSize(options.filesize) +')</div></div>' +
 					'<div class="pull-left tags">&nbsp;<span class="label label-success">.' + options.filetype.replace(/,/g,'</span>&nbsp;<span class="label label-success">.') + '</span>' +
-					'&nbsp;<!--<span class="label label-warning enable-tooltip" data-placement="top" title="'+ UPLOADER_LANGUAGE.ctrl_v_tip +'"><small class="glyphicon glyphicon-info-sign"></small> '+ UPLOADER_LANGUAGE.ctrl_v_button +'</span>&nbsp;--><span class="label label-warning enable-tooltip" data-placement="top" title="'+ UPLOADER_LANGUAGE.drop_container +'"><small class="glyphicon glyphicon-info-sign"></small> '+ UPLOADER_LANGUAGE.drop_button +'</span>' +
+					'&nbsp;<span class="label label-warning enable-tooltip" data-placement="top" title="'+ UPLOADER_LANGUAGE.drop_container +'"><small class="glyphicon glyphicon-info-sign"></small> '+ UPLOADER_LANGUAGE.drop_button +'</span>' +
 					(options.max_width > 0 && options.max_height > 0 ? '<br /><small>&nbsp;'+ UPLOADER_LANGUAGE.resize.replace('{{0}}', options.max_width.toString().toHTML() + 'x' + options.max_height.toString().toHTML()) + '</small>' : '') +
 					'</div><div class="clearfix"></div>' +
 					'<div id="' + progresses_id + '" class="progresses"></div><div class="clearfix"></div>' +
@@ -112,7 +112,7 @@ var UPLOADER_LANGUAGE = {
 						},
 						thumb: function(){
 							flex_uploader.uploader.makeThumb( file, function( error, ret ) {
-								$('.media-object', $progresses[file.id]).attr('src', error ? $.LP.baseuri+'placeholder?text='+file.ext+'&size=75x75&fontsize=35' : ret);
+								$('.media-object', $progresses[file.id]).attr('src', error ? LP.baseuri+'placeholder?text='+file.ext+'&size=75x75&fontsize=35' : ret);
 							});
 						},
 						name: function(name){
@@ -175,7 +175,7 @@ var UPLOADER_LANGUAGE = {
 					{
 						$thumbnails[id] = $('<div class="col-xs-6 col-md-4 alert"><div class="thumbnail">' +
 							'<div class="file-panel"><span class="cancel" data-dismiss="alert" aria-label="Close">'+UPLOADER_LANGUAGE.close+'</span><span class="rotateRight">'+UPLOADER_LANGUAGE.rotate_right+'</span><span class="rotateLeft">'+UPLOADER_LANGUAGE.rotate_left+'</span></div>' +
-							'<a href="'+$.LP.baseuri+'attachment?id='+id+'"  target="_blank"><img src="'+$.LP.baseuri+'placeholder?size=300x200&text='+encodeURIComponent(UPLOADER_LANGUAGE.loading)+'" alt="" class="img-responsive center-block"  onerror="this.src=\''+ $.LP.baseuri +'placeholder?size=300x200&text=\'+encodeURIComponent(\''+UPLOADER_LANGUAGE.reading+'\');"></a>' +
+							'<a href="'+LP.baseuri+'attachment?id='+id+'"  target="_blank"><img src="'+LP.baseuri+'placeholder?size=300x200&text='+encodeURIComponent(UPLOADER_LANGUAGE.loading)+'" alt="" class="img-responsive center-block"  onerror="this.src=\''+ LP.baseuri +'placeholder?size=300x200&text=\'+encodeURIComponent(\''+UPLOADER_LANGUAGE.reading+'\');"></a>' +
 							'<div class="caption">' +
         					'<h4><span class="title">'+(filename ? filename.toHTML() : '')+'</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>' +
 							'</div><div class="clearfix"></div>' +
@@ -194,10 +194,10 @@ var UPLOADER_LANGUAGE = {
 							});
 						if (!fileext) 
 						{
-							$.LP.get($.LP.baseuri + 'attachment/info?id='+ id).done(function(json){
+							LP.get(LP.baseuri + 'attachment/info?id='+ id).done(function(json){
 								if (typeof json.data.ext != 'undefined')
 								{
-									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? $.LP.baseuri + 'attachment/preview?id='+ id : $.LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
+									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview?id='+ id : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
 									$('.title', $thumbnails[id]).text(json.data.displayname);
 									$('img', $thumbnails[id]).attr('src',pic);
 								}
@@ -205,7 +205,7 @@ var UPLOADER_LANGUAGE = {
 						}
 						else
 						{
-							var pic = img_types.indexOf(fileext.toLowerCase()) > -1 ? $.LP.baseuri + 'attachment/preview?id='+ id: $.LP.baseuri + 'placeholder?size=300x200&text='+ encodeURIComponent(fileext);
+							var pic = img_types.indexOf(fileext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview?id='+ id: LP.baseuri + 'placeholder?size=300x200&text='+ encodeURIComponent(fileext);
 							$('img', $thumbnails[id]).attr('src',pic);
 						}
 					}
@@ -318,9 +318,9 @@ var UPLOADER_LANGUAGE = {
 					this.md5File( file ).progress(function(percentage) {
 						progress(file).progressing(0).message(UPLOADER_LANGUAGE.hashing + ' ' + (percentage * 100).toFixed(2) + '%');
 					}).then(function(val) {
-						$.LP.POST($.LP.baseuri + 'attachment/hash_query', {
+						LP.POST(LP.baseuri + 'attachment/hash_query', {
 							hash: val,
-							_token: $.LP.csrf,
+							_token: LP.csrf,
 							filename: file.name,
 							ext: file.ext,
 							size: file.size
@@ -407,16 +407,16 @@ var UPLOADER_LANGUAGE = {
 					if (flex_uploader.uploader || typeof t.prop('flex_uploader') == 'undefined' || typeof t.prop('flex_uploader').uploader != 'undefined') return;
 					flex_uploader.uploader = WebUploader.create({
 						// swf文件路径
-						swf: $.LP.baseuri + "static/js/webuploader/Uploader.swf",
+						swf: LP.baseuri + "static/js/webuploader/Uploader.swf",
 						// 文件接收服务端。
-						server: $.LP.baseuri + "attachment/uploader_query?of=json",
+						server: LP.baseuri + "attachment/uploader_query?of=json",
 						// 选择文件的按钮。可选。内部根据当前运行是创建，可能是input元素，也可能是flash
 						pick: {
 							id: document.getElementById(pick_id),
 							multiple: true
 						},
 						//表单附加数据
-						formData: $.extend(true, {}, {'_token': $.LP.csrf}),
+						formData: $.extend(true, {}, {'_token': LP.csrf}),
 						//文件表单name
 						fileVal: 'Filedata',
 						//METHOD
@@ -435,7 +435,7 @@ var UPLOADER_LANGUAGE = {
 						accept: {
 							title: UPLOADER_LANGUAGE.select_file,
 							extensions: options.filetype,
-							mimeTypes: typeof mimeType != 'undefined' ? options.filetype.split(',').map(function(v){return mimeType.lookup('name.' + v);}).join(',') : '*/*'
+							mimeTypes: typeof mimeType != 'undefined' && !navigator.userAgent.indexOf('Chrome') ? options.filetype.split(',').map(function(v){return mimeType.lookup('name.' + v);}).join(',') : '*/*'
 						},
 						//是否允许在文件传输时提前把下一个文件的分片,MD5准备好
 						prepareNextFile: true,
@@ -447,10 +447,11 @@ var UPLOADER_LANGUAGE = {
 						chunked: true,
 						//同时上传并发数
 						threads: 3,
+						//以下两个属性设置后，如果一个页面有多个uploader，会将rt_rt_xxxxx放到最后一个.webuploader-container容器内
 						//指定拖拽的容器
-						dnd: document.getElementById(uploader_id),
+						//dnd: document.getElementById(uploader_id),
 						//全局禁用拉拽，防止默认打开文件
-						disableGlobalDnd: true,
+						//disableGlobalDnd: true,
 						//可以粘贴的容器
 						//paste: document.getElementById(uploader_id),
 						thumb: {// 缩略图
