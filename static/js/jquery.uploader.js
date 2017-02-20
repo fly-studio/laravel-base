@@ -352,8 +352,8 @@ var UPLOADER_LANGUAGE = {
 				};
 				//上传过程中触发，携带上传进度。
 				method.uploadProgress = function(file, percentage) {
-					t.triggerHandler('uploader.progressing',[file, percentage, attachment().get()]);
-					progress(file).progressing(percentage);
+					t.triggerHandler('uploader.progressing',[file, percentage * 100, attachment().get()]);
+					progress(file).progressing(percentage * 100);
 				};
 				//当文件上传成功时触发。
 				method.uploadSuccess = function(file, json) {
