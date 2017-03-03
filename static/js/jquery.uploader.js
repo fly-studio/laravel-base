@@ -357,15 +357,16 @@ var UPLOADER_LANGUAGE = {
 				};
 				//当文件上传成功时触发。
 				method.uploadSuccess = function(file, json) {
+					var message = json.message && json.message.content ? json.message.content : json.message;
 					if (json && (json.result == 'success' || json.result == 'api')) {
 						progress(file).success();
 						if (options.filelimit == 1) preview().removeAll();
 						preview(json.data.id, json.data.displayname, json.data.ext).build().setFile(file);
 						t.triggerHandler('uploader.uploaded',[file, json, attachment().get()]);
 					} else {
-						progress(file).error(UPLOADER_LANGUAGE.error+': ' + json.message.content);
-						t.triggerHandler('uploader.error',[file, json.message.content, attachment().get()]);
-						//$.alert(json.message.content);
+						progress(file).error(UPLOADER_LANGUAGE.error+': ' + message);
+						t.triggerHandler('uploader.error',[file, message, attachment().get()]);
+						//$.alert(message);
 					}
 				};
 				
