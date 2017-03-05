@@ -194,7 +194,7 @@ var UPLOADER_LANGUAGE = {
 							});
 						if (!fileext) 
 						{
-							LP.get(LP.baseuri + 'attachment/info/'+ id).done(function(json){
+							LP.get(LP.baseuri + 'api/attachment/'+ id).done(function(json){
 								if (typeof json.data.ext != 'undefined')
 								{
 									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview/'+ id : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
