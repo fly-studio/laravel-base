@@ -58,7 +58,7 @@ class MemberController extends Controller
 	{
 		$user = User::with(['roles'])->find($id);
 		if (empty($user))
-			return $this->failure_noexists();
+			return $this->failure_notexists();
 
 		$this->_data = $user;
 		return !$request->offsetExists('of') ? $this->view('admin.member.show') : $this->api($user->toArray());
@@ -102,7 +102,7 @@ class MemberController extends Controller
 	{
 		$user = User::find($id);
 		if (empty($user))
-			return $this->failure_noexists();
+			return $this->failure_notexists();
 
 		$keys = ['username', 'nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
 		$this->_validates = $this->getScriptValidate('member.store', $keys);
@@ -114,7 +114,7 @@ class MemberController extends Controller
 	{
 		$user = User::find($id);
 		if (empty($user))
-			return $this->failure_noexists();
+			return $this->failure_notexists();
 
 		//modify the password
 		if (!empty($request->input('password')))
