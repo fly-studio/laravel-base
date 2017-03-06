@@ -1,1 +1,1 @@
-<title><{config('settings.title')}><{foreach config('settings.subtitles') as $v}> - <{$v.title}><{/foreach}></title>
+<title><{foreach config('settings.subtitles')|array_reverse as $v}><{$v.title}> - <{/foreach}><{config('settings.title')}></title>

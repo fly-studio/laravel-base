@@ -175,7 +175,7 @@ var UPLOADER_LANGUAGE = {
 					{
 						$thumbnails[id] = $('<div class="col-xs-6 col-md-4 alert"><div class="thumbnail">' +
 							'<div class="file-panel"><span class="cancel" data-dismiss="alert" aria-label="Close">'+UPLOADER_LANGUAGE.close+'</span><span class="rotateRight">'+UPLOADER_LANGUAGE.rotate_right+'</span><span class="rotateLeft">'+UPLOADER_LANGUAGE.rotate_left+'</span></div>' +
-							'<a href="'+LP.baseuri+'attachment?id='+id+'"  target="_blank"><img src="'+LP.baseuri+'placeholder?size=300x200&text='+encodeURIComponent(UPLOADER_LANGUAGE.loading)+'" alt="" class="img-responsive center-block"  onerror="this.src=\''+ LP.baseuri +'placeholder?size=300x200&text=\'+encodeURIComponent(\''+UPLOADER_LANGUAGE.reading+'\');"></a>' +
+							'<a href="'+LP.baseuri+'attachment/'+id+'"  target="_blank"><img src="'+LP.baseuri+'placeholder?size=300x200&text='+encodeURIComponent(UPLOADER_LANGUAGE.loading)+'" alt="" class="img-responsive center-block"  onerror="this.src=\''+ LP.baseuri +'placeholder?size=300x200&text=\'+encodeURIComponent(\''+UPLOADER_LANGUAGE.reading+'\');"></a>' +
 							'<div class="caption">' +
         					'<h4><span class="title">'+(filename ? filename.toHTML() : '')+'</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>' +
 							'</div><div class="clearfix"></div>' +
@@ -194,18 +194,18 @@ var UPLOADER_LANGUAGE = {
 							});
 						if (!fileext) 
 						{
-							LP.get(LP.baseuri + 'attachment/info?id='+ id).done(function(json){
+							LP.get(LP.baseuri + 'api/attachment/'+ id).done(function(json){
 								if (typeof json.data.ext != 'undefined')
 								{
-									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview?id='+ id : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
-									$('.title', $thumbnails[id]).text(json.data.displayname);
+									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview/'+ id : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
+									$('.title', $thumbnails[id]).text(json.data.filename);
 									$('img', $thumbnails[id]).attr('src',pic);
 								}
 							});
 						}
 						else
 						{
-							var pic = img_types.indexOf(fileext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview?id='+ id: LP.baseuri + 'placeholder?size=300x200&text='+ encodeURIComponent(fileext);
+							var pic = img_types.indexOf(fileext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview/'+ id: LP.baseuri + 'placeholder?size=300x200&text='+ encodeURIComponent(fileext);
 							$('img', $thumbnails[id]).attr('src',pic);
 						}
 					}
@@ -318,7 +318,7 @@ var UPLOADER_LANGUAGE = {
 					this.md5File( file ).progress(function(percentage) {
 						progress(file).progressing(0).message(UPLOADER_LANGUAGE.hashing + ' ' + (percentage * 100).toFixed(2) + '%');
 					}).then(function(val) {
-						LP.POST(LP.baseuri + 'attachment/hash_query', {
+						LP.PUT(LP.baseuri + 'attachment/hash', {
 							hash: val,
 							_token: LP.csrf,
 							filename: file.name,
@@ -328,7 +328,7 @@ var UPLOADER_LANGUAGE = {
 							flex_uploader.uploader.skipFile(file);
 							progress(file).success().message(UPLOADER_LANGUAGE.hash_success);
 							if (options.filelimit == 1) preview().removeAll();
-							preview(json.data.id, json.data.displayname, json.data.ext).build().setFile(file);
+							preview(json.data.id, json.data.filename, json.data.ext).build().setFile(file);
 							t.triggerHandler('uploader.uploaded',[file, json, attachment().get()]);
 						}).fail(function(){
 							file.md5 = val;
@@ -357,15 +357,16 @@ var UPLOADER_LANGUAGE = {
 				};
 				//当文件上传成功时触发。
 				method.uploadSuccess = function(file, json) {
+					var message = json.message && json.message.content ? json.message.content : json.message;
 					if (json && (json.result == 'success' || json.result == 'api')) {
 						progress(file).success();
 						if (options.filelimit == 1) preview().removeAll();
-						preview(json.data.id, json.data.displayname, json.data.ext).build().setFile(file);
+						preview(json.data.id, json.data.filename, json.data.ext).build().setFile(file);
 						t.triggerHandler('uploader.uploaded',[file, json, attachment().get()]);
 					} else {
-						progress(file).error(UPLOADER_LANGUAGE.error+': ' + json.message.content);
-						t.triggerHandler('uploader.error',[file, json.message.content, attachment().get()]);
-						//$.alert(json.message.content);
+						progress(file).error(UPLOADER_LANGUAGE.error+': ' + message);
+						t.triggerHandler('uploader.error',[file, message, attachment().get()]);
+						//$.alert(message);
 					}
 				};
 				
@@ -409,7 +410,7 @@ var UPLOADER_LANGUAGE = {
 						// swf文件路径
 						swf: LP.baseuri + "static/js/webuploader/Uploader.swf",
 						// 文件接收服务端。
-						server: LP.baseuri + "attachment/uploader_query?of=json",
+						server: LP.baseuri + "attachment/uploader?of=json",
 						// 选择文件的按钮。可选。内部根据当前运行是创建，可能是input元素，也可能是flash
 						pick: {
 							id: document.getElementById(pick_id),

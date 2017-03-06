@@ -18,7 +18,7 @@ $.kindeditor_default_setting = {
 	extraFileUploadParams : {
 	   "PHPSESSID" : "<{''|@session_id|encrypt}>"
 	},
-	uploadJson : LP.baseuri+'attachment/kindeditor_upload_query?of=json',
+	uploadJson : LP.baseuri+'attachment/kindeditor?of=json',
 	filePostName : 'Filedata'
 };
 $.ueditor_default_setting = {
@@ -29,5 +29,5 @@ $.ueditor_default_setting = {
 	]},complete: {toolbars: typeof window.UEDITOR_CONFIG != 'undefined' ? window.UEDITOR_CONFIG.toolbars : []
 	}
 };
-window.UEDITOR_CONFIG.serverUrl = LP.baseuri + 'attachment/ueditor_upload_query?of=json&_token=' + LP.csrf;
+window.UEDITOR_CONFIG.serverUrl = LP.baseuri + 'attachment/ueditor?of=json&_token=' + LP.csrf;
 })(jQuery);

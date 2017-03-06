@@ -7,15 +7,9 @@ $().ready(function(){
 
 		$('a[method]:not([method="delete"])', obj).query();
 		$('a[method="delete"]', obj).query(function(json){
-			if ((json.result == 'success' || json.result == 'api') && json.data.id) {
-				if (method.datatable && json.url === true)
+			if (json.result == 'success' || json.result == 'api') {
+				if (method.datatable)
 					method.datatable.ajax.reload(null, false);
-				else
-					json.data.id.forEach(function(id){
-						$('#line-'+id).fadeOut(function(){
-							$(this).remove();
-						});
-					});
 			}
 		}, {
 			layout: 'topCenter',

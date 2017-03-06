@@ -66,14 +66,14 @@ class Handler extends ExceptionHandler
 					{
 						$file = str_replace([base_path(), PLUGINSPATH], '', $value['file']);
 						$line = $value['line'];
-						return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('document.failure_model_noexist', ['model' => $exception->getModel(), 'file' => $file , 'line' => $line, 'id' => implode(',', $exception->getIds())]);
+						return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('document.model_not_exists', ['model' => $exception->getModel(), 'file' => $file , 'line' => $line, 'id' => implode(',', $exception->getIds())]);
 					}
 				}
 			}
 			else if($exception instanceof PermissionException)
-				return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('auth.failure_permission');
+				return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('auth.permission_forbidden');
 			else if ($exception instanceof TokenMismatchException)
-				return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('validation.failure_csrf');
+				return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('validation.csrf_invalid');
 			else if (($exception instanceof QueryException) || ($exception instanceof PDOException))
 				return (new OutputResponse)->setRequest($request)->setResult('error')->setMessage('server.error_database');
 			// other 500 errors
@@ -108,7 +108,7 @@ class Handler extends ExceptionHandler
 	protected function unauthenticated($request, AuthenticationException $exception)
 	{
 		if ($request->expectsJson()) {
-			return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('auth.failure_unlogin');
+			return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('auth.unlogin');
 			//response()->json(['error' => 'Unauthenticated.'], 401);
 		}
 

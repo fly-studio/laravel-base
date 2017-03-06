@@ -25,7 +25,7 @@
 <!-- DataTable的Block -->
 <{block "table-td-plus"}>
 <td data-from="avatar_aid" data-orderable="false">
-	<img src="<{''|attachment}>?id={{data}}&width=80&height=80" alt="avatar" class="img-circle">
+	<img src="<{'attachment'|url}>/{{data}}/80x80" alt="avatar" class="img-circle">
 </td>
 <td data-from="username">{{data}}</td>
 <td data-from="nickname"><span class="enable-emoji">{{if data}}{{data.emojione()}}{{/if}}</span></td>
