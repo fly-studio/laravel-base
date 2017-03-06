@@ -12,11 +12,11 @@ return [
 			],
 			'nickname' => [
 				'name' => '昵称',
-				'rules' => 'string|min:1',
+				'rules' => 'nullable|string|min:1',
 			],
 			'realname' => [
 				'name' => '真实姓名',
-				'rules' => 'ansi:2|regex:/^[a-z\x{4e00}-\x{9fa5}\x{f900}-\x{fa2d}\s]*$/iu|max:50|min:3',
+				'rules' => 'nullable|ansi:2|regex:/^[a-z\x{4e00}-\x{9fa5}\x{f900}-\x{fa2d}\s]*$/iu|max:50|min:3',
 				'message' => [
 					'regex' => '[:attribute] 必须为汉字、英文'
 				],
@@ -35,19 +35,19 @@ return [
 			],
 			'phone' => [
 				'name' => '手机',
-				'rules' => 'phone|unique:users,{{attribute}},{{id}}',
+				'rules' => 'nullable|phone|unique:users,{{attribute}},{{id}}',
 			],
 			'idcard' => [
 				'name' => '身份证',
-				'rules' => 'id_card|unique:users,{{attribute}},{{id}}',
+				'rules' => 'nullable|id_card|unique:users,{{attribute}},{{id}}',
 			],
 			'email' => [
 				'name' => 'E-Mail',
-				'rules' => 'email|unique:users,{{attribute}},{{id}}',
+				'rules' => 'nullable|email|unique:users,{{attribute}},{{id}}',
 			],
 			'avatar_aid' => [
 				'name' => '用户头像',
-				'rules' => 'numeric',
+				'rules' => 'nullable|numeric',
 			],
 			'role_ids' => [
 				'name' => '用户组',
