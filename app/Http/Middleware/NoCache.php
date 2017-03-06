@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Addons\Core\Middleware\Core as BaseCore;
+use Addons\Core\Middleware\NoCache as BaseNoCache;
 
-class NoCache extends BaseCore
+class NoCache extends BaseNoCache
 {
 
 }
