@@ -1,8 +1,6 @@
 var UPLOADER_LANGUAGE = {
 	'close' : '关闭',
-	'drop_container' : '拖到文件到这里',
-	'drop_tip' : '支持从Windows中拖动文件到这里上传（需现代浏览器）',
-	'drop_button' : '拖放文件',
+
 	'select_file' : '选择文件',
 	'ctrl_v_tip' : '可以使用Ctrl+V直接粘贴截图（需现代浏览器）',
 	'ctrl_v_button' : 'Ctrl+V 粘贴',
@@ -73,7 +71,7 @@ var UPLOADER_LANGUAGE = {
 				flex_uploader.$container = $('<div class="uploader-container" id="'+ uploader_id +'">'+
 					'<div class="pull-left"><div id="'+ pick_id +'">'+ UPLOADER_LANGUAGE.select_file +'(≤ '+ bytesToSize(options.filesize) +')</div></div>' +
 					'<div class="pull-left tags">&nbsp;<span class="label label-success">.' + options.filetype.replace(/,/g,'</span>&nbsp;<span class="label label-success">.') + '</span>' +
-					'&nbsp;<span class="label label-warning enable-tooltip" data-placement="top" title="'+ UPLOADER_LANGUAGE.drop_container +'"><small class="glyphicon glyphicon-info-sign"></small> '+ UPLOADER_LANGUAGE.drop_button +'</span>' +
+					'&nbsp;<span class="label label-warning enable-tooltip" data-placement="top" title="'+ UPLOADER_LANGUAGE.drop_container +'">' +
 					(options.max_width > 0 && options.max_height > 0 ? '<br /><small>&nbsp;'+ UPLOADER_LANGUAGE.resize.replace('{{0}}', options.max_width.toString().toHTML() + 'x' + options.max_height.toString().toHTML()) + '</small>' : '') +
 					'</div><div class="clearfix"></div>' +
 					'<div id="' + progresses_id + '" class="progresses"></div><div class="clearfix"></div>' +
