@@ -1,6 +1,5 @@
-var UPLOADER_LANGUAGE = {
+window.UPLOADER_LANGUAGE = {
 	'close' : '关闭',
-
 	'select_file' : '选择文件',
 	'ctrl_v_tip' : '可以使用Ctrl+V直接粘贴截图（需现代浏览器）',
 	'ctrl_v_button' : 'Ctrl+V 粘贴',
@@ -24,7 +23,7 @@ var UPLOADER_LANGUAGE = {
 (function($){
 	if(typeof LP == 'undefined')
 		throw('this javascript file need behind \'laravel.lp.js\'');
-	
+
 	$.fn.extend({
 		uploader : function(max_width, max_height, filesize, filetype, filelimit, id) {
 			var options = {

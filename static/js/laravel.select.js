@@ -7,7 +7,7 @@
 		if (typeof method.cacheData[key] != 'undefined')
 			$dfd.resolve(method.cacheData[key]);
 		else {
-			LP.post(url, params).done(function(json, textStatus, jqXHR){
+			LP.post(url, $.extend(true, {}, params, {of: 'json'})).done(function(json, textStatus, jqXHR){
 				var items = json.data.data;
 				method.cacheData[key] = items;
 				$dfd.resolve(method.cacheData[key]);
@@ -90,7 +90,7 @@
 				var selection = $this.data('selection') ? $this.data('selection') : text;
 				var params = $this.data('params');
 				var values = $this.attr('value') ? $this.attr('value').split(',') : $this.val();
-				var url = LP.baseuri + $this.data('model')+'/data/json';
+				var url = LP.baseuri + $this.data('model')+'/data';
 				params = $.extend(true, {}, {all: 'true'}, params);
 				method.getData(url, params).done(function(json){
 					var data = method.format(json, id, selection, text); 
@@ -112,7 +112,7 @@
 				var selection = $this.data('selection') ? $this.data('selection') : text;
 				var params = $this.data('params');
 				var values = $this.attr('value') ? $this.attr('value').split(',') : $this.val();
-				var url = LP.baseuri + $this.data('model')+'/data/json';
+				var url = LP.baseuri + $this.data('model')+'/data';
 				params = $.extend(true, {}, {all: 'true', tree: 'true'}, params);
 
 				method.getData(url, params).done(function(json){
@@ -141,7 +141,7 @@
 				var term = $this.data('term') ? $this.data('term') : null;
 				var q = $this.data('q') ? $this.data('q') : null;
 				var values = $this.attr('value') ? $this.attr('value').split(',') : $this.val();
-				var url = LP.baseuri + $this.data('model') + '/data/json';
+				var url = LP.baseuri + $this.data('model') + '/data';
 				var _config = {
 					language: "zh-CN",
 					ajax: {
@@ -194,7 +194,7 @@
 				var text = $this.data('text') ? $this.data('text') : '{{keywords}} <span class="text-muted">({{count}}次使用)</span>';
 				var selection = $this.data('selection') ? $this.data('selection') : '{{keywords}}';
 				var values = $this.attr('value') ? $this.attr('value').split(',') : $this.val();
-				var url = LP.baseuri + ($this.data('model') ? $this.data('model') : 'admin/tag') + '/data/json';
+				var url = LP.baseuri + ($this.data('model') ? $this.data('model') : 'admin/tag') + '/data';
 				var _config = {
 					language: "zh-CN",
 					ajax: {

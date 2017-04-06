@@ -17,21 +17,16 @@ $router->resources([
 	'member' => 'MemberController',
 ]);
 
-$router->any('wechat/feedback/{aid}/{oid?}', 'WechatController@feedback');
-$router->addAnyActionRoutes([
-	'wechat',
-]);
-
-$router->group(['namespace' => 'Admin','prefix' => 'admin', 'middleware' => ['auth', 'role:administrator']], function($router) {
+$router->group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['auth', 'role:administrator']], function($router) {
 	
-	$router->addAdminRoutes([
+	$router->crud([
 		'member' => 'MemberController',
 	]);
+	$router->get('/', 'HomeController@index');
 
-	//admin目录下的其它路由需放置在本条前
-	$router->addUndefinedRoutes();
 });
 
-//根目录的其它路由需放置在本条前
-$router->addUndefinedRoutes();
-
+$router->get('/', 'HomeController@index');
+$router->actions([
+	'auth' => ['index', 'login', 'logout', 'choose', 'authenticate-query'],
+]);

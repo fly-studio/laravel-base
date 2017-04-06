@@ -93,6 +93,7 @@ $().ready(function(){
 		if (removeIt === true) $('tbody', $dt).empty();
 		return r;
 	};
+
 	$.fn.dataTable.ext.renderer.pageButton.bootstrap = function ( settings, host, idx, buttons, page, pages ) {
 		var api     = new $.fn.dataTable.Api( settings );
 		var classes = settings.oClasses;
@@ -288,7 +289,7 @@ $().ready(function(){
 			renderer: 'bootstrap',
 
 			ajax: {
-				url: LP.baseuri + config.namespace+'/'+config.name+'/data/json',
+				url: LP.baseuri + config.namespace+'/'+config.name+'/data?of=json',
 				timeout: 20 * 1000,
 				type: 'POST',
 				data: function(d){

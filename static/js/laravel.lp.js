@@ -1,5 +1,5 @@
-var LP = {};
-var QUERY_LANGUAGE = {
+window.LP = {};
+window.QUERY_LANGUAGE = {
 	'error' : '错误',
 	'reload' : '重新载入',
 	'redirect' : '页面跳转',

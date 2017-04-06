@@ -13,7 +13,7 @@
 <{block "body-container"}>
 <div class="container">
 	<h1 class="page-header">登录</h1>
-	<form action="<{'auth/authenticate_query'|url nofilter}>" id="form" method="POST">
+	<form action="<{'auth/authenticate-query'|url nofilter}>" id="form" method="POST">
 		<{csrf_field() nofilter}>
 		<div class="form-group">
 			<label for="username">用户名</label>
