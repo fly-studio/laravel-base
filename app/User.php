@@ -79,6 +79,7 @@ class User extends Authenticatable
 
 //自动创建extra等数据
 User::created(function($user){
+	$user->extra()->create([]);
 	$user->finance()->create([]);
 });
 	

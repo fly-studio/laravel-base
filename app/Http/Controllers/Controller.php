@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Addons\Core\Validation\ValidatesRequests;
+use Addons\Censor\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Addons\Core\Controllers\Controller as BaseController;
 

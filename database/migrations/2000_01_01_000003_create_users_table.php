@@ -60,8 +60,8 @@ class CreateUsersTable extends Migration
 			$table->unsignedInteger('id')->unique()->primary();
 			$table->decimal('money', 16, 2)->index()->default(0)->comment = '余额';
 			$table->decimal('used_money', 16, 2)->index()->default(0)->comment = '已消费金额';
-			$table->decimal('bonus', 16, 2)->index()->default(0)->comment = '红包余额';
-			$table->decimal('used_bonus', 16, 2)->index()->default(0)->comment = '已使用红包';
+			$table->decimal('coin', 16, 2)->index()->default(0)->comment = '币余额';
+			$table->decimal('used_coin', 16, 2)->index()->default(0)->comment = '已使用币';
 			$table->decimal('score', 16, 2)->index()->default(0)->comment = '积分余额';
 			$table->decimal('used_score', 16, 2)->index()->default(0)->comment = '已使用积分';
 

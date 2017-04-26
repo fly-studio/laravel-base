@@ -172,8 +172,10 @@ return [
 		 */
 		Laravel\Tinker\TinkerServiceProvider::class,
 
-		//Smarty注入模块
+		//Smarty
 		Addons\Smarty\ServiceProvider::class,
+		//验证
+		Addons\Censor\ServiceProvider::class,
 		//Core before RouteServiceProvider
 		Addons\Core\ServiceProvider::class,
 
@@ -187,7 +189,7 @@ return [
 		App\Providers\RouteServiceProvider::class,
 
 		//Debuger
-		Barryvdh\Debugbar\ServiceProvider::class,
+		//Barryvdh\Debugbar\ServiceProvider::class,
 		//验证码
 		Mews\Captcha\CaptchaServiceProvider::class,
 		//验证体系

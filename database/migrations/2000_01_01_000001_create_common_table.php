@@ -33,6 +33,7 @@ class CreateCommonTable extends Migration
 			$table->foreign('tag_id')->references('id')->on('tags')->onUpdate('cascade')->onDelete('cascade');
 		});
 
+		//日志
 		Schema::create('logs', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('type')->index()->comment = '事件';
