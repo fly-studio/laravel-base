@@ -68,7 +68,7 @@ class MemberController extends Controller
 	{
 		$keys = ['username', 'password', 'nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
 		$this->_data = [];
-		$this->_validates = $this->getScriptValidate('member.store', $keys);
+		$this->_validates = $this->getValidatorScript('member.store', $keys);
 		return $this->view('admin.member.create');
 	}
 
@@ -105,7 +105,7 @@ class MemberController extends Controller
 			return $this->failure_notexists();
 
 		$keys = ['username', 'nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
-		$this->_validates = $this->getScriptValidate('member.store', $keys);
+		$this->_validates = $this->getValidatorScript('member.store', $keys);
 		$this->_data = $user;
 		return $this->view('admin.member.edit');
 	}

@@ -28,7 +28,7 @@ class AuthController extends Controller
 		$this->guard()->logout();
 
 		$keys = [$this->username(), 'password'];
-		$validates = $this->getScriptValidate('member.store', $keys);
+		$validates = $this->getValidatorScript('member.store', $keys);
 		
 		$this->_validates = $validates;
 		return $this->view('admin/login');

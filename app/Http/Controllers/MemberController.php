@@ -28,7 +28,7 @@ class MemberController extends Controller
 	public function create()
 	{
 		$keys = ['username', 'password', 'gender', 'avatar_aid', 'accept_license'];
-		$this->_validates = $this->getScriptValidate('member.store', $keys);
+		$this->_validates = $this->getValidatorScript('member.store', $keys);
 		return $this->view('member.create');
 	}
 

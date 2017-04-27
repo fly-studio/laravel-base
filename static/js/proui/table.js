@@ -311,9 +311,10 @@ $().ready(function(){
 					$dt.data('url-query', query);
 					//修改导出按钮的链接
 					$('a[data-append-queries]').each(function(){$(this).attr('href', $(this).data('href'));}).querystring(query);
+					var p = (parseInt(d.start) + 1) / d.length;
 					return $.extend(true, {}, {
 						size: d.length,
-						page: !isNaN(d.start / d.length) ? Math.ceil(d.start / d.length) : 1
+						page: !isNaN(p) ? Math.ceil(p) : 1
 					}, query);
 				},
 				dataSrc: function(json){

@@ -238,7 +238,7 @@ window.UPLOADER_LANGUAGE = {
 						},
 						rebuildAll: function() {
 							//remove all files
-							files = flex_uploader.uploader.getFiles();
+							var files = flex_uploader.uploader.getFiles();
 							for(var i = 0;i < files.length;i++)
 								flex_uploader.uploader.removeFile(files[i], true);
 							//remove all preview
@@ -255,7 +255,7 @@ window.UPLOADER_LANGUAGE = {
 				var attachment = function() {
 					var aid = t.val();
 					if (aid == '0') aid = '';
-					aids = aid ? ( aid instanceof Array ? aid : aid.split(',') ) : [];
+					var aids = aid ? ( aid instanceof Array ? aid : aid.split(',') ) : [];
 					return {
 						write: function() {
 							if (t.is('select')){
