@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Role;
 use App\Logable;
 use App\CatalogCastTrait;
+use App\AttachmentCastTrait;
 use Addons\Core\Models\CallTrait;
 use Addons\Core\Models\CacheTrait;
 use Addons\Entrust\Traits\UserTrait;
@@ -20,7 +21,7 @@ class User extends Authenticatable
 {
 	use HasApiTokens, SoftDeletes, Notifiable, UserTrait;
 	use CacheTrait, CallTrait, PolyfillTrait;
-	use CatalogCastTrait;
+	use CatalogCastTrait, AttachmentCastTrait;
 	use Searchable, Logable;
 
 	//不能批量赋值
@@ -30,6 +31,7 @@ class User extends Authenticatable
 	protected $touches = ['roles'];
 	protected $casts = [
 		'gender' => 'catalog',
+		'avatar_aid' => 'attachment',
 	];
 
 

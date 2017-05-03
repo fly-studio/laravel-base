@@ -166,13 +166,13 @@ window.UPLOADER_LANGUAGE = {
 					};
 				};
 				var $thumbnails = {};
-				var preview = function(id, filename, fileext)
+				var preview = function(id, filename, fileext, url)
 				{
 					if (typeof id != 'undefined' && typeof $thumbnails[id] == 'undefined')
 					{
 						$thumbnails[id] = $('<div class="col-xs-6 col-md-4 alert"><div class="thumbnail">' +
 							'<div class="file-panel"><span class="cancel" data-dismiss="alert" aria-label="Close">'+UPLOADER_LANGUAGE.close+'</span><span class="rotateRight">'+UPLOADER_LANGUAGE.rotate_right+'</span><span class="rotateLeft">'+UPLOADER_LANGUAGE.rotate_left+'</span></div>' +
-							'<a href="'+LP.baseuri+'attachment/'+id+'"  target="_blank"><img src="'+LP.baseuri+'placeholder?size=300x200&text='+encodeURIComponent(UPLOADER_LANGUAGE.loading)+'" alt="" class="img-responsive center-block"  onerror="this.src=\''+ LP.baseuri +'placeholder?size=300x200&text=\'+encodeURIComponent(\''+UPLOADER_LANGUAGE.reading+'\');"></a>' +
+							'<a href="'+url+'"  target="_blank"><img src="'+LP.baseuri+'placeholder?size=300x200&text='+encodeURIComponent(UPLOADER_LANGUAGE.loading)+'" alt="" class="img-responsive center-block"  onerror="this.src=\''+ LP.baseuri +'placeholder?size=300x200&text=\'+encodeURIComponent(\''+UPLOADER_LANGUAGE.reading+'\');"></a>' +
 							'<div class="caption">' +
         					'<h4><span class="title">'+(filename ? filename.toHTML() : '')+'</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>' +
 							'</div><div class="clearfix"></div>' +
@@ -189,12 +189,12 @@ window.UPLOADER_LANGUAGE = {
 								);
 								$thumbnails[id].data('rotation', rotation);
 							});
-						if (!fileext) 
+						if (!fileext || !url) 
 						{
 							LP.get(LP.baseuri + 'api/attachment/'+ id).done(function(json){
 								if (typeof json.data.ext != 'undefined')
 								{
-									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview/'+ id : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
+									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? json.data.url : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
 									$('.title', $thumbnails[id]).text(json.data.filename);
 									$('img', $thumbnails[id]).attr('src',pic);
 								}
@@ -202,11 +202,11 @@ window.UPLOADER_LANGUAGE = {
 						}
 						else
 						{
-							var pic = img_types.indexOf(fileext.toLowerCase()) > -1 ? LP.baseuri + 'attachment/preview/'+ id: LP.baseuri + 'placeholder?size=300x200&text='+ encodeURIComponent(fileext);
-							$('img', $thumbnails[id]).attr('src',pic);
+							var pic = img_types.indexOf(fileext.toLowerCase()) > -1 ? url : LP.baseuri + 'placeholder?size=300x200&text='+ encodeURIComponent(fileext);
+							$('img', $thumbnails[id]).attr('src', pic);
 						}
 					}
-					
+
 					return {
 						build: function(){
 							if (t.triggerHandler('uploader.previewing', [this.getFile(), id, attachment().get()]) === false) return this;
@@ -325,7 +325,7 @@ window.UPLOADER_LANGUAGE = {
 							flex_uploader.uploader.skipFile(file);
 							progress(file).success().message(UPLOADER_LANGUAGE.hash_success);
 							if (options.filelimit == 1) preview().removeAll();
-							preview(json.data.id, json.data.filename, json.data.ext).build().setFile(file);
+							preview(json.data.id, json.data.filename, json.data.ext, json.data.url).build().setFile(file);
 							t.triggerHandler('uploader.uploaded',[file, json, attachment().get()]);
 						}).fail(function(){
 							file.md5 = val;
@@ -358,7 +358,7 @@ window.UPLOADER_LANGUAGE = {
 					if (json && (json.result == 'success' || json.result == 'api')) {
 						progress(file).success();
 						if (options.filelimit == 1) preview().removeAll();
-						preview(json.data.id, json.data.filename, json.data.ext).build().setFile(file);
+						preview(json.data.id, json.data.filename, json.data.ext, json.data.url).build().setFile(file);
 						t.triggerHandler('uploader.uploaded',[file, json, attachment().get()]);
 					} else {
 						progress(file).error(UPLOADER_LANGUAGE.error+': ' + message);

@@ -64,7 +64,8 @@ class Handler extends ExceptionHandler
 				{
 					if ($value['function'] == '__callStatic' && Str::endsWith($value['args'][0], 'OrFail'))
 					{
-						$file = str_replace([base_path(), PLUGINSPATH], '', $value['file']);
+						$file = str_replace(base_path(), '', $value['file']);
+						if (defined('LPPATH')) $file = str_replace(LPPATH, '', $file);
 						$line = $value['line'];
 						return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('document.model_not_exists', ['model' => $exception->getModel(), 'file' => $file , 'line' => $line, 'id' => implode(',', $exception->getIds())]);
 					}
