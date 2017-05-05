@@ -2,10 +2,10 @@
 
 return [
 	'import' => [
-		'view' => 'Allow view [:text]',
-		'create' => 'Allow create [:text]',
-		'edit' => 'Allow edit [:text]',
-		'destroy' => 'Allow delete [:text]',
-		'export' => 'Allow export [:text]'
+		'view' => 'View [:text]',
+		'create' => 'Create [:text]',
+		'edit' => 'Edit [:text]',
+		'destroy' => 'Delete [:text]',
+		'export' => 'Export [:text]'
 	],
 ];
