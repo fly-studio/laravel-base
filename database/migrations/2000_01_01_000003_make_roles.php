@@ -2,7 +2,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class Seeds extends Migration
+class MakeRoles extends Migration
 {
 	/**
 	 * Run the migrations.

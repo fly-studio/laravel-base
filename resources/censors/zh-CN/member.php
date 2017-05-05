@@ -51,7 +51,6 @@ return [
 		'role_ids' => [
 			'name' => '用户组',
 			'rules' => 'required|array',
-			'tag_name' => 'role_ids[]',
 		],
 		'accept_license' => [
 			'name' => '阅读并同意协议',

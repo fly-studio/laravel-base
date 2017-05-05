@@ -189,14 +189,16 @@ window.UPLOADER_LANGUAGE = {
 								);
 								$thumbnails[id].data('rotation', rotation);
 							});
-						if (!fileext || !url) 
+						if (!fileext || !url)
 						{
 							LP.get(LP.baseuri + 'api/attachment/'+ id).done(function(json){
+								attachment().replace(id, json.data.id);
 								if (typeof json.data.ext != 'undefined')
 								{
 									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? json.data.url : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
 									$('.title', $thumbnails[id]).text(json.data.filename);
-									$('img', $thumbnails[id]).attr('src',pic);
+									$('img', $thumbnails[id]).attr('src', pic);
+									$('a', $thumbnails[id]).attr('href', json.data.url);
 								}
 							});
 						}
@@ -273,9 +275,14 @@ window.UPLOADER_LANGUAGE = {
 							if (i == -1) aids.push(id.toString());
 							return this.write();
 						},
+						replace: function(encodedID, id) {
+							var i = aids.indexOf(encodedID.toString());
+							if (i != -1) aids[i] = id.toString();
+							return this.write();
+						},
 						remove: function(id) {
 							var i = aids.indexOf(id.toString());
-							if (i != -1) aids.splice(i,1);
+							if (i != -1) aids.splice(i, 1);
 							return this.write();
 						},
 						removeAll: function(){

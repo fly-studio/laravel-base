@@ -7,7 +7,7 @@
  *  use them only in specific pages. Also, if you remove a js plugin you won't use, make
  *  sure to remove its initialization from uiInit().
  */
-
+(function(){
 var App = function($) {
 
 	/* Helper variables - set in uiInit() */
@@ -629,6 +629,7 @@ var App = function($) {
 		}
 	};
 }(jQuery);
-
 /* Initialize app when page loads */
 jQuery(function(){ App.init(); });
+window.App = App;
+})();
