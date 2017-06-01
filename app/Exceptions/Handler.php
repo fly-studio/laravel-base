@@ -4,9 +4,9 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Support\Str;
-use Addons\Core\Http\OutputResponse;
 use Doctrine\DBAL\Driver\PDOException;
 use Illuminate\Database\QueryException;
+use Addons\Core\Http\OutputResponseFactory;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Session\TokenMismatchException;
 use Addons\Entrust\Exception\PermissionException;
@@ -67,16 +67,16 @@ class Handler extends ExceptionHandler
 						$file = str_replace(base_path(), '', $value['file']);
 						if (defined('LPPATH')) $file = str_replace(LPPATH, '', $file);
 						$line = $value['line'];
-						return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('document.model_not_exists', ['model' => $exception->getModel(), 'file' => $file , 'line' => $line, 'id' => implode(',', $exception->getIds())]);
+						return app(OutputResponseFactory::class)->failure('document.model_not_exists', false, ['model' => $exception->getModel(), 'file' => $file , 'line' => $line, 'id' => implode(',', $exception->getIds())])->setRequest($request);
 					}
 				}
 			}
 			else if($exception instanceof PermissionException)
-				return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('auth.permission_forbidden');
+				return app(OutputResponseFactory::class)->failure('auth.permission_forbidden')->setRequest($request);
 			else if ($exception instanceof TokenMismatchException)
-				return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('validation.csrf_invalid');
+				return app(OutputResponseFactory::class)->failure('validation.csrf_invalid')->setRequest($request);
 			else if (($exception instanceof QueryException) || ($exception instanceof PDOException))
-				return (new OutputResponse)->setRequest($request)->setResult('error')->setMessage('server.error_database');
+				return app(OutputResponseFactory::class)->error('server.error_database')->setRequest($request);
 			// other 500 errors
 		}
 
@@ -93,7 +93,7 @@ class Handler extends ExceptionHandler
     protected function prepareResponse($request, Exception $e)
     {
         if ($this->isHttpException($e)) {
-            return $request->expectsJson() ? (new OutputResponse)->setRequest($request)->setResult('error')->setRawMessage($e->getMessage())->setStatusCode($e->getStatusCode()) : $this->toIlluminateResponse($this->renderHttpException($e), $e);
+            return $request->expectsJson() ? app(OutputResponseFactory::class)->error()->setRequest($request)->setRawMessage($e->getMessage())->setStatusCode($e->getStatusCode()) : $this->toIlluminateResponse($this->renderHttpException($e), $e);
         } else {
             return $this->toIlluminateResponse($this->convertExceptionToResponse($e), $e);
         }
@@ -109,7 +109,7 @@ class Handler extends ExceptionHandler
 	protected function unauthenticated($request, AuthenticationException $exception)
 	{
 		if ($request->expectsJson()) {
-			return (new OutputResponse)->setRequest($request)->setResult('failure')->setMessage('auth.unlogin');
+			return app(OutputResponseFactory::class)->failure('auth.unlogin')->setRequest($request);
 			//response()->json(['error' => 'Unauthenticated.'], 401);
 		}
 
