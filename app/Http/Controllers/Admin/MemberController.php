@@ -68,14 +68,14 @@ class MemberController extends Controller
 	{
 		$keys = ['username', 'password', 'nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
 		$this->_data = [];
-		$this->_validates = $this->getValidatorScript('member.store', $keys);
+		$this->_validates = $this->censorScripts('member.store', $keys);
 		return $this->view('admin.member.create');
 	}
 
 	public function store(Request $request)
 	{
 		$keys = ['username', 'password', 'nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
-		$data = $this->autoValidate($request, 'member.store', $keys);
+		$data = $this->censor($request, 'member.store', $keys);
 
 		$extraKeys = [];
 		$multipleKeys = [];
@@ -105,7 +105,7 @@ class MemberController extends Controller
 			return $this->failure_notexists();
 
 		$keys = ['username', 'nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
-		$this->_validates = $this->getValidatorScript('member.store', $keys);
+		$this->_validates = $this->censorScripts('member.store', $keys);
 		$this->_data = $user;
 		return $this->view('admin.member.edit');
 	}
@@ -119,12 +119,12 @@ class MemberController extends Controller
 		//modify the password
 		if (!empty($request->input('password')))
 		{
-			$data = $this->autoValidate($request, 'member.store', 'password');
+			$data = $this->censor($request, 'member.store', 'password');
 			$data['password'] = bcrypt($data['password']);
 			$user->update($data);
 		}
 		$keys = ['nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
-		$data = $this->autoValidate($request, 'member.store', $keys, $user);
+		$data = $this->censor($request, 'member.store', $keys, $user);
 
 		$extraKeys = [];
 		$multipleKeys = [];

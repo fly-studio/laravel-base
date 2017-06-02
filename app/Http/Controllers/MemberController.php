@@ -28,7 +28,7 @@ class MemberController extends Controller
 	public function create()
 	{
 		$keys = ['username', 'password', 'gender', 'avatar_aid', 'accept_license'];
-		$this->_validates = $this->getValidatorScript('member.store', $keys);
+		$this->_validates = $this->censorScripts('member.store', $keys);
 		return $this->view('member.create');
 	}
 
@@ -41,7 +41,7 @@ class MemberController extends Controller
 	public function store(Request $request)
 	{
 		$keys = ['username', 'password', 'gender', 'avatar_aid', 'accept_license'];
-		$data = $this->autoValidate($request, 'member.store', $keys);
+		$data = $this->censor($request, 'member.store', $keys);
 
 		unset($data['accept_license']);
 		$user = (new User)->add($data);

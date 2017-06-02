@@ -28,7 +28,7 @@ class AuthController extends Controller
 		$this->guard()->logout();
 
 		$keys = [$this->username(), 'password'];
-		$validates = $this->getValidatorScript('member.store', $keys);
+		$validates = $this->censorScripts('member.store', $keys);
 		
 		$this->_validates = $validates;
 		return $this->view('admin/login');
@@ -72,7 +72,7 @@ class AuthController extends Controller
 		}
 
 		$keys = [$this->username(), 'password'];
-		$data = $this->autoValidate($request, 'member.login', $keys);
+		$data = $this->censor($request, 'member.login', $keys);
 		$remember = $request->has('remember');
 		if ($this->guard()->attempt([$this->username() => $data[$this->username()], 'password' => $data['password']], $remember))
 		{
