@@ -86,7 +86,7 @@ class MemberController extends Controller
 		$data = array_except($data, array_merge($extraKeys, $multipleKeys));
 		$user = DB::transaction(function() use ($data, $extra, $multiples, $role_ids){
 			$user = (new User)->add($data);
-			$user->extra()->create($extra);
+			$user->extra()->update($extra);
 			foreach((array)$multiples as $k => $v)
 			{
 				$catalog = Catalog::getCatalogsByName('fields.'.Str::singular($k));
