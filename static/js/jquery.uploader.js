@@ -170,42 +170,47 @@ window.UPLOADER_LANGUAGE = {
 				{
 					if (typeof id != 'undefined' && typeof $thumbnails[id] == 'undefined')
 					{
-						$thumbnails[id] = $('<div class="col-xs-6 col-md-4 alert"><div class="thumbnail">' +
+						$thumbnails[id] = $('<div class="col-xs-6 col-md-4 alert uploader-thumbnail" data-id="'+id+'"><div class="thumbnail">' +
 							'<div class="file-panel"><span class="cancel" data-dismiss="alert" aria-label="Close">'+UPLOADER_LANGUAGE.close+'</span><span class="rotateRight">'+UPLOADER_LANGUAGE.rotate_right+'</span><span class="rotateLeft">'+UPLOADER_LANGUAGE.rotate_left+'</span></div>' +
 							'<a href="'+url+'"  target="_blank"><img src="'+LP.baseuri+'placeholder?size=300x200&text='+encodeURIComponent(UPLOADER_LANGUAGE.loading)+'" alt="" class="img-responsive center-block"  onerror="this.src=\''+ LP.baseuri +'placeholder?size=300x200&text=\'+encodeURIComponent(\''+UPLOADER_LANGUAGE.reading+'\');"></a>' +
 							'<div class="caption">' +
-        					'<h4><span class="title">'+(filename ? filename.toHTML() : '')+'</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>' +
+							'<h4><span class="title">'+(filename ? filename.toHTML() : '')+'</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>' +
 							'</div><div class="clearfix"></div>' +
 							'</div><div class="clearfix"></div></div>').appendTo('#' + thumbnails_id).on('closed.bs.alert', function(){
-								preview(id).remove();
+								preview($(this).data('id')).remove();
 							});
 							$('.rotateLeft,.rotateRight', $thumbnails[id]).on('click', function(){
-								var rotation = parseInt($thumbnails[id].data('rotation')) || 0;
+								var $obj = $(this).closest('.uploader-thumbnail');
+								var rotation = parseInt($obj.data('rotation')) || 0;
 								rotation += $(this).is('.rotateLeft') ? -90 : 90;
-								deg = 'rotate(' + rotation + 'deg)';
-								$('img', $thumbnails[id]).css(
+								var deg = 'rotate(' + rotation + 'deg)';
+								$('img', $obj).css(
 									$.supportTransition ? {'-webkit-transform': deg,'-mos-transform': deg,'-o-transform': deg,'transform': deg}
-								     : {filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation='+ (~~((rotation/90)%4 + 4)%4) +')'}
+									: {filter: 'progid:DXImageTransform.Microsoft.BasicImage(rotation='+ (~~((rotation/90)%4 + 4)%4) +')'}
 								);
-								$thumbnails[id].data('rotation', rotation);
+								$obj.data('rotation', rotation);
 							});
 						if (!fileext || !url)
 						{
 							LP.get(LP.baseuri + 'api/attachment/'+ id).done(function(json){
-								attachment().replace(id, json.data.id);
+								if (id != json.data.id)
+									preview(id).replace(json.data.id);
+								var $obj = $('.uploader-thumbnail[data-id="'+json.data.id+'"]');
+
 								if (typeof json.data.ext != 'undefined')
 								{
 									var pic = img_types.indexOf(json.data.ext.toLowerCase()) > -1 ? json.data.url : LP.baseuri + 'placeholder?size=300x200&text='+encodeURIComponent(json.data.ext);
-									$('.title', $thumbnails[id]).text(json.data.filename);
-									$('img', $thumbnails[id]).attr('src', pic);
-									$('a', $thumbnails[id]).attr('href', json.data.url);
+									$('.title', $obj).text(json.data.filename);
+									$('img', $obj).attr('src', pic);
+									$('a', $obj).attr('href', json.data.url);
 								}
 							});
 						}
 						else
 						{
+							var $obj = $('.uploader-thumbnail[data-id="'+id+'"]');
 							var pic = img_types.indexOf(fileext.toLowerCase()) > -1 ? url : LP.baseuri + 'placeholder?size=300x200&text='+ encodeURIComponent(fileext);
-							$('img', $thumbnails[id]).attr('src', pic);
+							$('img', $obj).attr('src', pic);
 						}
 					}
 
@@ -225,6 +230,13 @@ window.UPLOADER_LANGUAGE = {
 							delete $thumbnails[id];
 							t.triggerHandler('uploader.removed',[file, id, attachment().get()]);
 							return this;
+						},
+						replace(targetID)
+						{
+							$thumbnails[targetID] = $thumbnails[id];
+							$thumbnails[id].attr('data-id',targetID).data('id', targetID);
+							delete $thumbnails[id];
+							attachment().replace(id, targetID);
 						},
 						setFile: function(file){
 							$thumbnails[id].data("file", file);
