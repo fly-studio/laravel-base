@@ -18,17 +18,15 @@
 				<p><{if !empty($_data.message.content)}><{$_data.message.content|noscript nofilter}><{else}><{$_data.message|noscript nofilter}><{/if}></p>
 			</div>
 			<div class="panel-footer">
-				<{if !is_bool($_data.url) }>
-					<a href="<{$_data.url nofilter}>" target="_self">如果页面没有跳转，请点击这里</a>
+				<{if $_data.tipType->type == 'redirect' }>
+					<a href="<{$_data.tipType->url nofilter}>" target="_self">如果页面没有跳转，请点击这里</a>
 					<script type="text/javascript">
-					<{if !empty($_data.url)}>
 					setTimeout(function(){
-						self.location.href = '<{$_data.url|@addslashes nofilter}>';
-					},1500);
-					<{/if}>
+						self.location.href = '<{$_data.tipType->url|@addslashes nofilter}>';
+					}, <{$_data.tipType->timeout|default:1500}>);
 					</script>
 				<{else}>
-					<a href="<{$url.previous}>" target="_self">请后退页面</a>
+					<a href="javascript:history.back()" target="_self">请后退页面</a>
 				<{/if}>
 			</div>
 		</div>

@@ -49,7 +49,7 @@ class AuthController extends Controller
 	{
 		$user = $this->guard()->user();
 		$this->_roles = $user->roles;
-		return $this->_roles->count() == 1 ? redirect($this->_roles[0]->url) : $this->view('auth.choose');
+		return $this->_roles->count() == 1 ? redirect((string)$this->_roles[0]->url) : $this->view('auth.choose');
 	}
 
 	/**
