@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Addons\Core\Controllers\ApiTrait;
+use Addons\Core\ApiTrait;
 
 use App\Tag;
 
