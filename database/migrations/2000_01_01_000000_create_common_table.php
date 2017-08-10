@@ -17,7 +17,7 @@ class CreateCommonTable extends Migration
 			$table->text('payload');
 			$table->integer('last_activity');
 		});
-		
+
 		Schema::create('tags', function (Blueprint $table) {
 			$table->increments('id');
 			$table->string('keywords', 100)->index()->comment = "关键词";
@@ -38,8 +38,8 @@ class CreateCommonTable extends Migration
 			$table->bigIncrements('id');
 			$table->string('type')->index()->comment = '事件';
 			$table->morphs('auditable');
-			$table->text('old')->nullable()->comment = '舊數據';
-			$table->text('new')->nullable()->comment = '新數據';
+			$table->longText('old')->nullable()->comment = '舊數據';
+			$table->longText('new')->nullable()->comment = '新數據';
 			$table->unsignedInteger('user_id')->index()->nullable()->default(0)->comment = '用戶 ID';
 			$table->string('method', 50)->nullable()->comment = '請求方法';
 			$table->string('route')->nullable()->comment = '網址';
