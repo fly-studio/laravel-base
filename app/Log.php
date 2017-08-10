@@ -32,23 +32,20 @@ class Log extends Auditing
 	const REGISTER = 'register'; //注册
 
 	/**
-	 * 使用ControllerEvent创建一条记录
-	 * 
-	 * @param  ControllerEvent $event     控制器事件，来源于ControllerListener
-	 * @param  string          $type      日志类型
-	 * @param  [type]          $user_id   [description]
-	 * @param  array           $auditable [description]
-	 * @param  array           $data      [description]
-	 * @return [type]                     [description]
+	 * 使用Request创建日志
+	 *
+	 * @param  Request     $request   Request请求对象
+	 * @param  string      $type      日志类型，看上面的const
+	 * @param  mixed       $data      需要记录的日志
+	 * @param  int         $user_id   用户ID，默认当前用户
+	 * @param  Model       $auditable 需要关联的Model
+	 * @return Model
 	 */
-	public static function createByControllerEvent(ControllerEvent $event, $type = null, $data = null, $user_id = null, BaseModel $auditable = null)
+	public static function createByRequest(Request $request, $type, $data = null, $user_id = null, BaseModel $auditable = null)
 	{
-		$request = $event->getRequest();
-
-		if (is_null($type))
-			$type = $event->getControllerName().'@'.$event->getMethod();
 		if (is_null($user_id))
 			$user_id = Auth::check() ? Auth::user()->getKey() : 0;
+
 		if (is_null($data))
 			$data = $request->all();
 
@@ -66,6 +63,26 @@ class Log extends Auditing
 		return $static->save();
 	}
 
+	/**
+	 * 使用ControllerEvent创建日志
+	 *
+	 * @param  ControllerEvent $event     控制器事件，来源于ControllerListener
+	 * @param  string          $type      日志类型，看上面的const，默认：Controller@Method
+	 * @param  mixed           $data      需要记录的日志
+	 * @param  int             $user_id   用户ID
+	 * @param  Model           $auditable 需要关联的Model
+	 * @return Model
+	 */
+	public static function createByControllerEvent(ControllerEvent $event, $type = null, $data = null, $user_id = null, BaseModel $auditable = null)
+	{
+		$request = $event->getRequest();
+
+		if (is_null($type))
+			$type = $event->getControllerName().'@'.$event->getMethod();
+
+		return static::createByRequest($request, $type, $data, $user_id, $auditable);
+	}
+
 	public function setRequest(Request $request)
 	{
 		$this->request = $request;
@@ -76,7 +93,7 @@ class Log extends Auditing
 	{
 		return $this->request;
 	}
-	
+
 
 	public function table()
 	{
@@ -130,7 +147,7 @@ Log::creating(function($log){
 		$log->platform = $agent->platform().' '.$agent->version($agent->platform());
 		$log->device = $agent->device();
 	}
-	
+
 });
 
 Log::created(function($log){
