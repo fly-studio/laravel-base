@@ -1,8 +1,8 @@
 <?php
 namespace App;
 
-use App\Logable;
-use App\CatalogCastTrait;
+use App\Models\Logable;
+use App\Models\CatalogCastTrait;
 use Addons\Core\Models\CacheTrait;
 use Addons\Core\Models\CallTrait;
 use Addons\Core\Models\PolyfillTrait;

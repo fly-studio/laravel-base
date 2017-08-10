@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use App\Role;
-use App\Logable;
-use App\CatalogCastTrait;
-use App\AttachmentCastTrait;
+use App\Models\Logable;
+use App\Models\CatalogCastTrait;
 use Addons\Core\Models\CallTrait;
 use Addons\Core\Models\CacheTrait;
+use App\Models\AttachmentCastTrait;
 use Addons\Entrust\Traits\UserTrait;
 use Addons\Core\Models\PolyfillTrait;
 use Addons\Elasticsearch\Scout\Searchable;
@@ -84,4 +84,3 @@ User::created(function($user){
 	$user->extra()->create([]);
 	$user->finance()->create([]);
 });
-	

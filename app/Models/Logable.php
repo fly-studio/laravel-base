@@ -1,7 +1,7 @@
 <?php
-namespace App;
+namespace App\Models;
 
-use app\Log;
+use App\Log;
 use OwenIt\Auditing\Auditable;
 
 trait Logable
@@ -34,7 +34,7 @@ trait Logable
 
     /**
      * hit a model
-     * 
+     *
      * @return
      */
     public function viewing($user_id = null, $extraData = null)

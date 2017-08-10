@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 trait IpCastTrait {
 	public function asIp($value) {
