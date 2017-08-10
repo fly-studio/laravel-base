@@ -8,7 +8,7 @@ return [
 		'enable' => true,
 	],
 	'manual' => [
-		'enable' => true,
+		'enable' => false,
 	],
 	'system' => [
 		'enable' => true,
@@ -17,6 +17,6 @@ return [
 		'enable' => true,
 	],
 	'wechat' => [
-		'enable' => true,
+		'enable' => false,
 	],
 ];
