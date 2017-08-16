@@ -341,6 +341,7 @@ $().ready(function(){
 			columns: columns,
 			rowCallback: function( row, data, dataIndex ) {
 				//call
+				$dt.triggerHandler('datatable.row', [row, data, dataIndex]);
 			},
 			createdRow: function( row, data, dataIndex ) {
 				// Initialize Tooltips
@@ -349,11 +350,47 @@ $().ready(function(){
 				if ($.fn.popover) $('[data-toggle="popover"], .enable-popover', row).popover({container: 'body', animation: true});		
 				//call	
 				method.bindMethods(row);
+				$dt.triggerHandler('datatable.created-row', [row, data, dataIndex]);
 			},
 			drawCallback: function( settings ) {
 				method.setConfig(settings);
 				//call
-			}/*,
+				$dt.triggerHandler('datatable.draw', [settings]);
+			},
+			footerCallback: function(tfoot, data, start, end, display) {
+				$dt.triggerHandler('datatable.footer', [tfoot, data, start, end, display]);
+			},
+			formatNumber: function( toFormat ) {
+				$dt.triggerHandler('datatable.format-number', [toFormat]);
+			},
+			headerCallback: function(thead, data, start, end, display) {
+				$dt.triggerHandler('datatable.header', [thead, data, start, end, display]);
+			},
+			infoCallback: function(settings, start, end, max, total, pre) {
+				$dt.triggerHandler('datatable.info', [settings, start, end, max, total, pre]);
+			},
+			initComplete: function(settings, json) {
+				$dt.triggerHandler('datatable.init', [settings, json]);
+			},
+			preDrawCallback: function( settings ) {
+				$dt.triggerHandler('datatable.pre-draw', [settings]);
+			},
+			stateLoadCallback: function(settings, callback) {
+				$dt.triggerHandler('datatable.state-load', [settings, callback]);
+			},
+			stateLoaded: function(settings, data) {
+				$dt.triggerHandler('datatable.state-loaded', [settings, data]);
+			},
+			stateLoadParams: function(settings, data) {
+				$dt.triggerHandler('datatable.state-load-params', [settings, data]);
+			},
+			stateSaveCallback: function(settings, data) {
+				$dt.triggerHandler('datatable.state-save', [settings, data]);
+			},
+			stateSaveParams: function(settings, data) {
+				$dt.triggerHandler('datatable.state-save-params', [settings, data]);
+			}
+			/*,
 			stateSave: false,
 			stateDuration: -1*/
 		});
