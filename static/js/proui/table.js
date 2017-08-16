@@ -66,7 +66,7 @@ $().ready(function(){
 		var r = [];
 		$('tbody td,tbody th', $dt).each(function(i, v){
 			var $t = $(this);
-			var render = template.compile($t.html());
+			var render = template.compile(($t.html() ? $t.html() : '').toString().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0*39;/g, "'"));
 
 			var c = {
 				data: $t.data('from') || null,
