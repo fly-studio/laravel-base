@@ -18,10 +18,16 @@ $().ready(function(){
 		if ($(obj).is('tr'))
 		{
 			$(obj).on('click', '*', function(e){
-				if ($(e.target).is('a,button,:checkbox')) return;
+				if ($(e.target).is('a,button,:checkbox')) {
+					e.stopPropagation();
+					return false;
+				}
 				
-				$('td:eq(0) :checkbox', $(this).closest('tr')).trigger('click');
+				$td = $('td:eq(0) :checkbox', $(this).closest('tr'));
+				$td.prop('checked', !$td.prop('checked')); //do not trigger event
+				$td.triggerHandler('click');
 			});
+
 			$('td:eq(0) :checkbox', obj).on('click', function(e){
 				var $tr = $(this).closest('tr');
 				if (this.checked) $tr.addClass('active'); else $tr.removeClass('active');
@@ -66,6 +72,7 @@ $().ready(function(){
 		var r = [];
 		$('tbody td,tbody th', $dt).each(function(i, v){
 			var $t = $(this);
+			//recover < > &
 			var render = template.compile(($t.html() ? $t.html() : '').toString().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0*39;/g, "'"));
 
 			var c = {
