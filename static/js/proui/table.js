@@ -19,7 +19,7 @@ $().ready(function(){
 		{
 			$(obj).on('click', function(e) {
 				var $target = $(e.target);
-				if ($target.parentsUntil('tr').filter('a,:input,button').length > 0) //exists a input button
+				if ($target.parentsUntil('tr').add($target).filter('a,:input,button').length > 0) //exists a input button
 					return;
 
 				var $this = $(this);
