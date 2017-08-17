@@ -17,20 +17,18 @@ $().ready(function(){
 		});
 		if ($(obj).is('tr'))
 		{
-			$(obj).on('click', '*', function(e){
-				if ($(e.target).is('a,button,:checkbox')) {
-					e.stopPropagation();
-					return false;
-				}
-				
-				$td = $('td:eq(0) :checkbox', $(this).closest('tr'));
-				$td.prop('checked', !$td.prop('checked')); //do not trigger event
-				$td.triggerHandler('click');
-			});
+			$(obj).on('click', function(e) {
+				var $target = $(e.target);
+				if ($target.parentsUntil('tr').filter('a,:input,button').length > 0) //exists a input button
+					return;
 
-			$('td:eq(0) :checkbox', obj).on('click', function(e){
-				var $tr = $(this).closest('tr');
-				if (this.checked) $tr.addClass('active'); else $tr.removeClass('active');
+				var $this = $(this);
+				var active = !!$this.data('active');
+				$this.data('active', !active);
+				$this.triggerHandler('active');
+			}).on('active', function(e){
+				var active = !!$(this).data('active');
+				$('td:eq(0) :checkbox', $(obj)).prop('checked', active);
 			});
 		}
 			
