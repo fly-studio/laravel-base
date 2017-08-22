@@ -135,7 +135,7 @@ class Log extends Auditing
 }
 
 Log::creating(function($log){
-	$request = $log->getRequest() ?: app('request');
+	$request = $log->getRequest() ?: (app()->runningInConsole() ? null : app('request'));
 	if (!app()->runningInConsole() || (!empty($request) && !empty($request->header('User-Agent'))))
 	{
 		$agent = new Agent($request->header(), $request->header('User-Agent'));
