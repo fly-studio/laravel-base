@@ -16,7 +16,10 @@ return [
 	'tools' => [
 		'enable' => true,
 	],
+	'helpers' => [
+		'enable' => true,
+	],
 	'wechat' => [
-		'enable' => false,
+		'enable' => true,
 	],
 ];
