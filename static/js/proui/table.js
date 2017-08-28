@@ -7,15 +7,9 @@ $().ready(function(){
 
 		$('a[method]:not([method="delete"])', obj).query();
 		$('a[method="delete"]', obj).query(function(json){
-			if ((json.result == 'success' || json.result == 'api') && json.data.id) {
-				if (method.datatable && json.url === true)
+			if (json.result == 'success' || json.result == 'api') {
+				if (method.datatable)
 					method.datatable.ajax.reload(null, false);
-				else
-					json.data.id.forEach(function(id){
-						$('#line-'+id).fadeOut(function(){
-							$(this).remove();
-						});
-					});
 			}
 		}, {
 			layout: 'topCenter',
@@ -23,14 +17,18 @@ $().ready(function(){
 		});
 		if ($(obj).is('tr'))
 		{
-			$(obj).on('click', '*', function(e){
-				if ($(e.target).is('a,button,:checkbox')) return;
-				
-				$('td:eq(0) :checkbox', $(this).closest('tr')).trigger('click');
-			});
-			$('td:eq(0) :checkbox', obj).on('click', function(e){
-				var $tr = $(this).closest('tr');
-				if (this.checked) $tr.addClass('active'); else $tr.removeClass('active');
+			$(obj).on('click', function(e) {
+				var $target = $(e.target);
+				if ($target.parentsUntil('tr').add($target).filter('a,:input,button').length > 0) //exists a input button
+					return;
+
+				var $this = $(this);
+				var active = !!$this.data('active');
+				$this.data('active', !active);
+				$this.triggerHandler('active');
+			}).on('active', function(e){
+				var active = !!$(this).data('active');
+				$('td:eq(0) :checkbox', $(obj)).prop('checked', active);
 			});
 		}
 			
@@ -72,7 +70,8 @@ $().ready(function(){
 		var r = [];
 		$('tbody td,tbody th', $dt).each(function(i, v){
 			var $t = $(this);
-			var render = template.compile($t.html());
+			//recover < > &
+			var render = template.compile(($t.html() ? $t.html() : '').toString().replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0*39;/g, "'"));
 
 			var c = {
 				data: $t.data('from') || null,
@@ -99,6 +98,7 @@ $().ready(function(){
 		if (removeIt === true) $('tbody', $dt).empty();
 		return r;
 	};
+
 	$.fn.dataTable.ext.renderer.pageButton.bootstrap = function ( settings, host, idx, buttons, page, pages ) {
 		var api     = new $.fn.dataTable.Api( settings );
 		var classes = settings.oClasses;
@@ -294,7 +294,7 @@ $().ready(function(){
 			renderer: 'bootstrap',
 
 			ajax: {
-				url: $.baseuri + config.namespace+'/'+config.name+'/data/json',
+				url: LP.baseuri + config.namespace+'/'+config.name+'/data?of=json',
 				timeout: 20 * 1000,
 				type: 'POST',
 				data: function(d){
@@ -316,9 +316,10 @@ $().ready(function(){
 					$dt.data('url-query', query);
 					//修改导出按钮的链接
 					$('a[data-append-queries]').each(function(){$(this).attr('href', $(this).data('href'));}).querystring(query);
+					var p = (parseInt(d.start) + 1) / d.length;
 					return $.extend(true, {}, {
 						size: d.length,
-						page: !isNaN(d.start / d.length) ? Math.ceil(d.start / d.length) : 1
+						page: !isNaN(p) ? Math.ceil(p) : 1
 					}, query);
 				},
 				dataSrc: function(json){
@@ -338,6 +339,7 @@ $().ready(function(){
 			columns: columns,
 			rowCallback: function( row, data, dataIndex ) {
 				//call
+				$dt.triggerHandler('datatable.row', [row, data, dataIndex]);
 			},
 			createdRow: function( row, data, dataIndex ) {
 				// Initialize Tooltips
@@ -346,11 +348,47 @@ $().ready(function(){
 				if ($.fn.popover) $('[data-toggle="popover"], .enable-popover', row).popover({container: 'body', animation: true});		
 				//call	
 				method.bindMethods(row);
+				$dt.triggerHandler('datatable.created-row', [row, data, dataIndex]);
 			},
 			drawCallback: function( settings ) {
 				method.setConfig(settings);
 				//call
-			}/*,
+				$dt.triggerHandler('datatable.draw', [settings]);
+			},
+			footerCallback: function(tfoot, data, start, end, display) {
+				$dt.triggerHandler('datatable.footer', [tfoot, data, start, end, display]);
+			},
+			formatNumber: function( toFormat ) {
+				$dt.triggerHandler('datatable.format-number', [toFormat]);
+			},
+			headerCallback: function(thead, data, start, end, display) {
+				$dt.triggerHandler('datatable.header', [thead, data, start, end, display]);
+			},
+			infoCallback: function(settings, start, end, max, total, pre) {
+				$dt.triggerHandler('datatable.info', [settings, start, end, max, total, pre]);
+			},
+			initComplete: function(settings, json) {
+				$dt.triggerHandler('datatable.init', [settings, json]);
+			},
+			preDrawCallback: function( settings ) {
+				$dt.triggerHandler('datatable.pre-draw', [settings]);
+			},
+			stateLoadCallback: function(settings, callback) {
+				$dt.triggerHandler('datatable.state-load', [settings, callback]);
+			},
+			stateLoaded: function(settings, data) {
+				$dt.triggerHandler('datatable.state-loaded', [settings, data]);
+			},
+			stateLoadParams: function(settings, data) {
+				$dt.triggerHandler('datatable.state-load-params', [settings, data]);
+			},
+			stateSaveCallback: function(settings, data) {
+				$dt.triggerHandler('datatable.state-save', [settings, data]);
+			},
+			stateSaveParams: function(settings, data) {
+				$dt.triggerHandler('datatable.state-save-params', [settings, data]);
+			}
+			/*,
 			stateSave: false,
 			stateDuration: -1*/
 		});
@@ -359,8 +397,9 @@ $().ready(function(){
 	//初始化
 	method.bindMethods('body');
 	method.make();
-
 	$('#tools-contrainer').appendTo('#toolbar');
+	method.bindMethods('#toolbar');
+
 	$('#reload').on('click', function(){
 		method.datatable.ajax.reload(null, false);
 	});

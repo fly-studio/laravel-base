@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Agent;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (config('app.debug'))
+        /*if (config('app.debug'))
         {
             switch (strtolower(Agent::browser())) {
                 case 'chrome':
@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
                     app('log')->getMonolog()->pushHandler(new \Monolog\Handler\BrowserConsoleHandler()); //console.log
                     break;
             }
-        }
+        }*/
         //app('log')->getMonolog()->pushHandler(new \Monolog\Handler\PHPConsoleHandler()); //chrome-php-console
         //instead with DatabaseAuditor
         app(\OwenIt\Auditing\AuditorManager::class)->extend('database', function(){

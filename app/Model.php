@@ -1,14 +1,13 @@
 <?php
 namespace App;
 
-use Illuminate\Database\Eloquent\Model as BaseModel;
-
+use App\Models\Logable;
+use App\Models\CatalogCastTrait;
 use Addons\Core\Models\CacheTrait;
 use Addons\Core\Models\CallTrait;
 use Addons\Core\Models\PolyfillTrait;
-use App\CatalogCastTrait;
 use Addons\Elasticsearch\Scout\Searchable;
-use App\Logable;
+use Illuminate\Database\Eloquent\Model as BaseModel;
 
 class Model extends BaseModel {
 	use CacheTrait, CallTrait, PolyfillTrait;

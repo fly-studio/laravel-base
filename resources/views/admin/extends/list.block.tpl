@@ -2,7 +2,7 @@
 
 <{block "head-scripts-common"}>
 <script src="<{'js/jsencrypt.min.js'|static}>"></script>
-<script src="<{'js/common.js'|static}>"></script>
+<script src="<{'js/common-2.0.js'|static}>"></script>
 <{/block}>
 <{block "head-styles-plus"}>
 <link rel="stylesheet" href="<{'css/proui/datatable.min.css'|static}>">
@@ -166,15 +166,15 @@
 			<{block "table-td"}>
 				<{block "table-td-before"}><{/block}>
 				<{block "table-td-id"}>
-				<td class="text-left" data-from="id"><input type="checkbox" name="id[]" value="{{data}}">{{data}}</td>
+				<td class="text-left" data-from="id" data-order-sequence='["desc", "asc"]'><input type="checkbox" name="id[]" value="{{data}}">{{data}}</td>
 				<{/block}>
 				<{block "table-td-plus"}><{/block}>
 				<{block "table-td-timestamps"}>
 					<{block "table-td-timestamps-created_at"}>
-				<td data-from="created_at">{{data}}</td>
+				<td data-from="created_at" data-order-sequence='["desc", "asc"]'>{{data}}</td>
 					<{/block}>
 					<{block "table-td-timestamps-updated_at"}>
-				<td data-from="updated_at">{{data}}</td>
+				<td data-from="updated_at" data-order-sequence='["desc", "asc"]'>{{data}}</td>
 					<{/block}>
 				<{/block}>
 				<{block "table-td-options"}>
@@ -215,9 +215,9 @@
 			</div>
 			<div class="modal-body">
 				<p>导出格式：<label for="" class="label label-info" id="export-format"><{$_of}></label></p>
-				<p>当前总数：<span id="export-count"></span>条数据（无搜索条件：<span id="export-total"></span>）</p>
-				<div class="alert alert-info"><b>注意：</b>数据按照当前表格的<b>搜索</b>、<b>排序</b>方式导出</div>
-				<p>每个文件：<span id="export-size"></span>条
+				<p>当前数量：<b id="export-count">0</b> <!-- of <b id="export-total"></b> --></p>
+				<div class="alert alert-warning"><b>注意：</b>数据按照当前表格的<b>筛选结果</b>、<b>排序方式</b>导出。</div>
+				<p>每个文件：<span id="export-size">0</span>条
 				<div class="input-slider-success">
 					<input type="text" id="export-slider" class="form-control">
 				</div>

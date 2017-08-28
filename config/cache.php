@@ -40,23 +40,23 @@ return [
 
         'database' => [
             'driver' => 'database',
-            'table'  => 'cache',
+            'table' => 'cache',
             'connection' => null,
         ],
 
         'file' => [
             'driver' => 'file',
-            'path'   => storage_path('framework/cache'),
+            'path' => storage_path('framework/cache/data'),
         ],
 
         'memcached' => [
             'driver' => 'memcached',
             'persistent_id' => env('MEMCACHED_PERSISTENT_ID'),
-            'sasl'       => [
+            'sasl' => [
                 env('MEMCACHED_USERNAME'),
                 env('MEMCACHED_PASSWORD'),
             ],
-            'options'    => [
+            'options' => [
                 // Memcached::OPT_CONNECT_TIMEOUT  => 2000,
             ],
             'servers' => [
@@ -90,6 +90,6 @@ return [
     |
     */
 
-    'prefix' => substr(md5(env('APP_URL')), 16, 16),
+    'prefix' => substr(md5(env('APP_URL')), 16, 8),
     'ttl' => env('CACHE_TTL', 1440),
 ];

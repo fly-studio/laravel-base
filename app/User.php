@@ -1,26 +1,27 @@
 <?php
 namespace App;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Builder;
-use Addons\Core\Models\CacheTrait;
-use Addons\Core\Models\CallTrait;
-use Addons\Core\Models\PolyfillTrait;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Addons\Entrust\Traits\UserTrait;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use App\Role;
-use App\CatalogCastTrait;
-use App\Logable;
+use App\Models\Logable;
+use App\Models\CatalogCastTrait;
+use Addons\Core\Models\CallTrait;
+use Addons\Core\Models\CacheTrait;
+use App\Models\AttachmentCastTrait;
+use Addons\Entrust\Traits\UserTrait;
+use Addons\Core\Models\PolyfillTrait;
 use Addons\Elasticsearch\Scout\Searchable;
 
 class User extends Authenticatable
 {
 	use HasApiTokens, SoftDeletes, Notifiable, UserTrait;
 	use CacheTrait, CallTrait, PolyfillTrait;
-	use CatalogCastTrait;
+	use CatalogCastTrait, AttachmentCastTrait;
 	use Searchable, Logable;
 
 	//不能批量赋值
@@ -30,6 +31,7 @@ class User extends Authenticatable
 	protected $touches = ['roles'];
 	protected $casts = [
 		'gender' => 'catalog',
+		'avatar_aid' => 'attachment',
 	];
 
 
@@ -79,6 +81,6 @@ class User extends Authenticatable
 
 //自动创建extra等数据
 User::created(function($user){
+	$user->extra()->create([]);
 	$user->finance()->create([]);
 });
-	

@@ -1,14 +1,15 @@
 <?php
 namespace App\Http\Controllers;
 
+use Auth;
+use App\Role;
 use Illuminate\Http\Request;
-use Plugins\Wechat\App\Http\Controllers\WechatController as BaseWechatController;
+use Plugins\Wechat\App\Tools\API;
 use Plugins\Wechat\App\WechatUser;
 use Plugins\Wechat\App\WechatDepotNews;
-use Plugins\Wechat\App\Tools\API;
 use Plugins\Wechat\App\Tools\User as WechatUserTool;
-use App\Role;
-use Auth;
+use Plugins\Wechat\App\Http\Controllers\WechatController as BaseWechatController;
+
 class WechatController extends BaseWechatController {
 	private $user = null;
 

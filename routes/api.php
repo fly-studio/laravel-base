@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-$router->get('user', function (Request $request) {
+/*$router->middleware('auth:api')->get('user', function (Request $request) {
     return $request->user();
-})->middleware('auth:api');
+});
+*/

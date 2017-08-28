@@ -24,15 +24,6 @@ class EventServiceProvider extends ServiceProvider
     ];
 
     /**
-     * 要注册的订阅者类。
-     *
-     * @var array
-     */
-    protected $subscribe = [
-
-    ];
-
-    /**
      * Register any events for your application.
      *
      * @return void

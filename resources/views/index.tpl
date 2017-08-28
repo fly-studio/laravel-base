@@ -1,11 +1,6 @@
 <{extends file="extends/main.block.tpl"}>
 
 <{block "body-container"}>
-
-<div id="app">
-	<example></example>
-	<passport-clients></passport-clients>
-</div>
-<script src="<{'js/app.js'|static nofilter}>"></script>
+<h1 class="text-center">Laravel plus (L+) v4.0</h1>
 
 <{/block}>

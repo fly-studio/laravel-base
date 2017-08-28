@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'My Application',
+    'name' => 'Laravel',
 
     /*
     |--------------------------------------------------------------------------
@@ -160,6 +160,7 @@ return [
 		Illuminate\Pagination\PaginationServiceProvider::class,
 		Illuminate\Pipeline\PipelineServiceProvider::class,
 		Illuminate\Queue\QueueServiceProvider::class,
+		Barryvdh\Queue\AsyncServiceProvider::class,
 		Illuminate\Redis\RedisServiceProvider::class,
 		Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
 		Illuminate\Session\SessionServiceProvider::class,
@@ -167,8 +168,15 @@ return [
 		Illuminate\Validation\ValidationServiceProvider::class,
 		Illuminate\View\ViewServiceProvider::class,
 
-		//Smarty注入模块
+		/*
+		 * Package Service Providers...
+		 */
+		Laravel\Tinker\TinkerServiceProvider::class,
+
+		//Smarty
 		Addons\Smarty\ServiceProvider::class,
+		//验证
+		Addons\Censor\ServiceProvider::class,
 		//Core before RouteServiceProvider
 		Addons\Core\ServiceProvider::class,
 
@@ -176,12 +184,13 @@ return [
 		 * Application Service Providers...
 		 */
 		App\Providers\AppServiceProvider::class,
-		// App\Providers\BroadcastServiceProvider::class,
 		App\Providers\AuthServiceProvider::class,
+		// App\Providers\BroadcastServiceProvider::class,
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
+
 		//Debuger
-		Barryvdh\Debugbar\ServiceProvider::class,
+		//Barryvdh\Debugbar\ServiceProvider::class,
 		//验证码
 		Mews\Captcha\CaptchaServiceProvider::class,
 		//验证体系
@@ -220,6 +229,8 @@ return [
 		'Artisan'   => Illuminate\Support\Facades\Artisan::class,
 		'Auth'      => Illuminate\Support\Facades\Auth::class,
 		'Blade'     => Illuminate\Support\Facades\Blade::class,
+		'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
+		'Bus' => Illuminate\Support\Facades\Bus::class,
 		'Cache'     => Illuminate\Support\Facades\Cache::class,
 		'Config'    => Illuminate\Support\Facades\Config::class,
 		'Cookie'    => Illuminate\Support\Facades\Cookie::class,

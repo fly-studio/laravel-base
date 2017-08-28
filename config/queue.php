@@ -7,11 +7,11 @@ return [
     | Default Queue Driver
     |--------------------------------------------------------------------------
     |
-    | The Laravel queue API supports a variety of back-ends via an unified
+    | Laravel's queue API supports an assortment of back-ends via a single
     | API, giving you convenient access to each back-end using the same
     | syntax for each one. Here you may set the default queue driver.
     |
-    | Supported: "sync", "database", "beanstalkd", "sqs", "redis", "null"
+    | Supported: "sync", "async", "database", "beanstalkd", "sqs", "redis", "null"
     |
     */
 
@@ -32,6 +32,13 @@ return [
 
         'sync' => [
             'driver' => 'sync',
+        ],
+
+        'async' => [
+            'driver' => 'async',
+            'table' => 'jobs',
+            'queue' => 'default',
+            'expire' => 90,
         ],
 
         'database' => [

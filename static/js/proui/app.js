@@ -7,7 +7,7 @@
  *  use them only in specific pages. Also, if you remove a js plugin you won't use, make
  *  sure to remove its initialization from uiInit().
  */
-
+(function(){
 var App = function($) {
 
 	/* Helper variables - set in uiInit() */
@@ -45,7 +45,7 @@ var App = function($) {
 				var $img = $(obj);
 				var w = $img.width();
 				var h = $img.height();
-				$img.attr('src', $.baseuri + 'placeholder?text=No+Image' + (w > 0 && h > 0 ? '&size=' + w + 'x' + h : '' ));
+				$img.attr('src', LP.baseuri + 'placeholder?text=No+Image' + (w > 0 && h > 0 ? '&size=' + w + 'x' + h : '' ));
 			}
 		}
 		document.body.addEventListener('error', function(e){
@@ -533,7 +533,7 @@ var App = function($) {
 		$('a', colorList).click(function(e){
 			// Get theme name
 			theme = $(this).data('theme');
-			$.cookie('proui-theme', theme, {expires: 365, path: $.baseuri});
+			$.cookie('proui-theme', theme, {expires: 365, path: LP.baseuri});
 			$('li', colorList).removeClass('active');
 			$(this).parent('li').addClass('active');
 
@@ -629,6 +629,7 @@ var App = function($) {
 		}
 	};
 }(jQuery);
-
 /* Initialize app when page loads */
 jQuery(function(){ App.init(); });
+window.App = App;
+})();

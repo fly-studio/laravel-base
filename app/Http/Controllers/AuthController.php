@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+use Auth, Lang;
 use App\Http\Requests;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Lang;
-//trait
 use Addons\Core\Controllers\ThrottlesLogins;
 
 class AuthController extends Controller
@@ -31,7 +28,7 @@ class AuthController extends Controller
 		$this->guard()->logout();
 
 		$keys = [$this->username(), 'password'];
-		$validates = $this->getScriptValidate('member.store', $keys);
+		$validates = $this->censorScripts('member.store', $keys);
 		
 		$this->_validates = $validates;
 		return $this->view('admin/login');
@@ -52,7 +49,7 @@ class AuthController extends Controller
 	{
 		$user = $this->guard()->user();
 		$this->_roles = $user->roles;
-		return $this->_roles->count() == 1 ? redirect($this->_roles[0]->url) : $this->view('auth.choose');
+		return $this->_roles->count() == 1 ? redirect((string)$this->_roles[0]->url) : $this->view('auth.choose');
 	}
 
 	/**
@@ -75,7 +72,7 @@ class AuthController extends Controller
 		}
 
 		$keys = [$this->username(), 'password'];
-		$data = $this->autoValidate($request, 'member.login', $keys);
+		$data = $this->censor($request, 'member.login', $keys);
 		$remember = $request->has('remember');
 		if ($this->guard()->attempt([$this->username() => $data[$this->username()], 'password' => $data['password']], $remember))
 		{

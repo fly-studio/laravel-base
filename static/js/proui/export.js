@@ -10,10 +10,9 @@ $().ready(function(){
 		var $links = $('#export-links').empty();
 		$('#export-size').text(size);
 		for (var i = 1; i <= pages; i++) {
-			$links.append('<div class="col-md-3 col-xs-4"><a href="'+$.baseuri+namespace+'/'+name+'/export/'+format+'?page='+i+'&size='+size+'" class="btn btn-link" target="_blank" data-append-queries="true">第'+i+'个</a> ('+ (size * (i - 1) + 1) + '-' + (i == pages ? total : size * i)  +')</div>');
+			var $o = $('<div class="col-md-3 col-xs-4"><a href="'+LP.baseuri+namespace+'/'+name+'/export" class="btn btn-link" target="_blank" data-append-queries="true">第'+i+'个</a> ('+ (size * (i - 1) + 1) + '-' + (i == pages ? total : size * i)  +')</div>').appendTo($links);
+			$('a', $o).querystring($.extend(true, {}, urlQuery, {of: format, page: i, size: size}));
 		}
-		$('a', $links).querystring(urlQuery);
-
 	};
 
 	$('#export-slider').slider({

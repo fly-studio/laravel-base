@@ -12,15 +12,13 @@ class VerifyCsrfToken extends BaseVerifier
 	 * @var array
 	 */
 	protected $except = [
-		'attachment',
-		'attachment/index',
-		'attachment/preview',
-		'attachment/phone',
-		'attachment/redirect',
-		'attachment/resize',
-		'attachment/download',
-		'attachment/fullavatar-query',
-		'attachment/*/*',
+		'attachment/hash',
+		'attachment/uploader',
+		'attachment/dataurl',
+		'attachment/ueditor',
+		'attachment/editormd',
+		'attachment/kindeditor',
+		'attachment/fullavatar',
 		'wechat/push',
 		'wechat/feedback/*',
 		'wechat/feedback/*/*',

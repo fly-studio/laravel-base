@@ -1,9 +1,9 @@
 <?php
 namespace App;
 
-use Addons\Entrust\Permission as BasePermission;
-use App\Logable;
+use App\Models\Logable;
 use Addons\Elasticsearch\Scout\Searchable;
+use Addons\Entrust\Permission as BasePermission;
 
 class Permission extends BasePermission
 {
