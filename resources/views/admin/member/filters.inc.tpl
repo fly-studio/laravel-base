@@ -86,7 +86,7 @@
 				skin: 'twoer',
 				isShowClear:true,
 				readOnly:true,
-				dateFmt:'yyyy-MM-dd',
+				dateFmt:'yyyy-MM-dd 23:59:59',
 				isShowOthers:false,
 				minDate: '#F{$dp.$D(\'created_at-min\')}'
 			});
