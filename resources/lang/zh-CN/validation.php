@@ -47,6 +47,8 @@ return [
 	'in_array'         => '[:attribute] 必须在 :other 内。',
 	'integer'          => '[:attribute] 必须是整数。',
 	'ip'               => '[:attribute] 必须是有效的 IP 地址。',
+	'ipv4'             => '[:attribute] 必须是有效的 IPv4 地址。',
+	'ipv6'             => '[:attribute] 必须是有效的 IPv6 地址。',
 	'json'             => '[:attribute] 必须是有效的 JSON 字符串。',
 	'max'              => [
 		'numeric' => '[:attribute] 不能大于 :max。',

@@ -5,13 +5,13 @@ use Auth;
 use Carbon\Carbon;
 use Jenssegers\Agent\Agent;
 use Illuminate\Http\Request;
-use OwenIt\Auditing\Auditing;
+use OwenIt\Auditing\Models\Audit;
 use Addons\Core\Http\SerializableRequest;
 use Addons\Elasticsearch\Scout\Searchable;
 use Addons\Core\Contracts\Events\ControllerEvent;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 
-class Log extends Auditing
+class Log extends Audit
 {
 	use Searchable;
 
@@ -20,8 +20,8 @@ class Log extends Auditing
 
 	protected $casts = [
 		'request' => 'array',
-		'old' => 'json',
-		'new' => 'json',
+		'old_values' => 'json',
+		'new_values' => 'json',
 	];
 
 	protected $request = null;
@@ -52,7 +52,7 @@ class Log extends Auditing
 		$result = [
 			'type' => $type,
 			'user_id' => $user_id,
-			'new' => empty($data) ? null : $data,
+			'new_values' => empty($data) ? null : $data,
 			'auditable_id' => 0,
 			'auditable_type' => '',
 			'created_at' => Carbon::now(),
@@ -122,7 +122,7 @@ class Log extends Auditing
 	public function scope_all(Builder $builder, $keywords)
 	{
 		if (empty($keywords)) return;
-		$logs = static::search()->where(['ip', 'ua','browser', 'platform', 'device', 'type'], $keywords)->take(2000)->keys();
+		$logs = static::search()->where(['ip', 'user_agent','browser', 'platform', 'device', 'type'], $keywords)->take(2000)->keys();
 		return $builder->whereIn($this->getKeyName(), $logs);
 	}
 
@@ -140,7 +140,7 @@ Log::creating(function($log){
 	{
 		$agent = new Agent($request->header(), $request->header('User-Agent'));
 		$log->ip_address = $request->getClientIp();
-		$log->ua = $request->header('User-Agent');
+		$log->user_agent = $request->header('User-Agent');
 		$log->request = ((new SerializableRequest($request))->data());
 		$log->method = $request->method();
 		$log->browser = $agent->isRobot() ? $agent->robot() : $agent->browser().' '.$agent->version($agent->browser());
