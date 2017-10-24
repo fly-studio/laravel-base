@@ -27,7 +27,7 @@ return [
 		'primary_key' => 'id',
 		'foreign_key' => 'user_id',
 		'model'       => App\User::class,
-		'resolver'    => App\User::class,
+		'resolver'    => App\Models\LogUserResolver::class,
 	],
 
 	/*
@@ -65,5 +65,5 @@ return [
 	|
 	 */
 
-	'console'        => false,
+	'console'        => true,
 ];

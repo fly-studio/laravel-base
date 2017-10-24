@@ -6,9 +6,9 @@ use Auth, Lang;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Addons\Core\Controllers\RedirectsUsers;
-use Addons\Core\Controllers\ThrottlesLogins;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Auth\RedirectsUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 
 class AuthController extends Controller
 {

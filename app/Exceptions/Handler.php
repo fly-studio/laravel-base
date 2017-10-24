@@ -76,16 +76,29 @@ class Handler extends ExceptionHandler
 						$file = str_replace(base_path(), '', $value['file']);
 						if (defined('LPPATH')) $file = str_replace(LPPATH, '', $file);
 						$line = $value['line'];
-						return app(OutputResponseFactory::class)->failure('document.model_not_exists', false, ['model' => $exception->getModel(), 'file' => $file , 'line' => $line, 'id' => implode(',', $exception->getIds())])->setRequest($request);
+						return app(OutputResponseFactory::class)
+							->failure('document.model_not_exists', false, [
+									'model' => $exception->getModel(),
+									'file' => $file ,
+									'line' => $line,
+									'id' => implode(',', $exception->getIds())
+								])
+							->setRequest($request);
 					}
 				}
 			}
 			else if($exception instanceof PermissionException)
-				return app(OutputResponseFactory::class)->failure('auth.permission_forbidden')->setRequest($request);
+				return app(OutputResponseFactory::class)
+					->failure('auth.permission_forbidden')
+					->setRequest($request);
 			else if ($exception instanceof TokenMismatchException)
-				return app(OutputResponseFactory::class)->failure('validation.csrf_invalid')->setRequest($request);
+				return app(OutputResponseFactory::class)
+					->failure('validation.csrf_invalid')
+					->setRequest($request);
 			else if (($exception instanceof QueryException) || ($exception instanceof PDOException))
-				return app(OutputResponseFactory::class)->error('server.error_database')->setRequest($request);
+				return app(OutputResponseFactory::class)
+					->error('server.error_database')
+					->setRequest($request);
 			// other 500 errors
 		}
 
@@ -93,29 +106,23 @@ class Handler extends ExceptionHandler
 	}
 
 	/**
-	 * Prepare a response for the given exception.
+	 * Prepare a JSON response for the given exception.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  \Exception $e
-	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @return \Illuminate\Http\JsonResponse
 	 */
-	protected function prepareResponse($request, Exception $e)
+	protected function prepareJsonResponse($request, Exception $e)
 	{
-		if (! $this->isHttpException($e) && config('app.debug')) {
-			return $request->expectsJson()
-				? app(OutputResponseFactory::class)->error()->setRequest($request)->setRawMessage($e->getMessage())->setStatusCode($e->getStatusCode())
-				: $this->toIlluminateResponse(
-					$this->convertExceptionToResponse($e), $e
-				);
-		}
+		$status = $this->isHttpException($e) ? $e->getStatusCode() : 500;
 
-		if (! $this->isHttpException($e)) {
-			$e = new HttpException(500, $e->getMessage());
-		}
+		$headers = $this->isHttpException($e) ? $e->getHeaders() : [];
 
-		return $this->toIlluminateResponse(
-			$this->renderHttpException($e), $e
-		);
+		return app(OutputResponseFactory::class)
+			->exception($e)
+			->setRequest($request)
+			->withHeaders($headers)
+			->setStatusCode($status);
 	}
 
 	/**

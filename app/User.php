@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 use App\Role;
 use App\Models\Logable;
@@ -17,7 +18,7 @@ use Addons\Entrust\Traits\UserTrait;
 use Addons\Core\Models\PolyfillTrait;
 use Addons\Elasticsearch\Scout\Searchable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements AuditableContract
 {
 	use HasApiTokens, SoftDeletes, Notifiable, UserTrait;
 	use CacheTrait, CallTrait, PolyfillTrait;

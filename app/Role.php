@@ -6,8 +6,9 @@ use Illuminate\Support\Arr;
 use Addons\Entrust\Role as BaseRole;
 use Addons\Core\Models\TreeCacheTrait;
 use Addons\Elasticsearch\Scout\Searchable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Role extends BaseRole
+class Role extends BaseRole implements AuditableContract
 {
 	use TreeCacheTrait;
 	use Searchable, Logable;

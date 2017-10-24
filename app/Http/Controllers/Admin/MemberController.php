@@ -12,7 +12,8 @@ class MemberController extends Controller
 	public $permissions = ['member'];
 
 	protected $keys = ['username', 'password', 'nickname', 'realname', 'gender', 'email', 'phone', 'idcard', 'avatar_aid', 'role_ids'];
-	protected $passwordKey = 'password';
+	protected $usernameKey = 0; // username
+	protected $passwordKey = 1; //password
 	protected $userRepo;
 
 	public function __construct(UserRepository $userRepo)
@@ -77,7 +78,8 @@ class MemberController extends Controller
 		if (empty($user))
 			return $this->failure_notexists();
 
-		$keys = array_except($this->keys, $this->passwordKey); //except password
+		$keys = array_except($this->keys, [$this->usernameKey, $this->passwordKey]); //except password
+
 		$this->_validates = $this->censorScripts('member.store', $keys);
 		$this->_data = $user;
 		return $this->view('admin.member.edit');
@@ -90,12 +92,13 @@ class MemberController extends Controller
 			return $this->failure_notexists();
 
 		//modify the password
-		if (!empty($request->input($this->passwordKey)))
+		$passwordField = $this->keys[$this->passwordKey];
+		if (!empty($request->input($passwordField)))
 		{
-			$data = $this->censor($request, 'member.store', $this->passwordKey);
+			$data = $this->censor($request, 'member.store', $passwordField);
 			$this->userRepo->updatePassword($user, $data['password']);
 		}
-		$keys = array_except($this->keys, $this->passwordKey); //except password
+		$keys = array_except($this->keys, [$this->passwordKey, $this->usernameKey]); //except password, username
 		$data = $this->censor($request, 'member.store', $keys, $user);
 
 		$user = $this->userRepo->update($user, $data);
