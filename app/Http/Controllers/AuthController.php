@@ -6,13 +6,24 @@ use Auth, Lang;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Addons\Core\Controllers\ThrottlesLogins;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Auth\RedirectsUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 
 class AuthController extends Controller
 {
-	use ThrottlesLogins;
+	use RedirectsUsers, ThrottlesLogins;
 
-	
+	/**
+	 * Create a new controller instance.
+	 *
+	 * @return void
+	 */
+	public function __construct()
+	{
+		$this->middleware('guest')->except('logout');
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -29,7 +40,7 @@ class AuthController extends Controller
 
 		$keys = [$this->username(), 'password'];
 		$validates = $this->censorScripts('member.store', $keys);
-		
+
 		$this->_validates = $validates;
 		return $this->view('admin/login');
 	}
@@ -38,9 +49,7 @@ class AuthController extends Controller
 	{
 		$this->guard()->logout();
 
-		$request->session()->flush();
-
-		$request->session()->regenerate();
+		$request->session()->invalidate();
 
 		return $this->success_logout(''); // redirect to homepage
 	}
@@ -59,35 +68,57 @@ class AuthController extends Controller
 	 */
 	public function authenticateQuery(Request $request)
 	{
-		// If the class is using the ThrottlesLogins trait, we can automatically throttle
-		// the login attempts for this application. We'll key this by the username and
-		// the IP address of the client making these requests into this application.
-		$throttles = $this->isUsingThrottlesLoginsTrait();
+		$this->censor($request, 'member.login', [$this->username(), 'password']);
 
-		if ($throttles && $this->hasTooManyLoginAttempts($request)) 
+		if ($this->hasTooManyLoginAttempts($request))
 		{
 			$this->fireLockoutEvent($request);
 
 			return $this->sendLockoutResponse($request);
 		}
 
-		$keys = [$this->username(), 'password'];
-		$data = $this->censor($request, 'member.login', $keys);
-		$remember = $request->has('remember');
-		if ($this->guard()->attempt([$this->username() => $data[$this->username()], 'password' => $data['password']], $remember))
-		{
-			//$request->session()->regenerate();
-
-			$this->clearLoginAttempts($request);
-
-			$user = $this->guard()->user();
-			$roles = $user->roles;
-			return $this->success_login($roles->count() >= 1 ? 'auth/choose' : $request->session()->pull('url.intended', $this->_roles[0]->url)); // redirect to the prevpage or url
-		} else {
-			//记录重试次数
-			$throttles && $this->incrementLoginAttempts($request);
-			return $this->failure_login();
+		if ($this->attemptLogin($request)) {
+			return $this->sendLoginResponse($request);
 		}
+
+		//记录重试次数
+		$this->incrementLoginAttempts($request);
+		return $this->sendFailedLoginResponse($request);
+	}
+
+	/**
+	 * Validate the user login request.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return void
+	 */
+	protected function validateLogin(Request $request)
+	{
+		$this->censor($request, 'member.login', [$this->username(), 'password']);
+	}
+
+	/**
+	 * Attempt to log the user into the application.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return bool
+	 */
+	protected function attemptLogin(Request $request)
+	{
+		return $this->guard()->attempt(
+			$this->credentials($request), $request->filled('remember')
+		);
+	}
+
+	/**
+	 * Get the needed authorization credentials from the request.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return array
+	 */
+	protected function credentials(Request $request)
+	{
+		return $request->only($this->username(), 'password');
 	}
 
 	public function create()
@@ -96,34 +127,74 @@ class AuthController extends Controller
 	}
 
 	/**
-	 * Redirect the user after determining they are locked out.
+	 * Send the response after the user was authenticated.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\RedirectResponse
+	 * @return \Illuminate\Http\Response
 	 */
-	protected function sendLockoutResponse(Request $request)
+	protected function sendLoginResponse(Request $request)
 	{
-		//$seconds = (int) Cache::get($this->getLoginLockExpirationKey($request)) - time();
-		$seconds = $this->limiter()->availableIn(
-            $this->throttleKey($request)
-        );
+		$request->session()->regenerate();
 
-		return $this->failure(['content' => Lang::get('auth.throttle', ['seconds' => $seconds])], FALSE, compact('seconds'));
+		$this->clearLoginAttempts($request);
+
+		return $this->authenticated($request, $this->guard()->user())
+				?: redirect()->intended($this->redirectPath());
 	}
 
 	/**
-	 * Determine if the class is using the ThrottlesLogins trait.
+	 * The user has been authenticated.
 	 *
-	 * @return bool
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  mixed  $user
+	 * @return mixed
 	 */
-	protected function isUsingThrottlesLoginsTrait()
+	protected function authenticated(Request $request, $user)
 	{
-		return in_array(
-			ThrottlesLogins::class, class_uses_recursive(get_class($this))
-		);
+		$roles = $user->roles;
+		return $roles->count() == 1
+			? $this->success_login($request->session()->pull('url.intended', $roles[0]->url)) // redirect to the prevpage or url
+			: false;
 	}
 
-    /**
+	/**
+	 * Get the failed login response instance.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 *
+	 * @throws ValidationException
+	 */
+	protected function sendFailedLoginResponse(Request $request)
+	{
+		return $this->failure_login();
+
+		throw ValidationException::withMessages([
+			$this->username() => [trans('auth.failed')],
+		]);
+	}
+
+	/**
+	 * Redirect the user after determining they are locked out.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return void
+	 * @throws \Illuminate\Validation\ValidationException
+	 */
+	protected function sendLockoutResponse(Request $request)
+	{
+		$seconds = $this->limiter()->availableIn(
+			$this->throttleKey($request)
+		);
+
+		return $this->failure(['content' => Lang::get('auth.throttle', ['seconds' => $seconds])], FALSE, compact('seconds'))->setStatusCode(423);
+
+		throw ValidationException::withMessages([
+			$this->username() => [Lang::get('auth.throttle', ['seconds' => $seconds])],
+		])->status(423);
+	}
+
+	/**
 	 * Get the guard to be used during authentication.
 	 *
 	 * @return \Illuminate\Contracts\Auth\StatefulGuard
@@ -131,6 +202,11 @@ class AuthController extends Controller
 	protected function guard()
 	{
 		return Auth::guard();
+	}
+
+	public function redirectTo()
+	{
+		return 'auth/choose';
 	}
 
 	/**

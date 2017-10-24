@@ -355,7 +355,7 @@ $().ready(function(){
 				//call
 				$dt.triggerHandler('datatable.draw', [settings]);
 			},
-			footerCallback: function(tfoot, data, start, end, display) {
+			/*footerCallback: function(tfoot, data, start, end, display) {
 				$dt.triggerHandler('datatable.footer', [tfoot, data, start, end, display]);
 			},
 			formatNumber: function( toFormat ) {
@@ -366,7 +366,7 @@ $().ready(function(){
 			},
 			infoCallback: function(settings, start, end, max, total, pre) {
 				$dt.triggerHandler('datatable.info', [settings, start, end, max, total, pre]);
-			},
+			},*/
 			initComplete: function(settings, json) {
 				$dt.triggerHandler('datatable.init', [settings, json]);
 			},

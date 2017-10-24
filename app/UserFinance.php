@@ -3,7 +3,7 @@ namespace App;
 
 use App\Model;
 
-class UserFinance extends Model 
+class UserFinance extends Model
 {
 	public function user()
 	{

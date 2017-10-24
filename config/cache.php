@@ -90,6 +90,9 @@ return [
     |
     */
 
-    'prefix' => substr(md5(env('APP_URL')), 16, 8),
+    'prefix' => env(
+        'CACHE_PREFIX',
+        str_slug(env('APP_NAME', 'laravel'), '_').'_'
+    ),
     'ttl' => env('CACHE_TTL', 1440),
 ];
