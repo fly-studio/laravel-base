@@ -114,8 +114,9 @@ class UserRepository extends Repository {
 		$builder = $user->newQuery()->with(['roles']);
 		$size = $request->input('size') ?: config('size.export', 1000);
 
-		$data = $this->_getExport($request, $builder, function(&$v){
-			$v['gender'] = !empty($v['gender']) ? $v['gender']['title'] : NULL;
+		$data = $this->_getExport($request, $builder, function($items){
+			foreach($items as $item)
+				$item['gender'] = !empty($item['gender']) ? $item['gender']['title'] : NULL;
 		}, ['users.*']);
 
 		return $data;
