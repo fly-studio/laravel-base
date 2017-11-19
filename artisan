@@ -14,10 +14,8 @@ define('LARAVEL_START', microtime(true));
 | loading of any our classes "manually". Feels great to relax.
 |
 */
-define('SYSPATH', realpath(__DIR__.'/../laravel').'/');
-define('LPPATH', realpath(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'l++').DIRECTORY_SEPARATOR);
 
-$loader = require SYSPATH.'/vendor/autoload.php';
+$loader = require __DIR__.'/../laravel/vendor/autoload.php';
 $loader->setPsr4('App\\', [realpath(__DIR__.'/app')]);
 
 $app = require_once __DIR__.'/bootstrap/app.php';

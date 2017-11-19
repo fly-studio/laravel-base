@@ -20,10 +20,8 @@ define('LARAVEL_START', microtime(true));
 | loading any of our classes later on. It feels great to relax.
 |
 */
-define('SYSPATH', realpath(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'laravel').DIRECTORY_SEPARATOR);
-define('LPPATH', realpath(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'l++').DIRECTORY_SEPARATOR);
 
-$loader = require SYSPATH.'/vendor/autoload.php';
+$loader = require __DIR__.'/../laravel/vendor/autoload.php';
 $loader->setPsr4('App\\', [realpath(__DIR__.'/app')]);
 /*
 |--------------------------------------------------------------------------

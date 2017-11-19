@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Event;
-use Addons\Core\Events\EventDispatcher;
+use Addons\Plugins\Events\EventDispatcher;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

@@ -69,12 +69,12 @@ class Handler extends ExceptionHandler
 			if($exception instanceof ModelNotFoundException)
 			{
 				$traces = $exception->getTrace();
+				$replaced_paths = array_merge([base_path()], array_map(function($v) {return realpath($v);}, config('plugins.paths')));
 				foreach($traces as $key => $value)
 				{
 					if ($value['function'] == '__callStatic' && Str::endsWith($value['args'][0], 'OrFail'))
 					{
-						$file = str_replace(base_path(), '', $value['file']);
-						if (defined('LPPATH')) $file = str_replace(LPPATH, '', $file);
+						$file = str_replace($replaced_paths, '', $value['file']);
 						$line = $value['line'];
 						return app(OutputResponseFactory::class)
 							->failure('document.model_not_exists', false, [

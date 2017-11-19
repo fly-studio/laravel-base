@@ -1,25 +1,29 @@
 <?php
 
 return [
-	'attachment' => [
-		'enable' => true,
+	'paths' => [
+		base_path('plugins'),
+		__DIR__.'/../../l++/plugins/',
 	],
-	'catalog' => [
-		'enable' => true,
+	'plugins' => [
+		'attachment' => [
+			'enable' => true,
+		],
+		'catalog' => [
+			'enable' => true,
+		],
+		'system' => [
+			'enable' => true,
+		],
+		'tools' => [
+			'enable' => true,
+		],
+		'helpers' => [
+			'enable' => true,
+		],
+		'wechat' => [
+			'enable' => false,
+		],
 	],
-	'manual' => [
-		'enable' => false,
-	],
-	'system' => [
-		'enable' => true,
-	],
-	'tools' => [
-		'enable' => true,
-	],
-	'helpers' => [
-		'enable' => true,
-	],
-	'wechat' => [
-		'enable' => true,
-	],
+
 ];

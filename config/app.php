@@ -161,7 +161,6 @@ return [
 		Illuminate\Pagination\PaginationServiceProvider::class,
 		Illuminate\Pipeline\PipelineServiceProvider::class,
 		Illuminate\Queue\QueueServiceProvider::class,
-		Barryvdh\Queue\AsyncServiceProvider::class,
 		Illuminate\Redis\RedisServiceProvider::class,
 		Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
 		Illuminate\Session\SessionServiceProvider::class,
@@ -174,12 +173,6 @@ return [
 		 */
 		Laravel\Tinker\TinkerServiceProvider::class,
 
-		//Smarty
-		Addons\Smarty\ServiceProvider::class,
-		//验证
-		Addons\Censor\ServiceProvider::class,
-		//Core before RouteServiceProvider
-		Addons\Core\ServiceProvider::class,
 
 		/*
 		 * Application Service Providers...
@@ -190,27 +183,6 @@ return [
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
 
-		//Debuger
-		//Barryvdh\Debugbar\ServiceProvider::class,
-		//验证码
-		Mews\Captcha\CaptchaServiceProvider::class,
-		//验证体系
-		Addons\Entrust\ServiceProvider::class,
-		//判断客户端和操作系统
-		Jenssegers\Agent\AgentServiceProvider::class,
-		//图片处理库
-		Intervention\Image\ImageServiceProvider::class,
-		//第三方登录
-		SocialiteProviders\Manager\ServiceProvider::class,
-		//Oauth2-server
-		Laravel\Passport\PassportServiceProvider::class,
-		//全文搜索引擎
-		Laravel\Scout\ScoutServiceProvider::class,
-		Addons\Elasticsearch\ServiceProvider::class,
-		//Log Viewer
-		Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-		//Log Model Event
-		OwenIt\Auditing\AuditingServiceProvider::class,
 	],
 
 	/*
@@ -259,13 +231,6 @@ return [
 		'URL'       => Illuminate\Support\Facades\URL::class,
 		'Validator' => Illuminate\Support\Facades\Validator::class,
 		'View'      => Illuminate\Support\Facades\View::class,
-
-		//'Debugbar' => 'Barryvdh\Debugbar\Facade::class',
-		'Captcha' => Mews\Captcha\Facades\Captcha::class,
-		'Entrust' => Addons\Entrust\Facade::class,
-		'Agent' => Jenssegers\Agent\Facades\Agent::class,
-		'Image' => Intervention\Image\Facades\Image::class,
-		'Elasticsearch' => Addons\Elasticsearch\Facade::class,
 	],
 
 ];
