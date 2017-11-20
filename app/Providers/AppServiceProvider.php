@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app[\Illuminate\Foundation\PackageManifest::class]->vendorPath = realpath(__DIR__.'/../../../laravel/vendor/');
         //
     }
 }
