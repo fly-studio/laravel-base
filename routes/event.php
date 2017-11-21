@@ -1,4 +1,5 @@
 <?php
+
 use Addons\Core\Events\ControllerEvent;
 
 $eventer->group(['namespace' => 'Http\Controllers'], function($eventer){

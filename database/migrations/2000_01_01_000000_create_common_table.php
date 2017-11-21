@@ -38,7 +38,8 @@ class CreateCommonTable extends Migration
 			$table->bigIncrements('id');
 			$table->unsignedInteger('user_id')->index()->nullable()->default(0)->comment = '用戶 ID';
 			$table->string('event')->index()->comment = '事件';
-			$table->morphs('auditable');
+			$table->integer("auditable_id");
+			$table->string("auditable_type");
 			$table->longText('old_values')->nullable()->comment = '舊數據';
 			$table->longText('new_values')->nullable()->comment = '新數據';
 			$table->text('url')->nullable()->comment = '網址';
@@ -51,6 +52,8 @@ class CreateCommonTable extends Migration
 			$table->ipAddress('ip_address', 45)->nullable()->comment = 'IP';
 			$table->timestamp('created_at')->index()->nullable();
 			$table->timestamp('updated_at')->nullable();
+
+			$table->index(["auditable_id", "auditable_type"]);
 		});
 	}
 
