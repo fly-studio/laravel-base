@@ -1,6 +1,10 @@
 <{extends file="admin/extends/main.block.tpl"}>
 
 <{block "head-scripts-common"}>
+<{block "head-scripts-vue"}>
+<script src="<{'js/vue/vue.min.js'|static nofilter}>"></script>
+<script src="<{'js/vue/vuex.min.js'|static nofilter}>"></script>
+<{/block}>
 <script src="<{'js/jsencrypt.min.js'|static}>"></script>
 <script src="<{'js/common-2.0.js'|static}>"></script>
 <{/block}>
@@ -123,7 +127,7 @@
 			</ul>
 		</div>
 		<{/block}>
-		
+
 		<{block "table-tools-after"}><{/block}>
 	</div>
 	<{/block}>
