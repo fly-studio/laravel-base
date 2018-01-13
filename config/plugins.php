@@ -7,22 +7,22 @@ return [
 	],
 	'plugins' => [
 		'attachment' => [
-			'enable' => true,
+			'enabled' => true,
 		],
 		'catalog' => [
-			'enable' => true,
+			'enabled' => true,
 		],
 		'system' => [
-			'enable' => true,
+			'enabled' => true,
 		],
 		'tools' => [
-			'enable' => true,
+			'enabled' => true,
 		],
 		'helpers' => [
-			'enable' => true,
+			'enabled' => true,
 		],
 		'wechat' => [
-			'enable' => false,
+			'enabled' => false,
 		],
 	],
 
