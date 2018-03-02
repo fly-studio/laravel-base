@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -18,7 +19,7 @@ class CreateUsersTable extends Migration
 			$table->string('username', 150)->unique()->comment = '用户名(账号)';
 			$table->string('password', 60)->nullable()->comment = '密码';
 			$table->string('nickname', 50)->nullable()->comment = '昵称';
-			$table->string('realname', 50)->nullable()->comment = '真实姓名'; 
+			$table->string('realname', 50)->nullable()->comment = '真实姓名';
 			$table->unsignedInteger('avatar_aid')->default(0)->comment = '头像AID';
 			$table->unsignedInteger('gender')->default(0)->comment = '性别';
 			$table->string('email')->nullable()->comment = 'Email';
@@ -88,7 +89,10 @@ class CreateUsersTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::drop('users');
-		Schema::drop('reset_password');
+		Schema::dropIfExists('password_resets');
+		Schema::dropIfExists('user_finances');
+		Schema::dropIfExists('user_multiples');
+		Schema::dropIfExists('user_extras');
+		Schema::dropIfExists('users');
 	}
 }

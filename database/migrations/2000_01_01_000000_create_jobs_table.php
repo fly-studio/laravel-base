@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -41,8 +42,7 @@ class CreateJobsTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::drop('jobgables');
-		Schema::drop('jobs');
-		Schema::drop('failed_jobs');
+		Schema::dropIfExists('jobs');
+		Schema::dropIfExists('failed_jobs');
 	}
 }

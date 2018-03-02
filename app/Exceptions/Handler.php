@@ -11,8 +11,6 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Session\TokenMismatchException;
 use Addons\Entrust\Exception\PermissionException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -23,12 +21,6 @@ class Handler extends ExceptionHandler
 	 * @var array
 	 */
 	protected $dontReport = [
-		\Illuminate\Auth\AuthenticationException::class,
-		\Illuminate\Auth\Access\AuthorizationException::class,
-		\Symfony\Component\HttpKernel\Exception\HttpException::class,
-		\Illuminate\Database\Eloquent\ModelNotFoundException::class,
-		\Illuminate\Session\TokenMismatchException::class,
-		\Illuminate\Validation\ValidationException::class,
 		\Addons\Entrust\Exception\PermissionException::class,
 	];
 	/**

@@ -73,10 +73,6 @@ return [
             'connection' => 'cache',
         ],
 
-        'xcache' => [
-            'driver' => 'xcache',
-        ],
-
     ],
 
     /*
@@ -92,7 +88,7 @@ return [
 
     'prefix' => env(
         'CACHE_PREFIX',
-        str_slug(env('APP_NAME', 'laravel'), '_').'_'
+        str_slug(env('APP_NAME', 'laravel'), '_').'_cache'
     ),
     'ttl' => env('CACHE_TTL', 1440),
 ];

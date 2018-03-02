@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -65,7 +66,8 @@ class CreateCommonTable extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('logs');
-		Schema::drop('fields');
-		Schema::drop('sessions');
+		Schema::dropIfExists('taggables');
+		Schema::dropIfExists('tags');
+		Schema::dropIfExists('sessions');
 	}
 }

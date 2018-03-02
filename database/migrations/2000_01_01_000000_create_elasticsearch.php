@@ -154,7 +154,7 @@ class CreateElasticsearch extends Migration
 										'search_analyzer' => 'title_search_standard',
 										'analyzer' => 'title_standard',
 									],
-									
+
 								],
 							],
 							[

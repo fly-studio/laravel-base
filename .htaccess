@@ -1,10 +1,14 @@
 <IfModule mod_rewrite.c>
 	<IfModule mod_negotiation.c>
-        Options -MultiViews
+        Options -MultiViews -Indexes
 	</IfModule>
 
 	RewriteEngine On
 	RewriteBase /
+	
+	# Handle Authorization Header
+	RewriteCond %{HTTP:Authorization} .
+	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 	# Redirect Trailing Slashes If Not A Folder...
 	RewriteCond %{REQUEST_FILENAME} !-d
@@ -22,8 +26,4 @@
 	RewriteRule ^ index.php [L]
 	#RewriteRule .* index.php/$0 [PT,L]
 	#RewriteRule .* index.php [L,E=PATH_INFO:$1]
-
-	# Handle Authorization Header
-	RewriteCond %{HTTP:Authorization} .
-	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
