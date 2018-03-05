@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Laravel\Passport\HasApiTokens;

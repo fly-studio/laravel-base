@@ -1,10 +1,11 @@
 <?php
+
 namespace App;
 
 use App\Model;
 
 class Tag extends Model{
-	
+
 	protected $guarded = ['id'];
 	protected $hidden = [];
 	protected $appends = ['count'];
@@ -27,6 +28,4 @@ class Tag extends Model{
 	{
 		return $this->hasMany('App\\Taggable', 'tag_id', 'id');
 	}
-
-
 }
