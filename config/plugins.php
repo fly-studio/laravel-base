@@ -21,6 +21,9 @@ return [
 		'helpers' => [
 			'enabled' => true,
 		],
+		'oauth2' => [
+			'enabled' => false,
+		],
 		'wechat' => [
 			'enabled' => false,
 		],
