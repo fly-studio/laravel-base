@@ -28,6 +28,10 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Passport::routes();
+        Passport::tokensCan([
+            //'self-show' => 'Get your user info.',
+        ]);
+        Passport::enableImplicitGrant();//隐式授权令牌
         Passport::tokensExpireIn(Carbon::now()->addDays(7));
         Passport::refreshTokensExpireIn(Carbon::now()->addDays(14));
         Passport::pruneRevokedTokens(); //删除过期令牌
