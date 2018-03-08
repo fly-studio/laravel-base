@@ -24,6 +24,9 @@ return [
 		'oauth2' => [
 			'enabled' => false,
 		],
+		'socialite' => [
+			'enabled' => false,
+		],
 		'wechat' => [
 			'enabled' => false,
 		],
