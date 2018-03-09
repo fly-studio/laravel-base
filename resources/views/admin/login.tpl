@@ -45,7 +45,7 @@
 
 					<!-- Footer -->
 					<footer class="text-muted push-top-bottom">
-						<small><span id="year-copy"></span> &copy; <a href="https://git.load-page.com/r/lp/" target="_blank">Laravel plus (L+) v4.0</a></small>
+						<small><span id="year-copy"></span> &copy; <a href="https://git.load-page.com/r/lp/" target="_blank">Laravel plus (L+) v6.0</a></small>
 					</footer>
 					<!-- END Footer -->
 				</div>
