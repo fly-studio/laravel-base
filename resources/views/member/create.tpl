@@ -39,7 +39,7 @@
 		<{/foreach}>
 			<div class="clearfix"></div>
 		</div>
-		<div class="form-group">
+		<div class="form-group hidden">
 			<label for="avatar_aid" class="control-label">上传图片</label>
 			<input type="hidden" class="form-control" name="avatar_aid" id="avatar_aid" value="0">
 		</div>

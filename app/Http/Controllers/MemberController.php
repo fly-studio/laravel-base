@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -15,9 +16,9 @@ class MemberController extends Controller
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-
+		return $this->api($request->user()->toArray());
 	}
 
 	/**
@@ -27,6 +28,7 @@ class MemberController extends Controller
 	 */
 	public function create()
 	{
+		Auth::guard()->logout();
 		$keys = ['username', 'password', 'avatar_aid', 'accept_license'];
 		$this->_validates = $this->censorScripts('member.store', $keys);
 		return $this->view('member.create');
@@ -45,7 +47,7 @@ class MemberController extends Controller
 
 		unset($data['accept_license']);
 		$user = (new User)->add($data);
-		return $this->success(NULL, 'member', $user->toArray());
+		return $this->success(NULL, 'auth', $user->toArray());
 	}
 
 	/**
