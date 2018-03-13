@@ -22,10 +22,10 @@ return [
 			'enabled' => true,
 		],
 		'oauth2' => [
-			'enabled' => false,
+			'enabled' => true,
 		],
 		'socialite' => [
-			'enabled' => false,
+			'enabled' => true,
 		],
 		'wechat' => [
 			'enabled' => false,

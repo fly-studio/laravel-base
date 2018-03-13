@@ -10,7 +10,7 @@
 <{/block}>
 
 <{block "head-scripts-bootstrap"}>
-	<script src="<{'js/bootstrap4/bootstrap.min.js'|static nofilter}>"></script>
+	<script src="<{'js/bootstrap3/bootstrap.min.js'|static nofilter}>"></script>
 <{/block}>
 
 <{block "head-scripts-inner"}><{/block}>

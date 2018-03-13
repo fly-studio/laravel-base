@@ -17,7 +17,7 @@ $router->resources([
 	'member' => 'MemberController',
 ]);
 
-$router->group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['auth', 'role:administrator']], function($router) {
+$router->group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'role:administrator']], function($router) {
 
 	$router->crud([
 		'member' => 'MemberController',
@@ -29,5 +29,13 @@ $router->group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['a
 $router->get('/', 'HomeController@index');
 $router->get('auth/login', 'AuthController@login')->name('login');
 $router->actions([
-	'auth' => ['index', 'login', 'logout', 'choose', 'authenticate-query'],
+	'auth' => ['index', 'login', 'logout', 'authenticate-query'],
 ]);
+
+$router->group(['namespace' => 'Admin', 'prefix' => 'admin'], function($router) {
+
+	$router->get('auth/login', 'Admin\\AuthController@login')->name('admin-login');
+	$router->actions([
+		'auth' => ['index', 'login', 'logout', 'choose', 'authenticate-query'],
+	]);
+});

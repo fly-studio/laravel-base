@@ -129,7 +129,7 @@ class Handler extends ExceptionHandler
 		return $request->expectsJson()
 					//? response()->json(['message' => $exception->getMessage()], 401)
 					? app(OutputResponseFactory::class)->failure('auth.unlogin')->setRequest($request)
-					: redirect()->guest(route('login'));
+					: redirect()->guest(route(in_array('admin', $exception->guards()) ? 'admin-login' : 'login'));
 	}
 
 }

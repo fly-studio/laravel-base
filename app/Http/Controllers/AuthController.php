@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Auth, Lang;
-use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
+
+use Plugins\Socialite\App\Repositories\SocialiteRepository;
 
 class AuthController extends Controller
 {
@@ -41,8 +42,11 @@ class AuthController extends Controller
 		$keys = [$this->username(), 'password'];
 		$validates = $this->censorScripts('member.store', $keys);
 
+		$socialiteRepo = app(SocialiteRepository::class);
+
 		$this->_validates = $validates;
-		return $this->view('admin/login');
+		$this->_socialites = $socialiteRepo->findEnableds();
+		return $this->view('login');
 	}
 
 	public function logout(Request $request)
@@ -52,13 +56,6 @@ class AuthController extends Controller
 		$request->session()->invalidate();
 
 		return $this->success_logout(''); // redirect to homepage
-	}
-
-	public function choose()
-	{
-		$user = $this->guard()->user();
-		$this->_roles = $user->roles;
-		return $this->_roles->count() == 1 ? redirect((string)$this->_roles[0]->url) : $this->view('auth.choose');
 	}
 
 	/**
@@ -121,11 +118,6 @@ class AuthController extends Controller
 		return $request->only($this->username(), 'password');
 	}
 
-	public function create()
-	{
-		return redirect('member/create');
-	}
-
 	/**
 	 * Send the response after the user was authenticated.
 	 *
@@ -151,10 +143,8 @@ class AuthController extends Controller
 	 */
 	protected function authenticated(Request $request, $user)
 	{
-		$roles = $user->roles;
-		return $roles->count() == 1
-			? $this->success_login($request->session()->pull('url.intended', $roles[0]->url)) // redirect to the prevpage or url
-			: false;
+
+		return  $this->success_login($request->session()->pull('url.intended', $this->redirectPath())); // redirect to the prevpage or url
 	}
 
 	/**
@@ -206,7 +196,7 @@ class AuthController extends Controller
 
 	public function redirectTo()
 	{
-		return 'auth/choose';
+		return '';
 	}
 
 	/**

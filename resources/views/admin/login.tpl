@@ -62,7 +62,7 @@
 					<!-- Login Block -->
 					<div class="block push-bit">
 						<!-- Login Form -->
-						<form action="<{'auth/authenticate-query'|url}>" method="post" id="form" class="form-horizontal">
+						<form action="<{'admin/auth/authenticate-query'|url}>" method="post" id="form" class="form-horizontal">
 							<input type="hidden" name="_token" value="<{csrf_token()}>">
 							<div class="form-group">
 								<div class="col-xs-12">

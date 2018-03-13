@@ -49,7 +49,7 @@
 				<input type="checkbox" class="" name="accept_license" id="accept_license" value="1"> 我已阅读并同意协议
 			</label>
 		</div>
-		<button type="submit" class="btn btn-default">注册</button>
+		<button type="submit" class="btn btn-success btn-block">注册</button>
 	</form>
 </div>
 <{/block}>
