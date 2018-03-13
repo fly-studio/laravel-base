@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'connection' => 'session', //reids => session, database => null
+    'connection' => env('SESSION_DRIVER') == 'redis' ? 'session' : null, //reids => session, database => null
 
     /*
     |--------------------------------------------------------------------------

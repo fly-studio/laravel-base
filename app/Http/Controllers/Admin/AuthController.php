@@ -46,7 +46,7 @@ class AuthController extends BaseAuthController
 
 		$request->session()->invalidate();
 
-		return $this->success_logout(''); // redirect to homepage
+		return $this->success_logout('admin-login'); // redirect to homepage
 	}
 
 	public function choose()

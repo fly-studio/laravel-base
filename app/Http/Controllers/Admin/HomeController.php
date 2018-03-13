@@ -14,6 +14,6 @@ class HomeController extends Controller
 	 */
 	public function index(Request $request)
 	{
-	   return $this->view('admin.dashboard');
+		return $this->view('admin.dashboard');
 	}
 }

@@ -18,7 +18,7 @@ class MemberController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		return $this->api($request->user()->toArray());
+		return $this->api($request->user());
 	}
 
 	/**
