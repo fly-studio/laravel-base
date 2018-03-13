@@ -119,12 +119,25 @@
     background-position: -252px -28px
 }
 
+.icon-sn-weixin-web {
+    background-position: -252px -28px
+}
+
 .icon-sn-bg-weixin {
     background-color: #00B500;
     background-position: -252px 0
 }
 
+.icon-sn-bg-weixin-web {
+    background-color: #00B500;
+    background-position: -252px 0
+}
+
 .fa-sn-weixin {
+    color: #00B500
+}
+
+.fa-sn-weixin-web {
     color: #00B500
 }
 

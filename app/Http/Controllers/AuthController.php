@@ -45,7 +45,7 @@ class AuthController extends Controller
 		$socialiteRepo = app(SocialiteRepository::class);
 
 		$this->_validates = $validates;
-		$this->_socialites = $socialiteRepo->findEnableds();
+		$this->_socialites = $socialiteRepo->findEnableDrivers(stripos($request->userAgent(), 'MicroMessenger') !== false);
 		return $this->view('login');
 	}
 
