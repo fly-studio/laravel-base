@@ -564,19 +564,21 @@ var LP;
                     data: data,
                     headers: this.headers
                 }, this.config).then(function (json) {
-                    if (typeof json != 'undefined'
-                        && json instanceof Object
-                        && typeof json.result != 'undefined'
-                        && (json.result == 'success' || json.result == 'api')) {
-                        if (_this.autoTip)
-                            _this.errorHandler(json);
-                        return json;
+                    if (json instanceof Object && typeof json.result != 'undefined') {
+                        if (json.result == 'success' || json.result == 'api') {
+                            if (_this.autoTip)
+                                _this.errorHandler(json);
+                            return json;
+                        }
+                        else {
+                            throw json;
+                        }
                     }
-                    else
-                        throw json;
+                    return json;
                 }).catch(function (e) {
                     if (_this.autoTip)
                         _this.errorHandler(e);
+                    throw e;
                 });
             };
             Base.prototype.get = function (url, data) {
