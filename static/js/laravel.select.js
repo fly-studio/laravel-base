@@ -2,21 +2,18 @@
 	var method = {cacheData: {}};
 	method.getData = function(url, params) {
 		var key = JSON.stringify({url: url, params: params});
-		var $dfd = jQuery.Deferred();
 
-		if (typeof method.cacheData[key] != 'undefined')
-			$dfd.resolve(method.cacheData[key]);
-		else {
-			LP.post(url, $.extend(true, {}, params, {of: 'json'})).done(function(json, textStatus, jqXHR){
-				var items = json.data.data;
-				method.cacheData[key] = items;
-				$dfd.resolve(method.cacheData[key]);
-			}).fail(function(){
-				var args = arguments;
-				$dfd.reject.apply($dfd, args);
-			});
-		}
-		return $dfd.promise();
+		return promiseWrap(() => {
+			if (typeof method.cacheData[key] != 'undefined')
+				return method.cacheData[key];
+			else {
+				return LP.http.jQueryAjax.post(url, $.extend(true, {}, params, {of: 'json'})).then(json => {
+					var items = json.data.data;
+					method.cacheData[key] = items;
+					return method.cacheData[key];
+				});
+			}
+		});
 	};
 	method.replaceData = function(data, format)
 	{
@@ -28,7 +25,7 @@
 				var n = o[i];
 				if (typeof d[ n ] != 'undefined')
 					d = d[n];
-				else 
+				else
 					return null;
 			}
 			return d;
@@ -38,7 +35,7 @@
 		var result = [];
 		for(var i = 0; i < items.length; ++i) {
 			var d = {
-				'id': id ? method.replaceData(items[i], id) : items[i].id, 
+				'id': id ? method.replaceData(items[i], id) : items[i].id,
 				'text': text ? method.replaceData(items[i], text) : items[i].text,
 				'selection': selection ? method.replaceData(items[i], selection) : items[i].selection,
 				'pid': pid ? method.replaceData(items[i], pid) : items[i].pid
@@ -92,8 +89,8 @@
 				var values = $this.attr('value') ? $this.attr('value').split(',') : $this.val();
 				var url = LP.baseuri + $this.data('model')+'/data';
 				params = $.extend(true, {}, {all: 'true'}, params);
-				method.getData(url, params).done(function(json){
-					var data = method.format(json, id, selection, text); 
+				method.getData(url, params).then(json => {
+					var data = method.format(json, id, selection, text);
 					$this.select2($.extend(true, {}, {language: "zh-CN", data: data, allowClear: true}, options));
 					//初始值
 					$this.val(values ? values : null).trigger("change");
@@ -115,7 +112,7 @@
 				var url = LP.baseuri + $this.data('model')+'/data';
 				params = $.extend(true, {}, {all: 'true', tree: 'true'}, params);
 
-				method.getData(url, params).done(function(json){
+				method.getData(url, params).then(json => {
 					var data = method.format(json, id, selection, text, pid);
 					data = method.recursive(data);
 					$this.select2($.extend(true, {}, {
@@ -154,7 +151,7 @@
 							var config = {page: _params.data.page, f: {}, q: {}};
 							if(term) config.f[term] = {'like': _params.data.term};
 							if(q) config.q[q] = _params.data.q;
-							method.getData(url, $.extend(true, {}, config, params)).done(function(json){
+							method.getData(url, $.extend(true, {}, config, params)).then(json => {
 								var data = method.format(json, id, selection, text);
 								success(data);
 							});
@@ -172,7 +169,7 @@
 				//有初始的值
 				if (values) {
 					var params = $this.data('params');
-					method.getData(url, $.extend(true, {}, params, {f: {id: {in: values}}})).done(function(json){
+					method.getData(url, $.extend(true, {}, params, {f: {id: {in: values}}})).then(json => {
 						var data = method.format(json, id, selection, text);
 						$this.select2($.extend(true, {}, _config, options, {data: data}));
 
@@ -207,7 +204,7 @@
 							var config = {page: _params.data.page, f: {}, q: {}};
 							if(term) config.f[term] = {'like': _params.data.term};
 							if(q) config.q[q] = _params.data.q;
-							method.getData(url, $.extend(true, {}, config, params)).done(function(json){
+							method.getData(url, $.extend(true, {}, config, params)).then(json => {
 								var data = method.format(json, id, selection, text);
 								success(data);
 							});
@@ -234,7 +231,7 @@
 				if (values) {
 					var params = $this.data('params');
 					var config = {f: {id: {in: values}}, q: {}};
-					method.getData(url, $.extend(true, {}, config, params)).done(function(json){
+					method.getData(url, $.extend(true, {}, config, params)).then(json => {
 						var data = method.format(json, id, selection, text);
 						$this.select2($.extend(true, {}, _config, options, {data: data}));
 					});

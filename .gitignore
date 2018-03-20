@@ -16,3 +16,4 @@ yarn-error.log
 /.htaccess
 /vendor/composer
 /vendor/autoload.php
+/mix-manifest.json

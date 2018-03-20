@@ -9,7 +9,8 @@
 			{
 				"polyfill": true,
 				"regenerator": true
-			}
+			},
+			"remove-webpack"
 		]
 	]
 }

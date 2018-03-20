@@ -1,4 +1,8 @@
 (function($){
+let querystring = function(param) {
+	var params = jQuery.deparam.querystring();
+	return params[param] ? params[param] : null;
+};
 $().ready(function(){
 	var method = {config: {}};
 	var $dt = $('#datatable');
@@ -6,15 +10,11 @@ $().ready(function(){
 	method.bindMethods = function(obj){
 
 		$('a[method]:not([method="delete"])', obj).query();
-		$('a[method="delete"]', obj).query(function(json){
-			if (json.result == 'success' || json.result == 'api') {
-				if (method.datatable)
-					method.datatable.ajax.reload(null, false);
-			}
-		}, {
-			layout: 'topCenter',
-			modal: false,
-		});
+		$('a[method="delete"]', obj).query(json =>{
+			if (method.datatable)
+				method.datatable.ajax.reload(null, false);
+
+		}, true);
 		if ($(obj).is('tr'))
 		{
 			$(obj).on('click', function(e) {
@@ -31,7 +31,7 @@ $().ready(function(){
 				$('td:eq(0) :checkbox', $(obj)).prop('checked', active);
 			});
 		}
-			
+
 	};
 
 	method.getConfig = function()
@@ -191,7 +191,7 @@ $().ready(function(){
 		};
 
 		// IE9 throws an 'unknown error' if document.activeElement is used
-		// inside an iframe or frame. 
+		// inside an iframe or frame.
 		var activeEl;
 
 		try {
@@ -253,7 +253,7 @@ $().ready(function(){
 		sLengthSelect: 'form-control',
 		sProcessing: 'dataTables_processing',
 	});
-	
+
 	method.make = function(){
 		var config = method.getConfig();
 		var columns = method.getColumns(true);
@@ -292,47 +292,39 @@ $().ready(function(){
 				asSorting: [ 'desc', 'asc' ]  //first sort desc, then asc
 			},
 			renderer: 'bootstrap',
+			ajax: function(data, callback, settings){
 
-			ajax: {
-				url: LP.baseuri + config.namespace+'/'+config.name+'/data?of=json',
-				timeout: 20 * 1000,
-				type: 'POST',
-				data: function(d){
-					var o = {};
-					for(var i = 0; i < d.order.length; ++i)
+				var o = {}, d = data;
+				for(var i = 0; i < d.order.length; ++i)
+				{
+					var item = d.order[i];
+					if (typeof d.columns[item.column] != 'undefined' && !!d.columns[item.column].orderable)
 					{
-						var item = d.order[i];
-						if (typeof d.columns[item.column] != 'undefined' && !!d.columns[item.column].orderable)
-						{
-							var name = !!d.columns[item.column].name ? d.columns[item.column].name : d.columns[item.column].data;
-							if (name) o[name] = item.dir;
-						}
+						var name = !!d.columns[item.column].name ? d.columns[item.column].name : d.columns[item.column].data;
+						if (name) o[name] = item.dir;
 					}
-					var query = $.extend(true, {}, config.queryParams, {
-						q: $.extend(true, d.search.value ? {_all: d.search.value} : {}, window.location.query('q')),
-						o: o,
-						f: $.extend(true, {}, window.location.query('f'))
-					});
-					$dt.data('url-query', query);
-					//修改导出按钮的链接
-					$('a[data-append-queries]').each(function(){$(this).attr('href', $(this).data('href'));}).querystring(query);
-					var p = (parseInt(d.start) + 1) / d.length;
-					return $.extend(true, {}, {
-						size: d.length,
-						page: !isNaN(p) ? Math.ceil(p) : 1
-					}, query);
-				},
-				dataSrc: function(json){
-					if (json && json.result == 'success' || json.result == 'api') {
-						json.recordsTotal = json.data.recordsTotal;
-						json.recordsFiltered = json.data.recordsFiltered;
-						json.data.data.forEach(function(v, k){v.DT_RowId = 'line-' + (v.id ? v.id : k);});
-						return json.data.data;
-					}
-					 else 
-						$.showtips(json);
-					return [];
 				}
+				var query = $.extend(true, {}, config.queryParams, {
+					q: $.extend(true, d.search.value ? {_all: d.search.value} : {}, querystring('q')),
+					o: o,
+					f: $.extend(true, {}, querystring('f'))
+				});
+				$dt.data('url-query', query);
+				//修改导出按钮的链接
+				$('a[data-append-queries]').each(function(){$(this).attr('href', $(this).data('href'));}).querystring(query);
+
+				var p = (parseInt(d.start) + 1) / d.length;
+				var params = $.extend(true, {}, {
+					size: d.length,
+					page: !isNaN(p) ? Math.ceil(p) : 1
+				}, query);
+
+				LP.http.jQueryAjax.post(LP.baseuri + config.namespace+'/'+config.name+'/data?of=json', params).then(json => {
+					json.data.data.forEach(function(v, k){v.DT_RowId = 'line-' + (v.id ? v.id : k);});
+					callback(json.data);
+				}).catch(() => {
+					callback([]);
+				});
 			},
 			serverSide: true,
 			deferRender: true,
@@ -345,8 +337,8 @@ $().ready(function(){
 				// Initialize Tooltips
 				if ($.fn.tooltip) $('[data-toggle="tooltip"], .enable-tooltip', row).tooltip({container: 'body', animation: false});
 				// Initialize Popovers
-				if ($.fn.popover) $('[data-toggle="popover"], .enable-popover', row).popover({container: 'body', animation: true});		
-				//call	
+				if ($.fn.popover) $('[data-toggle="popover"], .enable-popover', row).popover({container: 'body', animation: true});
+				//call
 				method.bindMethods(row);
 				$dt.triggerHandler('datatable.created-row', [row, data, dataIndex]);
 			},
@@ -417,5 +409,5 @@ $().ready(function(){
 
 	});
 });
-	
+
 })(jQuery);

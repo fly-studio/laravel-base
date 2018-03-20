@@ -21,8 +21,41 @@ window.UPLOADER_LANGUAGE = {
 	'duplicate' : '上传队列中有重复文件!'
 };
 (function($){
+
+	/**
+	 * 返回min~max之间的随机整数
+	 *
+	 * @param  {Int} min 最小随机范围
+	 * @param  {Int} max 最大随机范围
+	 * @return {Int}
+	 */
+	function rand(min, max) {
+		let argc = arguments.length;
+		if (argc === 0) {
+			min = 0;
+			max = 2147483647;
+		} else if (argc === 1) {
+			throw new Error('Warning: rand() expects exactly 2 parameters, 1 given');
+		}
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+	/**
+	 * 字节转义为可阅读的MB/GB等
+	 *
+	 * @param  {Number} bytes 字节数
+	 * @return {String}
+	 */
+	function bytesToSize(bytes) {
+		if (bytes === 0) return '0 B';
+
+		let k = 1024, sizes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
+			i = Math.floor(Math.log(bytes) / Math.log(k));
+
+		return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+	}
+
 	if(typeof LP == 'undefined')
-		throw('this javascript file need behind \'laravel.lp.js\'');
+		throw('this javascript file need behind \'lp.js\'');
 
 	$.fn.extend({
 		uploader : function(max_width, max_height, filesize, filetype, filelimit, id) {
@@ -46,6 +79,7 @@ window.UPLOADER_LANGUAGE = {
 				if (typeof id != 'undefined') options.id = id;
 			}
 			var img_types = ['jpg','jpeg','png','bmp','gif','webp','svg'];
+			let ajax = new LP.http.jQueryAjax();
 			return this.each(function(){
 				var t = $(this);
 
@@ -75,7 +109,7 @@ window.UPLOADER_LANGUAGE = {
 					'<div id="' + progresses_id + '" class="progresses"></div><div class="clearfix"></div>' +
 					'<div id="' + thumbnails_id + '" class="thumbnails row"></div><div class="clearfix"></div>' +
 					'</div>').insertAfter(t);
-				
+
 				if (typeof $.fn.tooltip != 'undefined') $('.enable-tooltip', flex_uploader.$container).tooltip();
 
 				var $progresses = {};
@@ -191,7 +225,7 @@ window.UPLOADER_LANGUAGE = {
 							});
 						if (!fileext || !url)
 						{
-							LP.get(LP.baseuri + 'api/attachment/'+ id).done(function(json){
+							ajax.get(LP.baseuri + 'api/attachment/'+ id).then(json => {
 								if (id != json.data.id)
 									preview(id).replace(json.data.id);
 								var $obj = $('.uploader-thumbnail[data-id="'+json.data.id+'"]');
@@ -333,19 +367,19 @@ window.UPLOADER_LANGUAGE = {
 					this.md5File( file ).progress(function(percentage) {
 						progress(file).progressing(0).message(UPLOADER_LANGUAGE.hashing + ' ' + (percentage * 100).toFixed(2) + '%');
 					}).then(function(val) {
-						LP.PUT(LP.baseuri + 'attachment/hash', {
+						ajax.put(LP.baseuri + 'attachment/hash', {
 							hash: val,
-							_token: LP.csrf,
+							//_token: LP.csrf,
 							filename: file.name,
 							ext: file.ext,
 							size: file.size
-						}).done(function(json) {
+						}).then(json => {
 							flex_uploader.uploader.skipFile(file);
 							progress(file).success().message(UPLOADER_LANGUAGE.hash_success);
 							if (options.filelimit == 1) preview().removeAll();
 							preview(json.data.id, json.data.filename, json.data.ext, json.data.url).build().setFile(file);
 							t.triggerHandler('uploader.uploaded',[file, json, attachment().get()]);
-						}).fail(function(){
+						}).catch(() =>{
 							file.md5 = val;
 							flex_uploader.uploader.upload(file);
 						});
@@ -363,7 +397,7 @@ window.UPLOADER_LANGUAGE = {
 					data.hash = obj.file.md5;
 				};
 				method.uploadStart = function(file) {
-					
+
 				};
 				//上传过程中触发，携带上传进度。
 				method.uploadProgress = function(file, percentage) {
@@ -384,7 +418,7 @@ window.UPLOADER_LANGUAGE = {
 						//$.alert(message);
 					}
 				};
-				
+
 				//当文件上传出错时触发。
 				method.uploadError = function(file, reason) {
 					progress(file).error(UPLOADER_LANGUAGE.error+': ' + reason);
@@ -392,7 +426,7 @@ window.UPLOADER_LANGUAGE = {
 				};
 				//不管成功或者失败，文件上传完成时触发。
 				method.uploadComplete = function(file) {
-					
+
 				};
 				method.error = function(code, max, file) {
 					switch(code)
@@ -537,7 +571,7 @@ window.UPLOADER_LANGUAGE = {
 				}
 
 			});
-			
+
 		}
 	});
 })(jQuery);
