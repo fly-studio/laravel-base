@@ -794,7 +794,7 @@ var LP;
                 if (_data && _data._token)
                     _headers['X-CSRF-TOKEN'] = _data._token;
                 return new Promise(function (resolve, reject) {
-                    var config = {
+                    var c = {
                         url: config.url,
                         data: _data ? _data : null,
                         async: true,
@@ -811,11 +811,11 @@ var LP;
                         }
                     };
                     if (typeof _headers['Authorization'] != 'undefined') {
-                        config['beforeSend'] = function (xhr) {
+                        c['beforeSend'] = function (xhr) {
                             xhr.setRequestHeader('Authorization', _headers['Authorization']);
                         };
                     }
-                    jQuery.ajax(config);
+                    jQuery.ajax(c);
                 });
             };
             jQueryAjax.prototype.decryptHandler = function () {
