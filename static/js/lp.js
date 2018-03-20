@@ -18,12 +18,12 @@ var LP;
         thiscript = scripts[scripts.length - 1];
     }
     var src = thiscript['src'] ? thiscript['src'] : thiscript.getAttribute('src');
-    LP._baseuri = src.toString().match(/[^\/:](\/.*)static\/js\/lp(\.min)?\.js/i) ? src.toString().match(/[^\/:](\/.*)static\/js\/lp(\.min)?\.js/i)[1] : src.toString().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '') + '/';
-    if (!LP._baseuri)
-        LP._baseuri = '/';
-    LP.baseuri = LP._baseuri;
+    var _baseuri = src.toString().match(/[^\/:](\/.*)static\/js\/lp(\.min)?\.js/i) ? src.toString().match(/[^\/:](\/.*)static\/js\/lp(\.min)?\.js/i)[1] : src.toString().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '') + '/';
+    if (!_baseuri)
+        _baseuri = '/';
+    LP.baseuri = _baseuri;
     if (jQuery)
-        jQuery['baseuri'] = LP._baseuri;
+        jQuery['baseuri'] = _baseuri;
 })(LP || (LP = {}));
 var LP;
 (function (LP) {
@@ -40,12 +40,6 @@ var LP;
         'encrypt_string': '数据已经加密，但密文解密失败，请联系管理员。',
         'encrypt_unserialize': '数据已经加密，但解密后反序列化失败，请联系管理员。',
     };
-    LP.TIPS_LANGUAGE = {
-        'tip': '提示',
-        'ok': '确定',
-        'cancel': '取消',
-        'back': '返回'
-    };
 })(LP || (LP = {}));
 var LP;
 (function (LP) {
@@ -61,22 +55,34 @@ var LP;
                 var rsa_str = cacheDriver.getItem('l+rsa');
                 var rsa = rsa_str ? JSON.parse(rsa_str) : null;
                 if (!rsa) {
-                    var crypt = new window['JSEncrypt']({ default_key_size: 1024 });
-                    var key = crypt.getKey();
-                    rsa = {
-                        private: key.getPrivateKey(),
-                        public: key.getPublicKey(),
-                    };
-                    cacheDriver.setItem('l+rsa', JSON.stringify(rsa));
+                    if (window['JSEncrypt']) {
+                        var crypt = new window['JSEncrypt']({ default_key_size: 1024 });
+                        var key = crypt.getKey();
+                        rsa = {
+                            private: key.getPrivateKey(),
+                            public: key.getPublicKey(),
+                        };
+                        cacheDriver.setItem('l+rsa', JSON.stringify(rsa));
+                    }
+                    else {
+                        rsa = {
+                            public: '',
+                            private: ''
+                        };
+                    }
                 }
                 return rsa;
             };
             RSAGenerator.prototype.encrypt = function (text) {
+                if (!window['JSEncrypt'])
+                    return text;
                 var crypt = new window['JSEncrypt']();
                 crypt.setKey(this.rsa.public);
                 return crypt.encrypt(text);
             };
             RSAGenerator.prototype.decrypt = function (text) {
+                if (!window['JSEncrypt'])
+                    return text;
                 var crypt = new window['JSEncrypt']();
                 crypt.setKey(this.rsa.private);
                 return crypt.decrypt(text);
