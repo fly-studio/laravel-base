@@ -794,7 +794,7 @@ var LP;
                 if (_data && _data._token)
                     _headers['X-CSRF-TOKEN'] = _data._token;
                 return new Promise(function (resolve, reject) {
-                    jQuery.ajax({
+                    var config = {
                         url: config.url,
                         data: _data ? _data : null,
                         async: true,
@@ -809,7 +809,13 @@ var LP;
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             reject(arguments);
                         }
-                    });
+                    };
+                    if (typeof _headers['Authorization'] != 'undefined') {
+                        config['beforeSend'] = function (xhr) {
+                            xhr.setRequestHeader('Authorization', _headers['Authorization']);
+                        };
+                    }
+                    jQuery.ajax(config);
                 });
             };
             jQueryAjax.prototype.decryptHandler = function () {
@@ -887,6 +893,100 @@ var LP;
         http.jQueryAjax = jQueryAjax;
     })(http = LP.http || (LP.http = {}));
 })(LP || (LP = {}));
+/**
+ * 将一个Array或者Object按树形结构alert出来、或返回
+ *
+ * @param  {Objbect/Array} array      传入的数组或者对象
+ * @param  {Boolean} return_val 是否返回，默认是alert出
+ * @return {String}             树形结构
+ */
+function print_r(array, return_val) {
+    if (return_val === void 0) { return_val = true; }
+    var output = '', pad_char = ' ', pad_val = 4, getFuncName = function (fn) {
+        var name = (/\W*function\s+([\w\$]+)\s*\(/).exec(fn);
+        if (!name)
+            return '(Anonymous)';
+        return name[1];
+    };
+    var repeat_char = function (len, pad_char) {
+        var str = '';
+        for (var i = 0; i < len; i++)
+            str += pad_char;
+        return str;
+    };
+    var formatArray = function (obj, cur_depth, pad_val, pad_char) {
+        if (cur_depth > 0)
+            cur_depth++;
+        var base_pad = repeat_char(pad_val * cur_depth, pad_char);
+        var thick_pad = repeat_char(pad_val * (cur_depth + 1), pad_char);
+        var str = '';
+        if (typeof obj === 'object' && obj !== null && obj.constructor && getFuncName(obj.constructor) !== 'PHPJS_Resource') {
+            str += 'Array\n' + base_pad + '(\n';
+            for (var key in obj) {
+                if (Object.prototype.toString.call(obj[key]) === '[object Array]')
+                    str += thick_pad + '[' + key + '] => ' + formatArray(obj[key], cur_depth + 1, pad_val, pad_char);
+                else
+                    str += thick_pad + '[' + key + '] => ' + obj[key] + '\n';
+            }
+            str += base_pad + ')\n';
+        }
+        else if (obj === null || obj === undefined)
+            str = '';
+        else
+            str = obj.toString();
+        return str;
+    };
+    output = formatArray(array, 0, pad_val, pad_char);
+    if (return_val !== true) {
+        alert(output);
+        return output;
+    }
+    return output;
+}
+/**
+ * Extends the object in the first argument using the object in the second argument.
+ * @method extend
+ * @param {boolean} deep
+ * @param {} obj
+ * @return {} obj extended
+ */
+function extend(deep, obj) {
+    var args = [];
+    for (var _i = 2; _i < arguments.length; _i++) {
+        args[_i - 2] = arguments[_i];
+    }
+    var argsStart, deepClone, firstArg;
+    if (typeof deep === 'boolean') {
+        argsStart = 2;
+        deepClone = deep;
+        firstArg = obj;
+    }
+    else {
+        argsStart = 1;
+        firstArg = deep;
+        deepClone = true;
+    }
+    for (var i = argsStart; i < arguments.length; i++) {
+        var source = arguments[i];
+        if (source) {
+            for (var prop in source) {
+                if (deepClone && source[prop] && source[prop].constructor === Object) {
+                    if (!firstArg[prop] || firstArg[prop].constructor === Object) {
+                        firstArg[prop] = firstArg[prop] || {};
+                        extend(firstArg[prop], deepClone, source[prop]);
+                    }
+                    else {
+                        firstArg[prop] = source[prop];
+                    }
+                }
+                else {
+                    firstArg[prop] = source[prop];
+                }
+            }
+        }
+    }
+    return firstArg;
+}
 if (!String.prototype.noHTML) {
     /**
      * 删除所有HTML标签
