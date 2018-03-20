@@ -28,7 +28,7 @@
 <{/block}>
 <{block name="head-scripts-lp"}>
 <script src="<{'js/jsencrypt.min.js'|static nofilter}>"></script>
-<script src="<{'js/lp.js'|static nofilter}>"></script>
+<script src="<{'js/lp.min.js'|static nofilter}>"></script>
 <script src="<{'js/lp/noty.tip.js'|static nofilter}>"></script>
 
 <{/block}>
