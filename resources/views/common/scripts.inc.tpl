@@ -10,8 +10,13 @@
 	<script src="<{'js/bootstrap3/bootstrap.min.js'|static nofilter}>"></script>
 <{/block}>
 
-<{block "head-scripts-inner"}><{/block}>
+<{block name="head-scripts-promise"}>
+	<script src="<{'js/es/promise.min.js'|static nofilter}>"></script>
+<{/block}>
 
 <{block name="head-scripts-lp"}>
 	<script src="<{'js/lp.min.js'|static nofilter}>"></script>
 <{/block}>
+
+
+<{block "head-scripts-inner"}><{/block}>
