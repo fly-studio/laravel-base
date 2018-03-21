@@ -126,10 +126,13 @@ class Handler extends ExceptionHandler
 	 */
 	protected function unauthenticated($request, AuthenticationException $exception)
 	{
-		return $request->expectsJson()
+		$api = in_array('api', $exception->guards());
+		$admin = in_array('admin', $exception->guards());
+
+		return $request->expectsJson() || $api
 					//? response()->json(['message' => $exception->getMessage()], 401)
-					? app(OutputResponseFactory::class)->failure('auth.unlogin')->setRequest($request)
-					: redirect()->guest(route(in_array('admin', $exception->guards()) ? 'admin-login' : 'login'));
+					? app(OutputResponseFactory::class)->failure($api ? 'auth.unAuthorization' : 'auth.unlogin')->setRequest($request)
+					: redirect()->guest(route($admin ? 'admin-login' : 'login'));
 	}
 
 }
