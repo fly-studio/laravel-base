@@ -1,4 +1,24 @@
 "use strict";
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9,7 +29,54 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var DeferredPromise = /** @class */ (function () {
+    function DeferredPromise() {
+        var _this = this;
+        this.resolve = function () { };
+        this.reject = function () { };
+        this._promise = new Promise(function (resolve, reject) {
+            // assign the resolve and reject functions to `this`
+            // making them usable on the class instance
+            _this.resolve = resolve;
+            _this.reject = reject;
+        });
+        // bind `then` and `catch` to implement the same interface as Promise
+        this.then = this._promise.then.bind(this._promise);
+        this.catch = this._promise.catch.bind(this._promise);
+        this[Symbol.toStringTag] = 'Promise';
+    }
+    DeferredPromise.prototype.promise = function () {
+        return this._promise;
+    };
+    return DeferredPromise;
+}());
+if (!Promise.prototype.done) {
+    Promise.prototype.done = function (onFulfilled, onRejected) {
+        this.then(onFulfilled, onRejected)
+            .catch(function (reason) {
+            // 抛出一个全局错误
+            setTimeout(function () { throw reason; }, 0);
+        });
+    };
+}
+if (!Promise.prototype.finally) {
+    Promise.prototype.finally = function (callback) {
+        var P = this.constructor;
+        return this.then(function (value) { return P.resolve(callback()).then(function () { return value; }); }, function (reason) { return P.resolve(callback()).then(function () { throw reason; }); });
+    };
+}
+function promiseWrap(callback) {
+    var args = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        args[_i - 1] = arguments[_i];
+    }
+    return new Promise(function (r) { return r(); }).then(function () {
+        return callback.apply(void 0, __spread(args));
+    });
+}
+/// <reference path="polyfill/deferredPromise.ts" />
 var LP;
+/// <reference path="polyfill/deferredPromise.ts" />
 (function (LP) {
     //base uri
     var thiscript = window.document.currentScript;
@@ -498,11 +565,167 @@ var LP;
         sec.Encryptor = Encryptor;
     })(sec = LP.sec || (LP.sec = {}));
 })(LP || (LP = {}));
+if (!String.prototype.noHTML) {
+    /**
+     * 删除所有HTML标签
+     *
+     * let str = "<a href=''>我爱你</a>".toPre();
+     * 返回 '我爱你'
+     *
+     * @return {String}
+     */
+    String.prototype.noHTML = function () {
+        return this.replace(/<script[^>]*?>.*?<\/script>/ig, '').replace(/<[\/\!]*?[^<>]*?>/g, '').replace(/<style[^>]*?>.*?<\/style>/ig, '').replace(/<![\s\S]*?--[ \t\n\r]*>/, '').replace(/([\r\n])[\s]+/, '').replace(/&(quot|#34|amp|#38|lt|#60|gt|#62|nbsp|#160)/i, '');
+    };
+}
+if (!String.prototype.toHTML) {
+    /**
+     * 转义字符串的HTML字符，主要有 < > " ' &
+     * let str = '<a href="xxx">'.toHTML();
+     * 返回 '&lt;a href=&quot;xxx&quot;&gt;'
+     *
+     * @return {String}
+     */
+    String.prototype.toHTML = function () {
+        return this.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    };
+}
+/// <reference path="../polyfill/string.ts" />
+/// <reference path="../http/base.ts" />
+/// <reference path="../lang.ts" />
+var LP;
+/// <reference path="../polyfill/string.ts" />
+/// <reference path="../http/base.ts" />
+/// <reference path="../lang.ts" />
+(function (LP) {
+    var tip;
+    (function (tip) {
+        tip.toast_interface = null;
+        tip.alert_interface = null;
+        tip.confirm_interface = null;
+        tip.prompt_interface = null;
+        function formatMessage(message) {
+            return !(message instanceof Object) ? { content: message } : message;
+        }
+        tip.formatMessage = formatMessage;
+        function toast(message, timeout) {
+            if (timeout === void 0) { timeout = 1000; }
+            var _message = formatMessage(message);
+            return promiseWrap(function () {
+                if (typeof tip.toast_interface == 'function')
+                    return tip.toast_interface(_message, timeout);
+                else
+                    window.alert(_message.content.noHTML());
+            });
+        }
+        tip.toast = toast;
+        function alert(message, confirm_callback) {
+            var _message = formatMessage(message);
+            return promiseWrap(function () {
+                if (typeof tip.alert_interface == 'function')
+                    return tip.alert_interface(_message);
+                else
+                    window.alert(_message.content.noHTML());
+            }).then(function () {
+                if (confirm_callback && typeof confirm_callback == 'function')
+                    confirm_callback.call(void 0);
+            });
+        }
+        tip.alert = alert;
+        function confirm(message, confirm_callback, cancel_callback) {
+            var _message = formatMessage(message);
+            return promiseWrap(function () {
+                if (typeof tip.confirm_interface == 'function')
+                    return tip.confirm_interface(_message);
+                else {
+                    if (!window.confirm(_message.content.noHTML()))
+                        throw '';
+                }
+            }).then(function () {
+                if (confirm_callback && typeof confirm_callback == 'function')
+                    confirm_callback.call(void 0);
+            }, function () {
+                if (cancel_callback && typeof cancel_callback == 'function')
+                    cancel_callback.call(void 0);
+            });
+        }
+        tip.confirm = confirm;
+        function prompt(message, confirm_callback, cancel_callback) {
+            var _message = formatMessage(message);
+            return promiseWrap(function () {
+                if (typeof tip.prompt_interface == 'function')
+                    return tip.prompt_interface(_message);
+                else {
+                    var v = window.prompt(_message.content.noHTML());
+                    if (!v)
+                        throw '';
+                    else
+                        return v;
+                }
+            }).then(function (v) {
+                if (confirm_callback && typeof confirm_callback == 'function')
+                    confirm_callback.call(void 0, v);
+            }, function () {
+                if (cancel_callback && typeof cancel_callback == 'function')
+                    cancel_callback.call(void 0);
+            });
+        }
+        tip.prompt = prompt;
+    })(tip = LP.tip || (LP.tip = {}));
+})(LP || (LP = {}));
+/// <reference path="../polyfill/string.ts" />
+/// <reference path="../lang.ts" />
+/// <reference path="./base.ts" />
+var LP;
+/// <reference path="../polyfill/string.ts" />
+/// <reference path="../lang.ts" />
+/// <reference path="./base.ts" />
+(function (LP) {
+    var tip;
+    (function (tip) {
+        tip.diy_interface = null;
+        function diy(message, result, tipType) {
+            var _message = tip.formatMessage(message);
+            return promiseWrap(function () {
+                if (typeof tip.diy_interface == 'function')
+                    return tip.diy_interface(_message, result, tipType);
+                else
+                    return window.alert(_message.content.noHTML());
+            });
+        }
+        function json(result, message, tipType) {
+            if (typeof message == 'undefined' || typeof tipType != 'object')
+                return;
+            else if (typeof message == 'string')
+                message = { content: message };
+            diy(message, result, tipType);
+            switch (tipType.type) {
+                case 'redirect':
+                    setTimeout(function () {
+                        self.location.href = tipType.url;
+                    }, tipType.timeout);
+                    break;
+                case 'refresh':
+                    setTimeout(function () {
+                        self.location.reload();
+                        self.location.href = self.location.href;
+                    }, tipType.timeout);
+                    break;
+                case 'back':
+                case 'toast':
+                    break;
+            }
+        }
+        tip.json = json;
+    })(tip = LP.tip || (LP.tip = {}));
+})(LP || (LP = {}));
 /// <reference path="../lang.ts" />
 /// <reference path="../sec/encryptor.ts" />
+/// <reference path="../tip/json.ts" />
 var LP;
 /// <reference path="../lang.ts" />
 /// <reference path="../sec/encryptor.ts" />
+/// <reference path="../tip/json.ts" />
 (function (LP) {
     var http;
     (function (http) {
@@ -989,156 +1212,4 @@ function extend(deep, obj) {
     }
     return firstArg;
 }
-if (!String.prototype.noHTML) {
-    /**
-     * 删除所有HTML标签
-     *
-     * let str = "<a href=''>我爱你</a>".toPre();
-     * 返回 '我爱你'
-     *
-     * @return {String}
-     */
-    String.prototype.noHTML = function () {
-        return this.replace(/<script[^>]*?>.*?<\/script>/ig, '').replace(/<[\/\!]*?[^<>]*?>/g, '').replace(/<style[^>]*?>.*?<\/style>/ig, '').replace(/<![\s\S]*?--[ \t\n\r]*>/, '').replace(/([\r\n])[\s]+/, '').replace(/&(quot|#34|amp|#38|lt|#60|gt|#62|nbsp|#160)/i, '');
-    };
-}
-if (!String.prototype.toHTML) {
-    /**
-     * 转义字符串的HTML字符，主要有 < > " ' &
-     * let str = '<a href="xxx">'.toHTML();
-     * 返回 '&lt;a href=&quot;xxx&quot;&gt;'
-     *
-     * @return {String}
-     */
-    String.prototype.toHTML = function () {
-        return this.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    };
-}
-/// <reference path="../polyfill/string.ts" />
-/// <reference path="../http/base.ts" />
-/// <reference path="../lang.ts" />
-var LP;
-/// <reference path="../polyfill/string.ts" />
-/// <reference path="../http/base.ts" />
-/// <reference path="../lang.ts" />
-(function (LP) {
-    var tip;
-    (function (tip) {
-        tip.toast_interface = null;
-        tip.alert_interface = null;
-        tip.confirm_interface = null;
-        tip.prompt_interface = null;
-        function formatMessage(message) {
-            return !(message instanceof Object) ? { content: message } : message;
-        }
-        tip.formatMessage = formatMessage;
-        function toast(message, timeout) {
-            if (timeout === void 0) { timeout = 1000; }
-            var _message = formatMessage(message);
-            return promiseWrap(function () {
-                if (typeof tip.toast_interface == 'function')
-                    return tip.toast_interface(_message, timeout);
-                else
-                    window.alert(_message.content.noHTML());
-            });
-        }
-        tip.toast = toast;
-        function alert(message, confirm_callback) {
-            var _message = formatMessage(message);
-            return promiseWrap(function () {
-                if (typeof tip.alert_interface == 'function')
-                    return tip.alert_interface(_message);
-                else
-                    window.alert(_message.content.noHTML());
-            }).then(function () {
-                if (confirm_callback && typeof confirm_callback == 'function')
-                    confirm_callback.call(void 0);
-            });
-        }
-        tip.alert = alert;
-        function confirm(message, confirm_callback, cancel_callback) {
-            var _message = formatMessage(message);
-            return promiseWrap(function () {
-                if (typeof tip.confirm_interface == 'function')
-                    return tip.confirm_interface(_message);
-                else {
-                    if (!window.confirm(_message.content.noHTML()))
-                        throw '';
-                }
-            }).then(function () {
-                if (confirm_callback && typeof confirm_callback == 'function')
-                    confirm_callback.call(void 0);
-            }, function () {
-                if (cancel_callback && typeof cancel_callback == 'function')
-                    cancel_callback.call(void 0);
-            });
-        }
-        tip.confirm = confirm;
-        function prompt(message, confirm_callback, cancel_callback) {
-            var _message = formatMessage(message);
-            return promiseWrap(function () {
-                if (typeof tip.prompt_interface == 'function')
-                    return tip.prompt_interface(_message);
-                else {
-                    var v = window.prompt(_message.content.noHTML());
-                    if (!v)
-                        throw '';
-                    else
-                        return v;
-                }
-            }).then(function (v) {
-                if (confirm_callback && typeof confirm_callback == 'function')
-                    confirm_callback.call(void 0, v);
-            }, function () {
-                if (cancel_callback && typeof cancel_callback == 'function')
-                    cancel_callback.call(void 0);
-            });
-        }
-        tip.prompt = prompt;
-    })(tip = LP.tip || (LP.tip = {}));
-})(LP || (LP = {}));
-/// <reference path="../polyfill/string.ts" />
-/// <reference path="../lang.ts" />
-var LP;
-/// <reference path="../polyfill/string.ts" />
-/// <reference path="../lang.ts" />
-(function (LP) {
-    var tip;
-    (function (tip) {
-        tip.diy_interface = null;
-        function diy(message, result, tipType) {
-            var _message = tip.formatMessage(message);
-            return promiseWrap(function () {
-                if (typeof tip.diy_interface == 'function')
-                    return tip.diy_interface(_message, result, tipType);
-                else
-                    return window.alert(_message.content.noHTML());
-            });
-        }
-        function json(result, message, tipType) {
-            if (typeof message == 'undefined' || typeof tipType != 'object')
-                return;
-            else if (typeof message == 'string')
-                message = { content: message };
-            diy(message, result, tipType);
-            switch (tipType.type) {
-                case 'redirect':
-                    setTimeout(function () {
-                        self.location.href = tipType.url;
-                    }, tipType.timeout);
-                    break;
-                case 'refresh':
-                    setTimeout(function () {
-                        self.location.reload();
-                        self.location.href = self.location.href;
-                    }, tipType.timeout);
-                    break;
-                case 'back':
-                case 'toast':
-                    break;
-            }
-        }
-        tip.json = json;
-    })(tip = LP.tip || (LP.tip = {}));
-})(LP || (LP = {}));
 //# sourceMappingURL=lp.js.map
