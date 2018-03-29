@@ -1032,7 +1032,7 @@ var LP;
                             resolve(json);
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            reject(arguments);
+                            reject([].slice.call(arguments));
                         }
                     };
                     if (typeof _headers['Authorization'] != 'undefined') {
@@ -1060,18 +1060,25 @@ var LP;
             };
             jQueryAjax.prototype.errorHandler = function (e) {
                 if (e instanceof Array) {
+                    var xhr = e[0];
                     var textStatus = e[1];
                     switch (textStatus) {
                         case 'timeout':
                             LP.tip.toast(LP.QUERY_LANGUAGE.network_timeout);
                             break;
                         case 'error':
-                            break;
-                        case 'notmodified':
+                            if (xhr instanceof Object && typeof xhr.responseJSON != 'undefined') {
+                                var json = xhr.responseJSON;
+                                if (json instanceof Object && typeof json.result != 'undefined') {
+                                    LP.tip.json(json.result, json.message, json.tipType);
+                                }
+                            }
                             break;
                         case 'parsererror':
                             LP.tip.toast(LP.QUERY_LANGUAGE.parser_error);
                             break;
+                        //case 'notmodified':
+                        case 'abort':
                         default:
                             LP.tip.toast(LP.QUERY_LANGUAGE.server_error);
                             break;

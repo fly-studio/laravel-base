@@ -24,7 +24,7 @@
 					</ul>
 				</li>
 				<{pluginclude file="admin/sidebar.inc.tpl"}>
-				<li><a href="<{'auth/logout'|url}>"><i class="gi gi-exit sidebar-nav-icon"></i>退出系统</a></li>
+				<li><a href="<{'admin/auth/logout'|url}>"><i class="gi gi-exit sidebar-nav-icon"></i>退出系统</a></li>
 			</ul>
 			<!-- END Sidebar Navigation -->
 			<{/block}>
@@ -34,4 +34,3 @@
 	<!-- END Wrapper for scrolling functionality -->
 </div>
 <!-- END Main Sidebar -->
-

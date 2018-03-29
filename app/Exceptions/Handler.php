@@ -68,29 +68,21 @@ class Handler extends ExceptionHandler
 					{
 						$file = str_replace($replaced_paths, '', $value['file']);
 						$line = $value['line'];
-						return app(OutputResponseFactory::class)
-							->failure('document.model_not_exists', false, [
-									'model' => $exception->getModel(),
-									'file' => $file ,
-									'line' => $line,
-									'id' => implode(',', $exception->getIds())
-								])
-							->setRequest($request);
+						return $this->prepareJsonResponse($request, $exception,'document.model_not_exists', [
+							'model' => $exception->getModel(),
+							'file' => $file ,
+							'line' => $line,
+							'id' => implode(',', $exception->getIds())
+						]);
 					}
 				}
 			}
 			else if($exception instanceof PermissionException)
-				return app(OutputResponseFactory::class)
-					->failure('auth.permission_forbidden')
-					->setRequest($request);
+				return $this->prepareJsonResponse($request, $exception, 'auth.permission_forbidden');
 			else if ($exception instanceof TokenMismatchException)
-				return app(OutputResponseFactory::class)
-					->failure('validation.csrf_invalid')
-					->setRequest($request);
+				return $this->prepareJsonResponse($request, $exception, 'validation.csrf_invalid');
 			else if (($exception instanceof QueryException) || ($exception instanceof PDOException))
-				return app(OutputResponseFactory::class)
-					->error('server.error_database')
-					->setRequest($request);
+				return $this->prepareJsonResponse($request, $exception, 'server.error_database');
 			// other 500 errors
 		}
 
@@ -104,14 +96,14 @@ class Handler extends ExceptionHandler
 	 * @param  \Exception $e
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	protected function prepareJsonResponse($request, Exception $e)
+	protected function prepareJsonResponse($request, Exception $e, $message_name = null, array $data = [])
 	{
 		$status = $this->isHttpException($e) ? $e->getStatusCode() : 500;
 
 		$headers = $this->isHttpException($e) ? $e->getHeaders() : [];
 
 		return app(OutputResponseFactory::class)
-			->exception($e)
+			->exception($e, $message_name ?? $e->getMessage() ?: 'Server Error', false, $data)
 			->setRequest($request)
 			->withHeaders($headers)
 			->setStatusCode($status);
@@ -131,7 +123,7 @@ class Handler extends ExceptionHandler
 
 		return $request->expectsJson() || $api
 					//? response()->json(['message' => $exception->getMessage()], 401)
-					? app(OutputResponseFactory::class)->failure($api ? 'auth.unAuthorization' : 'auth.unlogin')->setRequest($request)
+					? $this->prepareJsonResponse($request, $exception, $api ? 'auth.unAuthorization' : 'auth.unlogin')
 					: redirect()->guest(route($admin ? 'admin-login' : 'login'));
 	}
 
