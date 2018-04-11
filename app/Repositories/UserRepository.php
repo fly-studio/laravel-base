@@ -16,8 +16,8 @@ class UserRepository extends Repository {
 
 	public function separateData($data)
 	{
-		$extraKeys = [];
-		$multipleKeys = [];
+		$extraKeys = [/*fill your extra keys*/];
+		$multipleKeys = [/*fill your multiple keys*/];
 
 		isset($data['password']) && $data['password'] = $this->hashPassword($data['password']);
 		$extra = array_only($data, $extraKeys);
@@ -44,19 +44,37 @@ class UserRepository extends Repository {
 		return User::with(['roles'])->find($id);
 	}
 
-	public function store(array $data)
+	public function findByUsername($username)
+	{
+		return User::with(['roles'])->findByUsername($username);
+	}
+
+	public function findOrFail($id)
+	{
+		return User::with(['roles'])->findOrFail($id);
+	}
+
+	public function store(array $data, $roleOrName = null)
 	{
 		$d = $this->separateData($data);
 		extract($d);
-		return DB::transaction(function() use ($data, $extra, $multiples, $role_ids) {
+		return DB::transaction(function() use ($data, $extra, $multiples, $role_ids, $roleOrName) {
 			$user = User::create($data);
-			$user->extra()->update($extra);
-			foreach((array)$multiples as $k => $v)
+			//update extra
+			!empty($extra) && $user->extra()->update($extra);
+			//update multiples
+			if (!empty($multiples))
 			{
-				$catalog = Catalog::getCatalogsByName('fields.'.Str::singular($k));
-				$game->$k()->attach($v, ['parent_cid' => $catalog['id']]);
+				foreach((array)$multiples as $k => $v)
+				{
+					$catalog = Catalog::getCatalogsByName('fields.'.Str::singular($k));
+					$user->$k()->attach($v, ['parent_cid' => $catalog['id']]);
+				}
 			}
-			$user->roles()->sync($role_ids);
+			//update roles
+			!empty($role_ids) && $user->roles()->sync($role_ids);
+			!empty($roleOrName) && $user->attachRole($roleOrName instanceof Role ? $roleOrName : Role::findByName($roleOrName));
+
 			return $user;
 		});
 	}
@@ -68,14 +86,20 @@ class UserRepository extends Repository {
 
 		return DB::transaction(function() use ($user, $extra, $multiples, $data, $role_ids){
 			$user->update($data);
-			$user->extra()->update($extra);
-			foreach((array)$multiples as $k => $v)
+			//update extra
+			!empty($extra) && $user->extra()->update($extra);
+			//update multiples
+			if (!empty($multiples))
 			{
-				$catalog = Catalog::getCatalogsByName('fields.'.Str::singular($k));
-				$game->$k()->detach();
-				$game->$k()->attach($v, ['parent_cid' => $catalog['id']]);
+				foreach((array)$multiples as $k => $v)
+				{
+					$catalog = Catalog::getCatalogsByName('fields.'.Str::singular($k));
+					$user->$k()->detach( array_map($catalog['children'], function($v){ return $v['id'];}) ); //detach all ids of fileds.$k.children
+					$user->$k()->attach($v, ['parent_cid' => $catalog['id']]);
+				}
 			}
-			$user->roles()->sync($role_ids);
+			//update roles
+			!empty($role_ids) && $user->roles()->sync($role_ids);
 			return $user;
 		});
 	}
@@ -101,10 +125,10 @@ class UserRepository extends Repository {
 		$builder = $user->newQuery()->with(['roles']);
 
 		$total = $this->_getCount($request, $builder, FALSE);
-		$data = $this->_getData($request, $builder, null, ['users.*']);
+		$data = $this->_getData($request, $builder);
 		$data['recordsTotal'] = $total; //不带 f q 条件的总数
 		$data['recordsFiltered'] = $data['total']; //带 f q 条件的总数
-		
+
 		return $data;
 	}
 
@@ -117,7 +141,7 @@ class UserRepository extends Repository {
 		$data = $this->_getExport($request, $builder, function($items){
 			foreach($items as $item)
 				$item['gender'] = !empty($item['gender']) ? $item['gender']['title'] : NULL;
-		}, ['users.*']);
+		});
 
 		return $data;
 	}

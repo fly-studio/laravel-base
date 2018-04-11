@@ -36,17 +36,6 @@ class User extends Authenticatable implements AuditableContract
 		'avatar_aid' => 'attachment',
 	];
 
-
-	public static function add($data, $role_name = NULL)
-	{
-		$data['password'] = empty($data['password']) ? '' : bcrypt($data['password']);
-		$user = static::create($data);
-		//加入view组
-		!empty($role_name) && $user->attachRole($role_name instanceof Role ? $role_name : Role::findByName($role_name));
-		return $user;
-	}
-
-
 	/*public function xxx_catalogs()
 	{
 		$catalog = Catalog::getCatalogsByName('fields.xxx_catalog');

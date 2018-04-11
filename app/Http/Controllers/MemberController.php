@@ -6,15 +6,17 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\User;
-use App\Role;
+use App\Repositories\UserRepository;
 
 class MemberController extends Controller
 {
+	protected $repo;
 
-	public function __construct()
+	public function __construct(UserRepository $repo)
 	{
 		$this->middleware('auth')->except(['create', 'store']);
+
+		$this->repo = $repo;
 	}
 
 	/**
@@ -52,7 +54,7 @@ class MemberController extends Controller
 		$data = $this->censor($request, 'member.store', $keys);
 
 		unset($data['accept_license']);
-		$user = (new User)->add($data);
+		$user = $this->repo->store($data, 'user1');
 		return $this->success(NULL, 'auth', $user->toArray());
 	}
 

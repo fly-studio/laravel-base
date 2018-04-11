@@ -152,7 +152,7 @@ class MakeRoles extends Migration
 			]);
 			\App\Role::findByName('super')->perms()->sync(\App\Permission::all());
 
-			\App\User::add([
+			app(\App\Repositories\UserRepository::class)->store([
 				'username' => 'admin',
 				'password' => '123456',
 				'nickname' => '超级管理员',
