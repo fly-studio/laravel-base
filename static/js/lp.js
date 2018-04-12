@@ -70,9 +70,14 @@ function promiseWrap(callback) {
     for (var _i = 1; _i < arguments.length; _i++) {
         args[_i - 1] = arguments[_i];
     }
-    return new Promise(function (r) { return r(); }).then(function () {
-        return callback.apply(void 0, __spread(args));
-    });
+    return new Promise(function (r) { return r(); }).then(function () { return callback.apply(void 0, __spread(args)); });
+}
+/**
+ * only one parameter
+ * @param args
+ */
+function promiseReject(args) {
+    return new Promise(function (r, j) { return j(args); });
 }
 /// <reference path="polyfill/deferredPromise.ts" />
 var LP;
@@ -628,7 +633,7 @@ var LP;
                     window.alert(_message.content.noHTML());
             }).then(function () {
                 if (confirm_callback && typeof confirm_callback == 'function')
-                    confirm_callback.call(void 0);
+                    return confirm_callback.call(void 0);
             });
         }
         tip.alert = alert;
@@ -639,14 +644,13 @@ var LP;
                     return tip.confirm_interface(_message);
                 else {
                     if (!window.confirm(_message.content.noHTML()))
-                        throw '';
+                        return promiseReject();
                 }
             }).then(function () {
                 if (confirm_callback && typeof confirm_callback == 'function')
-                    confirm_callback.call(void 0);
+                    return confirm_callback.call(void 0);
             }, function () {
-                if (cancel_callback && typeof cancel_callback == 'function')
-                    cancel_callback.call(void 0);
+                return promiseReject(cancel_callback && typeof cancel_callback == 'function' ? cancel_callback.call(void 0) : null);
             });
         }
         tip.confirm = confirm;
@@ -658,16 +662,15 @@ var LP;
                 else {
                     var v = window.prompt(_message.content.noHTML());
                     if (!v)
-                        throw '';
+                        return promiseReject();
                     else
                         return v;
                 }
             }).then(function (v) {
                 if (confirm_callback && typeof confirm_callback == 'function')
-                    confirm_callback.call(void 0, v);
+                    return confirm_callback.call(void 0, v);
             }, function () {
-                if (cancel_callback && typeof cancel_callback == 'function')
-                    cancel_callback.call(void 0);
+                return promiseReject(cancel_callback && typeof cancel_callback == 'function' ? cancel_callback.call(void 0) : null);
             });
         }
         tip.prompt = prompt;
@@ -794,14 +797,14 @@ var LP;
                             return json;
                         }
                         else {
-                            throw json;
+                            return promiseReject(json);
                         }
                     }
                     return json;
                 }).catch(function (e) {
                     if (_this.autoTip)
                         _this.errorHandler(e);
-                    throw e;
+                    return promiseReject(e);
                 });
             };
             Base.prototype.get = function (url, data) {

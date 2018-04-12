@@ -1,8 +1,4 @@
 let mix = require('laravel-mix');
-let File = require('laravel-mix/src/File');
-let uglify = require('uglify-js');
-let UglifyCss = require('clean-css');
-let extend = require('lodash').extend;
 mix.autoload({});
 mix.setPublicPath('./');
 mix.options({
@@ -11,6 +7,7 @@ mix.options({
 	uglify: {uglifyOptions: {output: {ascii_only: true}}}, // Uglify-specific options. https://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
 	//postCss: [] // Post-CSS options: https://github.com/postcss/postcss/blob/master/docs/plugins.md
 });
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
