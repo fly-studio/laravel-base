@@ -55,32 +55,36 @@ class Handler extends ExceptionHandler
 	 */
 	public function render($request, Exception $exception)
 	{
-		// 当findOrFail等情况下出现的报错
-		if($exception instanceof ModelNotFoundException)
-		{
-			$traces = $exception->getTrace();
-			$replaced_paths = array_merge([base_path()], array_map(function($v) {return realpath($v);}, config('plugins.paths')));
-			foreach($traces as $key => $value)
-			{
-				if ($value['function'] == '__callStatic' && Str::endsWith($value['args'][0], 'OrFail'))
-				{
-					$file = str_replace($replaced_paths, '', $value['file']);
-					$line = $value['line'];
-					return $this->prepareJsonResponse($request, $exception,'document.model_not_exists', [
-						'model' => $exception->getModel(),
-						'file' => $file ,
-						'line' => $line,
-						'id' => implode(',', $exception->getIds())
-					]);
-				}
-			}
-		}
-		else if($exception instanceof PermissionException)
+		if($exception instanceof PermissionException)
 			return $this->prepareJsonResponse($request, $exception, 'auth.permission_forbidden');
 		else if ($exception instanceof TokenMismatchException)
 			return $this->prepareJsonResponse($request, $exception, 'validation.csrf_invalid');
-		else if (($exception instanceof QueryException) || ($exception instanceof PDOException))
-			return $this->prepareJsonResponse($request, $exception, 'server.error_database');
+
+		if (!config('app.debug', false))
+		{
+			// 当findOrFail等情况下出现的报错
+			if($exception instanceof ModelNotFoundException)
+			{
+				$traces = $exception->getTrace();
+				$replaced_paths = array_merge([base_path()], array_map(function($v) {return realpath($v);}, config('plugins.paths')));
+				foreach($traces as $key => $value)
+				{
+					if ($value['function'] == '__callStatic' && Str::endsWith($value['args'][0], 'OrFail'))
+					{
+						$file = str_replace($replaced_paths, '', $value['file']);
+						$line = $value['line'];
+						return $this->prepareJsonResponse($request, $exception,'document.model_not_exists', [
+							'model' => $exception->getModel(),
+							'file' => $file ,
+							'line' => $line,
+							'id' => implode(',', $exception->getIds())
+						]);
+					}
+				}
+			}
+			else if (($exception instanceof QueryException) || ($exception instanceof PDOException))
+				return $this->prepareJsonResponse($request, $exception, 'server.error_database');
+		}
 
 		// other 500 errors
 		return parent::render($request, $exception);
