@@ -1,7 +1,7 @@
 <script type="text/x-templete" id="at-selector-tpl">
 <div class="btn-group" style="z-index: 3;">
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		<i class="fa fa-paper-plane-o text-info"></i>
+		<i class="fa fa-clock-o text-info"></i>
 	</button>
 	<ul class="dropdown-menu dropdown-menu-right">
 		<li class="dropdown-header">最近<i class="fa fa-clock-o pull-right"></i></li>

@@ -70,14 +70,14 @@ function promiseWrap(callback) {
     for (var _i = 1; _i < arguments.length; _i++) {
         args[_i - 1] = arguments[_i];
     }
-    return new Promise(function (r) { return r(); }).then(function () { return callback.apply(void 0, __spread(args)); });
+    return Promise.resolve(callback.call.apply(callback, __spread([this], args)));
 }
 /**
  * only one parameter
  * @param args
  */
 function promiseReject(args) {
-    return new Promise(function (r, j) { return j(args); });
+    return Promise.reject(args);
 }
 /// <reference path="polyfill/deferredPromise.ts" />
 var LP;
@@ -649,8 +649,8 @@ var LP;
             }).then(function () {
                 if (confirm_callback && typeof confirm_callback == 'function')
                     return confirm_callback.call(void 0);
-            }, function () {
-                return promiseReject(cancel_callback && typeof cancel_callback == 'function' ? cancel_callback.call(void 0) : null);
+            }, function (e) {
+                return promiseReject.call(void 0, cancel_callback && typeof cancel_callback == 'function' ? cancel_callback.call(void 0) : e);
             });
         }
         tip.confirm = confirm;
@@ -669,8 +669,8 @@ var LP;
             }).then(function (v) {
                 if (confirm_callback && typeof confirm_callback == 'function')
                     return confirm_callback.call(void 0, v);
-            }, function () {
-                return promiseReject(cancel_callback && typeof cancel_callback == 'function' ? cancel_callback.call(void 0) : null);
+            }, function (e) {
+                return promiseReject.call(void 0, cancel_callback && typeof cancel_callback == 'function' ? cancel_callback.call(void 0) : e);
             });
         }
         tip.prompt = prompt;
