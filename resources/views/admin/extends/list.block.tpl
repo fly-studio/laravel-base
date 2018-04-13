@@ -110,7 +110,6 @@
 					<li>
 						<a href="javascript:void(0)"><i class="fa fa-print pull-right"></i> 打印</a>
 						<a href="javascript:void(0)" data-namespace="<{block "namespace"}>admin<{/block}>" data-name="<{block 'name'}><{/block}>" data-export="csv"><i class="fi fi-csv pull-right"></i> CSV </a>
-						<a href="javascript:void(0)" data-namespace="<{block "namespace"}>admin<{/block}>" data-name="<{block 'name'}><{/block}>" data-export="pdf"><i class="fi fi-pdf pull-right"></i> PDF</a>
 						<a href="javascript:void(0)" data-namespace="<{block "namespace"}>admin<{/block}>" data-name="<{block 'name'}><{/block}>" data-export="xls"><i class="fi fi-xls pull-right"></i> Excel 2003</a>
 						<a href="javascript:void(0)" data-namespace="<{block "namespace"}>admin<{/block}>" data-name="<{block 'name'}><{/block}>" data-export="xlsx"><i class="fi fi-xlsx pull-right"></i> Excel 2007+</a>
 					</li>

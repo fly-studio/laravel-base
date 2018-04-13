@@ -44,14 +44,14 @@
 </ul>
 
 <{block "menubar-menus"}>
-<div class="collapse navbar-collapse" id="horizontal-menu-collapse"> 
+<div class="collapse navbar-collapse" id="horizontal-menu-collapse">
 	<ul class="nav navbar-nav">
 		<li>
 			<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">用户 <i class="fa fa-angle-down"></i></a>
 			<ul class="dropdown-menu">
 				<li><a href="<{'admin/member'|url}>"><i class="fa fa-asterisk fa-fw pull-right"></i> 所有用户</a></li>
-				<li><a href="<{'admin/member'|url}>?q[ofRole]=1"><i class="fa fa-lock fa-fw pull-right"></i> 会员列表</a></li>
-				<li><a href="<{'admin/member'|url}>?q[ofRole]=-1"><i class="fa fa-user fa-fw pull-right"></i> 受限列表</a></li>
+				<li><a href="<{'admin/member'|url}>?q[ofRole]=1"><i class="fa fa-user fa-fw pull-right"></i> 会员列表</a></li>
+				<li><a href="<{'admin/member'|url}>?q[ofRole]=-1"><i class="fa fa-ban fa-fw pull-right"></i> 受限列表</a></li>
 				<li><a href="<{'admin/member'|url}>?q[ofRole]=9"><i class="fa fa-magnet fa-fw pull-right"></i> 系统用户列表</a></li>
 				<li class="divider"></li>
 			</ul>
