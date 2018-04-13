@@ -62,7 +62,7 @@
 		</div>
 	</div>
 	<div class="form-group col-sm-4 pull-right text-right">
-		<button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 检索</button>
+		<button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> 检索</button> &nbsp; &nbsp;
 	</div>
 	<div class="clearfix"></div>
 </form>
