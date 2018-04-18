@@ -14,18 +14,10 @@ class Role extends BaseRole implements AuditableContract
 	use TreeCacheTrait;
 	use Searchable, Logable;
 
-	public static function getRolesByName($name = NULL)
+	public static function searchRole($name = null, $subKeys = null)
 	{
-		empty(static::$cacheTree) && static::getAll('name');
-		$name = str_replace(['.', '.children.children', '.children.children'], ['.children.', '.children', '.children'], $name);
-		return is_null($name) ? static::$cacheTree['name'] :
-			(empty($name) || in_array($name, ['none', 'null']) ? static::find(0)->toArray() : Arr::get(static::$cacheTree['name'], $name));
-	}
-
-	public static function getRolesById($id = NULL)
-	{
-		empty(static::$cacheTree) && static::getAll();
-		return is_null($id) ? static::$cacheTree['id'][ 0 ][ 'children' ] :
-			(empty($id) ? static::find(0)->toArray() : Arr::get(static::$cacheTree['id'], $id));
+		$node = static::getTreeCache()->search($name, null, 'name');
+		return empty($node) ? null :
+			(is_null($subKeys) ? $node : $node[$subKeys]);
 	}
 }
