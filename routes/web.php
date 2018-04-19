@@ -17,7 +17,7 @@ $router->resources([
 	'member' => 'MemberController',
 ]);
 
-$router->group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'role:administrator']], function($router) {
+$router->group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'role:administrator.**']], function($router) {
 
 	$router->crud([
 		'member' => 'MemberController',

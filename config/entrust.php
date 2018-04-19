@@ -182,7 +182,7 @@ return [
         /**
          * Define if the Entrust middleware are registered automatically in the service provider
          */
-        'register' => false,
+        'register' => true,
 
         /**
          * Method to be called in the middleware return case.
