@@ -54,12 +54,18 @@ class User extends Authenticatable implements AuditableContract
 
 	public function scopeOfRole(Builder $builder, $roleIdOrName)
 	{
-		$role = Role::findByCache($roleIdOrName);
-		empty($role) && $role = Role::findByName($roleIdOrName);
+		$role = Role::searchRole($roleIdOrName);
+		if (empty($role))
+			$role = Role::findByName($roleIdOrName);
+		else
+			$role = $role->fillToModel(new Role);
+
+		if (empty($role))
+			return;
 
 		$builder->join('role_user', 'role_user.user_id', '=', 'users.id', 'LEFT');
 
-		$builder->whereIn('role_user.role_id', $role->getDescendant()->merge([$role])->modelKeys());
+		$builder->whereIn('role_user.role_id', $role->getLeaves()->prepend($role)->modelKeys());
 	}
 
 	public function scope_all(Builder $builder, $keywords)
