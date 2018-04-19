@@ -21,12 +21,13 @@ class Role extends BaseRole implements AuditableContract
 			(is_null($subKeys) ? $node : $node[$subKeys]);
 	}
 
-	public static function scopeOfLeaves($builder, $name)
+	public static function scopeOfLeaves($builder, $name, $withSelf = false)
 	{
 		$node = static::getTreeCache()->search($name, null, 'name');
 		if (empty($node))
 			return;
-		$leaves = $node->leaves()->put($node->id, $node);
+		$leaves = $node->leaves();
+		if (boolval($withSelf)) $leaves->put($node->id, $node);
 		$builder->whereIn('id', $leaves->pluck('id')->toArray());
 	}
 }

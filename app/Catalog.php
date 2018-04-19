@@ -17,12 +17,13 @@ class Catalog extends BaseCatalog implements AuditableContract {
 		return $builder->whereIn($this->getKeyName(), $catalogs);
 	}
 
-	public static function scopeOfLeaves($builder, $name)
+	public static function scopeOfLeaves($builder, $name, $withSelf = false)
 	{
 		$node = static::getTreeCache()->search($name, null, 'name');
 		if (empty($node))
-			return $builder->whereIn('id', []);
-		$leaves = $node->leaves()->prepend($node, $node->id);
-		$builder->whereIn('id', $leaves->keys()->toArray());
+			return;
+		$leaves = $node->leaves();
+		if (boolval($withSelf)) $leaves->put($node->id, $node);
+		$builder->whereIn('id', $leaves->pluck('id')->toArray());
 	}
 }
