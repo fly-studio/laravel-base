@@ -38,7 +38,7 @@ class User extends Authenticatable implements AuditableContract
 
 	/*public function xxx_catalogs()
 	{
-		$catalog = Catalog::getCatalogsByName('fields.xxx_catalog');
+		$catalog = catalog_search('fields.xxx_catalog');
 		return $this->belongsToMany('App\Catalog', 'user_multiples', 'uid', 'cid')->withPivot(['parent_cid', 'extra'])->wherePivot('parent_cid', $catalog['id'])->withTimestamps();
 	}*/
 
