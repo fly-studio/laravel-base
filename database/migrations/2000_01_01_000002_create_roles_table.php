@@ -24,17 +24,18 @@ class CreateRolesTable extends Migration
 			$table->timestamps();
 		});
 
-		// Create table for associating roles to users (Many-to-Many)
+		// Create table for associating roles to users and teams (Many To Many Polymorphic)
 		Schema::create('role_user', function (Blueprint $table) {
-			$table->integer('user_id')->unsigned()->comment = '用户ID';
+			$table->unsignedInteger('user_id')->comment = '用户ID';
 			$table->integer('role_id')->comment = '用户组ID';
+			$table->string('user_type')->comment = '用户表KEY';
 
 			$table->foreign('user_id')->references('id')->on('users')
 				->onUpdate('cascade')->onDelete('cascade');
 			$table->foreign('role_id')->references('id')->on('roles')
 				->onUpdate('cascade')->onDelete('cascade');
 
-			$table->primary(['user_id', 'role_id']);
+			$table->primary(['user_id', 'role_id', 'user_type']);
 		});
 
 		// Create table for storing permissions
@@ -48,7 +49,7 @@ class CreateRolesTable extends Migration
 
 		// Create table for associating permissions to roles (Many-to-Many)
 		Schema::create('permission_role', function (Blueprint $table) {
-			$table->integer('permission_id')->unsigned()->comment = '权限ID';
+			$table->unsignedInteger('permission_id')->comment = '权限ID';
 			$table->integer('role_id')->comment = '用户组ID';
 
 			$table->foreign('permission_id')->references('id')->on('permissions')
@@ -59,17 +60,18 @@ class CreateRolesTable extends Migration
 			$table->primary(['permission_id', 'role_id']);
 		});
 
-		// Create table for associating permissions to users (Many-to-Many)
+		// Create table for associating permissions to users (Many To Many Polymorphic)
 		Schema::create('permission_user', function (Blueprint $table) {
-			$table->integer('permission_id')->unsigned()->comment = '权限ID';
-			$table->integer('user_id')->unsigned()->comment = '用户ID';
+			$table->unsignedInteger('permission_id')->comment = '权限ID';
+			$table->unsignedInteger('user_id')->comment = '用户ID';
+			$table->string('user_type')->comment = '用户表KEY';
 
 			$table->foreign('permission_id')->references('id')->on('permissions')
 				->onUpdate('cascade')->onDelete('cascade');
 			$table->foreign('user_id')->references('id')->on('users')
 				->onUpdate('cascade')->onDelete('cascade');
 
-			$table->primary(['permission_id', 'user_id']);
+			$table->primary(['permission_id', 'user_id', 'user_type']);
 		});
 
 	}

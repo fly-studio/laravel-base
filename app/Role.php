@@ -4,9 +4,9 @@ namespace App;
 
 use App\Models\Logable;
 use Illuminate\Support\Arr;
-use Addons\Entrust\Role as BaseRole;
 use Addons\Core\Models\TreeCacheTrait;
 use Addons\Elasticsearch\Scout\Searchable;
+use Addons\Entrust\Models\Role as BaseRole;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 class Role extends BaseRole implements AuditableContract

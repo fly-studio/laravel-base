@@ -12,9 +12,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use App\Role;
 use App\Models\Logable;
 use App\Models\CatalogCastTrait;
-use Addons\Core\Models\CallTrait;
 use Addons\Core\Models\CacheTrait;
 use App\Models\AttachmentCastTrait;
+use Addons\Core\Models\BuilderTrait;
 use Addons\Entrust\Traits\UserTrait;
 use Addons\Core\Models\PolyfillTrait;
 use Addons\Elasticsearch\Scout\Searchable;
@@ -22,7 +22,7 @@ use Addons\Elasticsearch\Scout\Searchable;
 class User extends Authenticatable implements AuditableContract
 {
 	use HasApiTokens, SoftDeletes, Notifiable, UserTrait;
-	use CacheTrait, CallTrait, PolyfillTrait;
+	use CacheTrait, BuilderTrait, PolyfillTrait;
 	use CatalogCastTrait, AttachmentCastTrait;
 	use Searchable, Logable;
 
