@@ -67,7 +67,7 @@ class UserRepository extends Repository {
 			{
 				foreach((array)$multiples as $k => $v)
 				{
-					$catalog = Catalog::getCatalogsByName('fields.'.Str::singular($k));
+					$catalog = catalog_search('fields.'.Str::singular($k));
 					$user->$k()->attach($v, ['parent_cid' => $catalog['id']]);
 				}
 			}
@@ -93,8 +93,8 @@ class UserRepository extends Repository {
 			{
 				foreach((array)$multiples as $k => $v)
 				{
-					$catalog = Catalog::getCatalogsByName('fields.'.Str::singular($k));
-					$user->$k()->detach( array_map($catalog['children'], function($v){ return $v['id'];}) ); //detach all ids of fileds.$k.children
+					$catalog = catalog_search('fields.'.Str::singular($k));
+					$user->$k()->detach($catalog->children()->pluck('id')->toArray()); //detach all ids of fileds.$k.children
 					$user->$k()->attach($v, ['parent_cid' => $catalog['id']]);
 				}
 			}
