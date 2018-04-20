@@ -52,7 +52,7 @@ class User extends Authenticatable implements AuditableContract
 		return $this->hasOne('App\\UserFinance', 'id', 'id');
 	}
 
-	public function scopeOfRole(Builder $builder, $roleIdOrName)
+	public function scopeOfRole(Builder $builder, $roleIdOrName, $withSelf = true)
 	{
 		$role = Role::searchRole($roleIdOrName);
 		if (empty($role))
@@ -63,9 +63,10 @@ class User extends Authenticatable implements AuditableContract
 		if (empty($role))
 			return;
 
-		$builder->join('role_user', 'role_user.user_id', '=', 'users.id', 'LEFT');
+		$roles = $role->getLeaves();
+		if ($withSelf) $roles->prepend($withSelf);
 
-		$builder->whereIn('role_user.role_id', $role->getLeaves()->prepend($role)->modelKeys());
+		return $builder->join('role_user', 'role_user.user_id', '=', 'users.id', 'LEFT')->whereIn('role_user.role_id', $roles->modelKeys());
 	}
 
 	public function scope_all(Builder $builder, $keywords)
