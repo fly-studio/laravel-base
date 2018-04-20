@@ -64,7 +64,7 @@ class User extends Authenticatable implements AuditableContract
 			return;
 
 		$roles = $role->getLeaves();
-		if ($withSelf) $roles->prepend($withSelf);
+		if ($withSelf) $roles = $roles->prepend($role);
 
 		return $builder->join('role_user', 'role_user.user_id', '=', 'users.id', 'LEFT')->whereIn('role_user.role_id', $roles->modelKeys());
 	}
