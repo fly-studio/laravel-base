@@ -186,9 +186,9 @@ return [
 
         /**
          * Method to be called in the middleware return case.
-         * Available: abort|redirect
+         * Available: abort|redirect|exception
          */
-        'handling' => 'abort',
+        'handling' => 'exception',
 
         /**
          * Parameter passed to the middleware_handling method

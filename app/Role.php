@@ -4,14 +4,12 @@ namespace App;
 
 use App\Models\Logable;
 use Illuminate\Support\Arr;
-use Addons\Core\Models\TreeCacheTrait;
 use Addons\Elasticsearch\Scout\Searchable;
 use Addons\Entrust\Models\Role as BaseRole;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 class Role extends BaseRole implements AuditableContract
 {
-	use TreeCacheTrait;
 	use Searchable, Logable;
 
 	public static function searchRole($name = null, $subKeys = null)
