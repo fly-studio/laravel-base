@@ -72,7 +72,7 @@ class UserRepository extends Repository {
 				}
 			}
 			//update roles
-			!empty($role_ids) && $user->roles()->sync($role_ids);
+			!empty($role_ids) && $user->syncRoles(array_wrap($role_ids));
 			!empty($roleOrName) && $user->attachRole($roleOrName instanceof Role ? $roleOrName : Role::findByName($roleOrName));
 
 			return $user;
@@ -99,7 +99,7 @@ class UserRepository extends Repository {
 				}
 			}
 			//update roles
-			!empty($role_ids) && $user->roles()->sync($role_ids);
+			!empty($role_ids) && $user->syncRoles(array_wrap($role_ids));
 			return $user;
 		});
 	}
