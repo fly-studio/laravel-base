@@ -83,7 +83,9 @@
 	<div class="block-options" id="tools-contrainer">
 		<{block "table-tools-before"}><{/block}>
 		<{block "table-tools-create"}>
+		<{if $_controller->checkMethodPermission('create')}>
 		<a class="btn btn-success btn-sm btn-alt" data-toggle="tooltip" title="新建<{block 'title'}><{/block}>" href="<{''|url}>/<{block "namespace"}>admin<{/block}>/<{block "name"}><{/block}>/create" data-shortcuts="ctrl+n"><i class="fa fa-plus animated pulse infinite"></i></a>
+		<{/if}>
 		<{/block}>
 		<{block "table-tools-plus"}><{/block}>
 		<{block "table-tools-resh"}>
@@ -99,13 +101,16 @@
 					<li>
 						<{block "table-tools-dropdown-operate-before"}><{/block}>
 						<{block "table-tools-dropdown-operate-delete"}>
+						<{if $_controller->checkMethodPermission('destory')}>
 						<a href="<{''|url}>/<{block "namespace"}>admin<{/block}>/<{block "name"}><{/block}>/0" method="delete" selector="#datatable [name='id[]']:checked" confirm="<{block "table-tools-dropdown-delete-confirm"}>您确定删除这%L项？此操作不可恢复！<{/block}>" class="" data-shortcuts="del"><span class="text-danger"><i class="fa fa-times pull-right "></i>删除所选</span></a>
+						<{/if}>
 						<{/block}>
 						<{block "table-tools-dropdown-operate-plus"}><{/block}>
 						<{block "table-tools-dropdown-operate-after"}><{/block}>
 					</li>
 				<{/block}>
 				<{block "table-tools-dropdown-export"}>
+					<{if $_controller->checkMethodPermission('export')}>
 					<li class="dropdown-header">导出<i class="fa fa-share pull-right"></i></li>
 					<li>
 						<a href="javascript:void(0)"><i class="fa fa-print pull-right"></i> 打印</a>
@@ -113,6 +118,7 @@
 						<a href="javascript:void(0)" data-namespace="<{block "namespace"}>admin<{/block}>" data-name="<{block 'name'}><{/block}>" data-export="xls"><i class="fi fi-xls pull-right"></i> Excel 2003</a>
 						<a href="javascript:void(0)" data-namespace="<{block "namespace"}>admin<{/block}>" data-name="<{block 'name'}><{/block}>" data-export="xlsx"><i class="fi fi-xlsx pull-right"></i> Excel 2007+</a>
 					</li>
+					<{/if}>
 				<{/block}>
 				<{block "table-tools-dropdown-after"}><{/block}>
 			</ul>
@@ -178,11 +184,15 @@
 					<div class="btn-group">
 						<{block "table-td-options-before"}><{/block}>
 							<{block "table-td-options-edit"}>
+							<{if $_controller->checkMethodPermission('edit')}>
 						<a href="<{''|url}>/<{block "namespace"}>admin<{/block}>/<{block "name"}><{/block}>/{{full.id}}/edit" data-toggle="tooltip" title="编辑" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+							<{/if}>
 							<{/block}>
 							<{block "table-td-options-plus"}><{/block}>
 							<{block "table-td-options-delete"}>
+							<{if $_controller->checkMethodPermission('destory')}>
 						<a href="<{''|url}>/<{block "namespace"}>admin<{/block}>/<{block "name"}><{/block}>/{{full.id}}" method="delete" confirm="<{block "table-td-options-delete-confirm"}>您确定删除这项：{{full.id}}吗？<{/block}>" data-toggle="tooltip" title="删除" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></a>
+							<{/if}>
 							<{/block}>
 						<{block "table-td-options-after"}><{/block}>
 					</div>

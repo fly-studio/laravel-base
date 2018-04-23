@@ -93,7 +93,7 @@
 					var data = method.format(json, id, selection, text);
 					$this.select2($.extend(true, {}, {language: "zh-CN", data: data, allowClear: true}, options));
 					//初始值
-					$this.val(values ? values : null).trigger("change");
+					$this.val(values ? values : null).trigger("change").triggerHandler('select2.loaded', [json, values]);
 				});
 			});
 		},
@@ -117,12 +117,14 @@
 					data = method.recursive(data);
 					$this.select2($.extend(true, {}, {
 						//theme: "bootstrap",
-						language: "zh-CN",data: data, allowClear: true,
+						language: "zh-CN",
+						data: data,
+						allowClear: true,
 						templateResult: function(data){return $('<div>' + data.text + '</div>');},
 						templateSelection: function(data){return data.selection;}
 					}, options));
 					//初始值
-					$this.val(values ? values : null).trigger("change");
+					$this.val(values ? values : null).trigger("change").triggerHandler('select2.loaded', [json, values]);
 				});
 			});
 		},
@@ -151,9 +153,11 @@
 							var config = {page: _params.data.page, f: {}, q: {}};
 							if(term) config.f[term] = {'like': _params.data.term};
 							if(q) config.q[q] = _params.data.q;
-							method.getData(url, $.extend(true, {}, config, params)).then(json => {
+							var _d = $.extend(true, {}, config, params);
+							method.getData(url, _d).then(json => {
 								var data = method.format(json, id, selection, text);
 								success(data);
+								$this.triggerHandler('select2.suggested', [json, _d]);
 							});
 						},
 						processResults: function (json, page) {
@@ -171,11 +175,10 @@
 					var params = $this.data('params');
 					method.getData(url, $.extend(true, {}, params, {f: {id: {in: values}}})).then(json => {
 						var data = method.format(json, id, selection, text);
-						$this.select2($.extend(true, {}, _config, options, {data: data}));
-
+						$this.select2($.extend(true, {}, _config, options, {data: data})).triggerHandler('select2.loaded', [json, values]);
 					});
 				} else
-					$this.select2($.extend(true, {}, _config, options));
+					$this.select2($.extend(true, {}, _config, options)).triggerHandler('select2.loaded');
 			});
 		},
 		tagsModel: function(options){
@@ -204,9 +207,11 @@
 							var config = {page: _params.data.page, f: {}, q: {}};
 							if(term) config.f[term] = {'like': _params.data.term};
 							if(q) config.q[q] = _params.data.q;
-							method.getData(url, $.extend(true, {}, config, params)).then(json => {
+							var _d = $.extend(true, {}, config, params);
+							method.getData(url, _d).then(json => {
 								var data = method.format(json, id, selection, text);
 								success(data);
+								$this.triggerHandler('select2.taged', [json, _d]);
 							});
 						},
 						processResults: function (json, page) {
@@ -233,10 +238,10 @@
 					var config = {f: {id: {in: values}}, q: {}};
 					method.getData(url, $.extend(true, {}, config, params)).then(json => {
 						var data = method.format(json, id, selection, text);
-						$this.select2($.extend(true, {}, _config, options, {data: data}));
+						$this.select2($.extend(true, {}, _config, options, {data: data})).triggerHandler('select2.loaded', [json, values]);
 					});
 				} else
-					$this.select2($.extend(true, {}, _config, options));
+					$this.select2($.extend(true, {}, _config, options)).triggerHandler('select2.loaded');
 			});
 		}
 	});
