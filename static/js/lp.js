@@ -595,6 +595,20 @@ if (!String.prototype.toHTML) {
         return this.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     };
 }
+if (!String.prototype.toPre) {
+    /**
+     * 转义字符串的空格、回车、制表符，也就是将textarea输入的文本可以原样显示到屏幕
+     * 类似于<pre>标签
+     *
+     * var str = " 空格\n第\t二行".toPre();
+     * 返回 '&nbsp;空格<br />第&nbsp;&nbsp;&nbsp;&nbsp;二行'
+     *
+     * @return {String}
+     */
+    String.prototype.toPre = function () {
+        return this.replace(/\040/g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2');
+    };
+}
 /// <reference path="../polyfill/string.ts" />
 /// <reference path="../http/base.ts" />
 /// <reference path="../lang.ts" />
@@ -732,6 +746,14 @@ var LP;
 (function (LP) {
     var http;
     (function (http) {
+        var TIP_MASK;
+        (function (TIP_MASK) {
+            TIP_MASK[TIP_MASK["ALERT_CLIENT_ERROR"] = 1] = "ALERT_CLIENT_ERROR";
+            TIP_MASK[TIP_MASK["ALERT_SERVER_ERROR"] = 2] = "ALERT_SERVER_ERROR";
+            TIP_MASK[TIP_MASK["ALERT_SUCCESS"] = 4] = "ALERT_SUCCESS";
+            TIP_MASK[TIP_MASK["ALERT_ERROR"] = 3] = "ALERT_ERROR";
+            TIP_MASK[TIP_MASK["ALERT_ALL"] = 7] = "ALERT_ALL";
+        })(TIP_MASK = http.TIP_MASK || (http.TIP_MASK = {}));
         function objectToForm(data) {
             var formData;
             if (data instanceof FormData)
@@ -746,7 +768,7 @@ var LP;
         http.objectToForm = objectToForm;
         var Base = /** @class */ (function () {
             function Base() {
-                this.autoTip = false;
+                this.tipMask = 0;
                 this.encryptor = new LP.sec.Encryptor();
                 this.commonHeaders = {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -754,9 +776,50 @@ var LP;
                     'X-RSA': encodeURIComponent(this.encryptor.getPublicKey()),
                 };
                 this.headers = {};
+                this.tipMask = 0;
             }
-            Base.prototype.setAutoTip = function (autoTip) {
-                this.autoTip = autoTip;
+            Base.getInstance = function () {
+                return new this;
+            };
+            Base.prototype.alertMask = function (mask) {
+                this.tipMask |= mask;
+                return this;
+            };
+            Base.prototype.alertAll = function (tip) {
+                if (tip === void 0) { tip = true; }
+                this.tipMask = tip ? TIP_MASK.ALERT_ALL : 0;
+                return this;
+            };
+            Base.prototype.alertClientError = function (tip) {
+                if (tip === void 0) { tip = true; }
+                if (tip)
+                    this.tipMask |= TIP_MASK.ALERT_CLIENT_ERROR;
+                else
+                    this.tipMask ^= TIP_MASK.ALERT_CLIENT_ERROR;
+                return this;
+            };
+            Base.prototype.alertServerError = function (tip) {
+                if (tip === void 0) { tip = true; }
+                if (tip)
+                    this.tipMask |= TIP_MASK.ALERT_SERVER_ERROR;
+                else
+                    this.tipMask ^= TIP_MASK.ALERT_SERVER_ERROR;
+                return this;
+            };
+            Base.prototype.alertError = function (tip) {
+                if (tip === void 0) { tip = true; }
+                if (tip)
+                    this.tipMask |= TIP_MASK.ALERT_ERROR;
+                else
+                    this.tipMask ^= TIP_MASK.ALERT_ERROR;
+                return this;
+            };
+            Base.prototype.alertSuccess = function (tip) {
+                if (tip === void 0) { tip = true; }
+                if (tip)
+                    this.tipMask |= TIP_MASK.ALERT_SUCCESS;
+                else
+                    this.tipMask ^= TIP_MASK.ALERT_SUCCESS;
                 return this;
             };
             Base.getCSRF = function () {
@@ -792,7 +855,7 @@ var LP;
                 }, this.config).then(function (json) {
                     if (json instanceof Object && typeof json.result != 'undefined') {
                         if (json.result == 'success' || json.result == 'api') {
-                            if (_this.autoTip)
+                            if (_this.tipMask & TIP_MASK.ALERT_SUCCESS)
                                 _this.errorHandler(json);
                             return json;
                         }
@@ -802,10 +865,15 @@ var LP;
                     }
                     return json;
                 }).catch(function (e) {
-                    if (_this.autoTip)
+                    if ((_this.tipMask & TIP_MASK.ALERT_SERVER_ERROR) && e instanceof Object && typeof e.result != 'undefined')
+                        _this.errorHandler(e);
+                    else if ((_this.tipMask & TIP_MASK.ALERT_CLIENT_ERROR) && typeof e['result'] == 'undefined')
                         _this.errorHandler(e);
                     return promiseReject(e);
                 });
+            };
+            Base.prototype.showTip = function (e) {
+                return this.errorHandler(e);
             };
             Base.prototype.get = function (url, data) {
                 return this.request('get', url, data);
@@ -936,8 +1004,8 @@ var LP;
 })(LP || (LP = {}));
 if (jQuery) {
     jQuery.fn.extend({
-        query: function (callback, autoTip) {
-            if (autoTip === void 0) { autoTip = true; }
+        query: function (callback, tipMask) {
+            if (tipMask === void 0) { tipMask = LP.http.TIP_MASK.ALERT_ALL; }
             return this.each(function () {
                 var $this = jQuery(this);
                 var is_form = $this.is('form');
@@ -969,7 +1037,7 @@ if (jQuery) {
                             var $t = jQuery(this), o = $t.offset();
                             jQuery('<div style="position:absolute;left:' + (o.left + $t.width()) + 'px;top:' + (o.top - 16) + 'px;height:16px;width:16px;display:block;z-index:99999" class="query-loading"><img src="data:image/gif;base64,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"</div>').appendTo('body');
                         }); //disabled the submit button
-                        return (new LP.http.jQueryAjax()).setAutoTip(autoTip).request(method, url, $selector.serializeArray()).then(function (json) {
+                        return LP.http.jQueryAjax.getInstance().alertMask(tipMask).request(method, url, $selector.serializeArray()).then(function (json) {
                             if (typeof callback != 'undefined' && jQuery.isFunction(callback))
                                 callback.call($this, json);
                         }).finally(function () {

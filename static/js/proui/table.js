@@ -319,11 +319,11 @@ $().ready(function(){
 					page: !isNaN(p) ? Math.ceil(p) : 1
 				}, query);
 
-				LP.http.jQueryAjax.post(LP.baseuri + config.namespace+'/'+config.name+'/data?of=json', params).then(json => {
+				LP.http.jQueryAjax.getInstance().alertError().post(LP.baseuri + config.namespace+'/'+config.name+'/data?of=json', params).then(json => {
 					json.data.data.forEach(function(v, k){v.DT_RowId = 'line-' + (v.id ? v.id : k);});
 					callback(json.data);
-				}).catch(() => {
-					callback([]);
+				}).catch(e => {
+					callback({data: [], total: 0, recordsFiltered: 0, recordsTotal: 0, per_page: 0});
 				});
 			},
 			serverSide: true,
