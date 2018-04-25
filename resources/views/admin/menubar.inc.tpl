@@ -46,6 +46,7 @@
 <{block "menubar-menus"}>
 <div class="collapse navbar-collapse" id="horizontal-menu-collapse">
 	<ul class="nav navbar-nav">
+		<{if $_permissionTable->checkUserRole('super')}>
 		<li>
 			<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">用户 <i class="fa fa-angle-down"></i></a>
 			<ul class="dropdown-menu">
@@ -56,6 +57,7 @@
 				<li class="divider"></li>
 			</ul>
 		</li>
+		<{/if}>
 		<{pluginclude file="admin/menubar.inc.tpl"}>
 	</ul>
 </div>

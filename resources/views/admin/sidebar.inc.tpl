@@ -16,6 +16,7 @@
 				<li class="sidebar-header">
 					<span class="sidebar-header-title">基本</span>
 				</li>
+				<{if $_permissionTable->checkUserRole('super')}>
 				<li>
 					<a href="#" class="sidebar-nav-menu"><i class="fa fa-angle-left sidebar-nav-indicator"></i><i class="gi gi-user sidebar-nav-icon"></i>会员管理</a>
 					<ul>
@@ -23,6 +24,7 @@
 						<li><a href="<{'admin/member/create'|url}>" name="member/create"><i class="gi gi-plus"></i> 添加会员</a></li>
 					</ul>
 				</li>
+				<{/if}>
 				<{pluginclude file="admin/sidebar.inc.tpl"}>
 				<li><a href="<{'admin/auth/logout'|url}>"><i class="gi gi-exit sidebar-nav-icon"></i>退出系统</a></li>
 			</ul>
