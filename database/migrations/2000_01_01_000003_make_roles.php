@@ -150,7 +150,7 @@ class MakeRoles extends Migration
 				'attachment' => '附件',
 				'member' => '用户',
 			]);
-			\App\Role::findByName('super')->permissions()->sync(\App\Permission::all());
+			\App\Role::findByName('super')->syncPermissions(\App\Permission::all(['id'])->modelKeys());
 
 			app(\App\Repositories\UserRepository::class)->store([
 				'username' => 'admin',

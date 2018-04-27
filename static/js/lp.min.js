@@ -872,9 +872,6 @@ var LP;
                     return promiseReject(e);
                 });
             };
-            Base.prototype.showTip = function (e) {
-                return this.errorHandler(e);
-            };
             Base.prototype.get = function (url, data) {
                 return this.request('get', url, data);
             };
@@ -939,21 +936,28 @@ var LP;
                 var params = config.method.toLowerCase() == 'get' ? config.data : {};
                 if (config.method.toLowerCase() == 'get')
                     config.data = null;
-                return this.instance.request({
+                var c = {
                     method: config.method.toLowerCase(),
                     url: config.url,
                     params: params,
                     data: config.data,
                     headers: config.headers
-                });
+                };
+                var _c = extend(true, {}, c, extra);
+                return this.instance.request(_c);
             };
             axiosAjax.prototype.decryptHandler = function () {
                 var t = this;
                 this.instance.defaults.transformResponse = [
                     function (data) {
                         var json = data;
-                        json = t.encryptor.decrypt(json);
-                        data = json;
+                        try {
+                            json = t.encryptor.decrypt(json);
+                            data = json;
+                        }
+                        catch (e) {
+                            console.log(e);
+                        }
                         return data;
                     }
                 ];
@@ -1035,9 +1039,20 @@ if (jQuery) {
                         $doms = $doms.filter(':not(.disabled,[disabled])');
                         $doms.prop('disabled', true).attr('disabled', 'disabled').each(function () {
                             var $t = jQuery(this), o = $t.offset();
-                            jQuery('<div style="position:absolute;left:' + (o.left + $t.width()) + 'px;top:' + (o.top - 16) + 'px;height:16px;width:16px;display:block;z-index:99999" class="query-loading"><img src="data:image/gif;base64,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"</div>').appendTo('body');
+                            jQuery('<div style="position:absolute;left:' + (o.left + $t.width()) + 'px;top:' + (o.top - 16) + 'px;height:32px;width:32px;display:block;z-index:99999" class="query-loading"><img style="width:32px;height:32px;" src="data:image/svg+xml;utf8,%3Csvg width=\'38\' height=\'38\' viewBox=\'0 0 38 38\' xmlns=\'http://www.w3.org/2000/svg\' stroke=\'#fff\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg transform=\'translate(1 1)\' stroke-width=\'2\'%3E%3Ccircle stroke-opacity=\'.5\' cx=\'18\' cy=\'18\' r=\'18\'/%3E%3Cpath d=\'M36 18c0-9.94-8.06-18-18-18\'%3E%3CanimateTransform attributeName=\'transform\' type=\'rotate\' from=\'0 18 18\' to=\'360 18 18\' dur=\'1s\' repeatCount=\'indefinite\'/%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E"></div>').appendTo('body');
                         }); //disabled the submit button
-                        return LP.http.jQueryAjax.getInstance().alertMask(tipMask).request(method, url, $selector.serializeArray()).then(function (json) {
+                        var data = $selector.serializeArray();
+                        var $files = jQuery('input[type="file"]:not([name=""])', $selector); // all files
+                        if ($selector.is('[enctype="multipart/form-data"]') || $files.length > 0) {
+                            var _formData_1 = new FormData();
+                            data.forEach(function (v) { return _formData_1.append(v.name, v.value); });
+                            $files.each(function () {
+                                var _this = this;
+                                jQuery.each(this.files, function (i, file) { return _formData_1.append(jQuery(_this).attr('name'), file); });
+                            });
+                            data = _formData_1;
+                        }
+                        return LP.http.jQueryAjax.getInstance().alertMask(tipMask).request(method, url, data).then(function (json) {
                             if (typeof callback != 'undefined' && jQuery.isFunction(callback))
                                 callback.call($this, json);
                         }).finally(function () {
@@ -1075,9 +1090,6 @@ var LP;
                 });
                 return _this;
             }
-            jQueryAjax.prototype.setConfig = function (key, value) {
-                return this;
-            };
             jQueryAjax.prototype.requestHandler = function (config, extra) {
                 var _headers = config.headers, _data = config.data;
                 if (typeof jQuery['deparam'] != 'undefined' && config.data && config.data instanceof String)
@@ -1098,6 +1110,7 @@ var LP;
                         type: config.method.toUpperCase(),
                         method: config.method.toUpperCase(),
                         headers: _headers,
+                        processData: _data instanceof FormData ? false : true,
                         dataType: /[\?&](jsonp|callback)=\?/i.test(config.url) ? 'jsonp' : 'json',
                         success: function (json, textStatus, jqXHR) {
                             resolve(json);
@@ -1106,12 +1119,19 @@ var LP;
                             reject([].slice.call(arguments));
                         }
                     };
-                    if (typeof _headers['Authorization'] != 'undefined') {
-                        c['beforeSend'] = function (xhr) {
+                    var _c = extend(true, {}, c, extra);
+                    _c['beforeSend'] = function (xhr) {
+                        if (typeof _headers['Authorization'] != 'undefined')
                             xhr.setRequestHeader('Authorization', _headers['Authorization']);
-                        };
+                        if (_c.processData === false && xhr.overrideMimeType)
+                            xhr.overrideMimeType("multipart/form-data");
+                    };
+                    if (_c.processData === false) {
+                        _c['enctype'] = 'multipart/form-data';
+                        _c['contentType'] = false;
+                        _c['mimeType'] = 'multipart/form-data';
                     }
-                    jQuery.ajax(c);
+                    jQuery.ajax(_c);
                 });
             };
             jQueryAjax.prototype.decryptHandler = function () {
@@ -1119,11 +1139,17 @@ var LP;
                 jQuery.ajaxSetup({
                     dataFilter: function (data, type) {
                         if (type.toLowerCase() == 'json') {
-                            var json = jQuery.parseJSON(data);
-                            json = t.encryptor.decrypt(json);
-                            data = JSON.stringify(json);
-                            if (typeof json.debug != 'undefined' && !!json.debug)
-                                console.log(json);
+                            var json = void 0;
+                            try {
+                                json = jQuery.parseJSON(data);
+                                json = t.encryptor.decrypt(json);
+                                data = JSON.stringify(json);
+                                if (typeof json.debug != 'undefined' && !!json.debug)
+                                    console.log(json);
+                            }
+                            catch (e) {
+                                console.log(e);
+                            }
                         }
                         return data;
                     }
@@ -1169,7 +1195,18 @@ var LP;
             };
             jQueryAjax.form = function (url, $form) {
                 var q = new jQueryAjax();
-                return q.request($form.attr('method'), $form.attr('action'), $form.serializeArray());
+                var data = $form.serializeArray();
+                var $files = jQuery('input[type="file"]:not([name=""])', $form); // all files
+                if ($form.is('[enctype="multipart/form-data"]') || $files.length > 0) {
+                    var _formData_2 = new FormData();
+                    data.forEach(function (v) { return _formData_2.append(v.name, v.value); });
+                    $files.each(function () {
+                        var _this = this;
+                        jQuery.each(this.files, function (i, file) { return _formData_2.append(jQuery(_this).attr('name'), file); });
+                    });
+                    data = _formData_2;
+                }
+                return q.request($form.attr('method'), $form.attr('action'), data);
             };
             jQueryAjax.head = function (url, data) {
                 var q = new jQueryAjax();
