@@ -115,6 +115,145 @@ var LP;
 })(LP || (LP = {}));
 var LP;
 (function (LP) {
+    function formatMessage(message) {
+        return typeof message != 'object' ? { content: message } : message;
+    }
+    LP.formatMessage = formatMessage;
+})(LP || (LP = {}));
+var LP;
+(function (LP) {
+    var ExceptionType;
+    (function (ExceptionType) {
+        ExceptionType["SERVER"] = "server";
+        ExceptionType["RUNTIME"] = "runtime";
+    })(ExceptionType = LP.ExceptionType || (LP.ExceptionType = {}));
+    var Exception /* extends Error */ = /** @class */ (function () {
+        function Exception(result, message, data, tipType) {
+            this.exceptionType = ExceptionType.RUNTIME;
+            this.stack = new Array;
+            this.fileName = '';
+            this.lineNumber = 0;
+            this.columnNumber = 0;
+            if (typeof result == 'string') {
+                if (message == null) { // 后面没参数了
+                    this.json = {
+                        result: 'error',
+                        message: LP.formatMessage(result),
+                        data: data,
+                        tipType: tipType
+                    };
+                }
+                else {
+                    this.json = {
+                        result: result,
+                        message: LP.formatMessage(message),
+                        data: data,
+                        tipType: tipType
+                    };
+                }
+                this.exceptionType = ExceptionType.RUNTIME;
+            }
+            else if (result instanceof Exception) {
+                this.json = result.json;
+                ;
+                this.stack = result.stack;
+                this.fileName = result.fileName;
+                this.lineNumber = result.lineNumber;
+                this.columnNumber = result.columnNumber;
+                this.exceptionType = result.exceptionType;
+            }
+            else if (result instanceof Error) {
+                this.stack = typeof result.stack != 'undefined' ? result.stack.split("\n") : [];
+                this.fileName = result.fileName;
+                this.lineNumber = result.lineNumber;
+                this.columnNumber = result.columnNumber;
+                this.exceptionType = ExceptionType.RUNTIME;
+                this.json = {
+                    result: 'error',
+                    message: LP.formatMessage(result.message),
+                    data: result.stack
+                };
+            }
+            else if (typeof result == 'object' && typeof result['result'] != 'undefined') {
+                this.json = result;
+                this.exceptionType = ExceptionType.SERVER;
+            }
+            else {
+                this.json = {
+                    result: 'error',
+                    message: '',
+                    data: result
+                };
+                this.exceptionType = ExceptionType.RUNTIME;
+            }
+            //if (this.stack.length <= 0)
+            //  this.stack = this.stacktrace();
+        }
+        Exception.prototype.stacktrace = function () {
+            var error = new Error();
+            var arr = error.stack ? error.stack.split('\n') : [];
+            return arr.slice(3);
+            /* function st(f: Function): Array<string> {
+                return !f ? [] :
+                    st(f.caller)
+                        .concat([
+                            f.toString()
+                                .split('(')[0]
+                                .substring(9)
+                            + '(' + [].concat(f.arguments).join(',') + ')'
+                        ]);
+            }
+            return st(arguments.callee.caller); */
+        };
+        Object.defineProperty(Exception.prototype, "result", {
+            get: function () {
+                return this.getResult();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Exception.prototype, "data", {
+            get: function () {
+                return this.getData();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Exception.prototype, "message", {
+            get: function () {
+                return this.getData();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Exception.prototype, "tipType", {
+            get: function () {
+                return this.getTipType();
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Exception.prototype.getResult = function () {
+            return this.json.result;
+        };
+        Exception.prototype.getData = function () {
+            return this.json.data;
+        };
+        Exception.prototype.toString = function () {
+            return this.getMessage().content;
+        };
+        Exception.prototype.getMessage = function () {
+            return LP.formatMessage(this.json.message);
+        };
+        Exception.prototype.getTipType = function () {
+            return this.json.tipType;
+        };
+        return Exception;
+    }());
+    LP.Exception = Exception;
+})(LP || (LP = {}));
+var LP;
+(function (LP) {
     var sec;
     (function (sec) {
         //ssl
@@ -182,6 +321,7 @@ function serialize(mixedValue) {
     // bugfixed by: Kevin van Zonneveld (http://kvz.io/)
     // bugfixed by: Ben (http://benblume.co.uk/)
     // bugfixed by: Codestar (http://codestarlive.com/)
+    // bugfixed by: idjem (https://github.com/idjem)
     //    input by: DtTvB (http://dt.in.th/2008-09-16.string-length-in-bytes.html)
     //    input by: Martin (http://www.erlenwiese.de/)
     //      note 1: We feel the main purpose of this function should be to ease
@@ -191,28 +331,14 @@ function serialize(mixedValue) {
     //   returns 1: 'a:3:{i:0;s:5:"Kevin";i:1;s:3:"van";i:2;s:9:"Zonneveld";}'
     //   example 2: serialize({firstName: 'Kevin', midName: 'van'})
     //   returns 2: 'a:2:{s:9:"firstName";s:5:"Kevin";s:7:"midName";s:3:"van";}'
+    //   example 3: serialize( {'ü': 'ü', '四': '四', '𠜎': '𠜎'})
+    //   returns 3: 'a:3:{s:2:"ü";s:2:"ü";s:3:"四";s:3:"四";s:4:"𠜎";s:4:"𠜎";}'
     var val, key, okey;
     var ktype = '';
     var vals = '';
     var count = 0;
     var _utf8Size = function (str) {
-        var size = 0;
-        var i = 0;
-        var l = str.length;
-        var code = 0;
-        for (i = 0; i < l; i++) {
-            code = str.charCodeAt(i);
-            if (code < 0x0080) {
-                size += 1;
-            }
-            else if (code < 0x0800) {
-                size += 2;
-            }
-            else {
-                size += 3;
-            }
-        }
-        return size;
+        return ~-encodeURI(str).split(/%..|./).length;
     };
     var _getType = function (inp) {
         var match;
@@ -261,12 +387,12 @@ function serialize(mixedValue) {
             val = 'a';
             /*
             if (type === 'object') {
-                let objname = mixedValue.constructor.toString().match(/(\w+)\(\)/);
-                if (objname === undefined) {
-                    return;
-                }
-                objname[1] = serialize(objname[1]);
-                val = 'O' + objname[1].substring(1, objname[1].length - 1);
+              let objname = mixedValue.constructor.toString().match(/(\w+)\(\)/);
+              if (objname === undefined) {
+                return;
+              }
+              objname[1] = serialize(objname[1]);
+              val = 'O' + objname[1].substring(1, objname[1].length - 1);
             }
             */
             for (key in mixedValue) {
@@ -282,7 +408,7 @@ function serialize(mixedValue) {
             }
             val += ':' + count + ':{' + vals + '}';
             break;
-        //case 'undefined':
+        case 'undefined':
         default:
             // Fall-through
             // if the JS object has a property which contains a null value,
@@ -313,11 +439,13 @@ function unserialize(data) {
     // bugfixed by: dptr1988
     // bugfixed by: Kevin van Zonneveld (http://kvz.io)
     // bugfixed by: Brett Zamir (http://brett-zamir.me)
+    // bugfixed by: philippsimon (https://github.com/philippsimon/)
     //  revised by: d3x
     //    input by: Brett Zamir (http://brett-zamir.me)
     //    input by: Martin (http://www.erlenwiese.de/)
     //    input by: kilops
     //    input by: Jaroslaw Czarniak
+    //    input by: lovasoa (https://github.com/lovasoa/)
     //      note 1: We feel the main purpose of this function should be
     //      note 1: to ease the transport of data between php & js
     //      note 1: Aiming for PHP-compatibility, we have to translate objects to arrays
@@ -325,39 +453,24 @@ function unserialize(data) {
     //   returns 1: ['Kevin', 'van', 'Zonneveld']
     //   example 2: unserialize('a:2:{s:9:"firstName";s:5:"Kevin";s:7:"midName";s:3:"van";}')
     //   returns 2: {firstName: 'Kevin', midName: 'van'}
-    var utf8Overhead = function (chr) {
-        // http://locutus.io/php/unserialize:571#comment_95906
-        var code = chr.charCodeAt(0);
-        var zeroCodes = [
-            338,
-            339,
-            352,
-            353,
-            376,
-            402,
-            8211,
-            8212,
-            8216,
-            8217,
-            8218,
-            8220,
-            8221,
-            8222,
-            8224,
-            8225,
-            8226,
-            8230,
-            8240,
-            8364,
-            8482
-        ];
-        if (code < 0x0080 || code >= 0x00A0 && code <= 0x00FF || zeroCodes.indexOf(code) !== -1) {
-            return 0;
+    //   example 3: unserialize('a:3:{s:2:"ü";s:2:"ü";s:3:"四";s:3:"四";s:4:"𠜎";s:4:"𠜎";}')
+    //   returns 3: {'ü': 'ü', '四': '四', '𠜎': '𠜎'}
+    var utf8Overhead = function (str) {
+        var s = str.length;
+        for (var i = str.length - 1; i >= 0; i--) {
+            var code = str.charCodeAt(i);
+            if (code > 0x7f && code <= 0x7ff) {
+                s++;
+            }
+            else if (code > 0x7ff && code <= 0xffff) {
+                s += 2;
+            }
+            // trail surrogate
+            if (code >= 0xDC00 && code <= 0xDFFF) {
+                i--;
+            }
         }
-        if (code < 0x0800) {
-            return 1;
-        }
-        return 2;
+        return s - 1;
     };
     var error = function (type, msg, filename, line) {
         switch (type) {
@@ -392,7 +505,7 @@ function unserialize(data) {
         }
         return [buf.length, buf.join('')];
     };
-    var _unserialize = function (data, offset) {
+    function _unserialize(data, offset) {
         var dtype;
         var dataoffset;
         var keyandchrs;
@@ -500,13 +613,15 @@ function unserialize(data) {
                 break;
         }
         return [dtype, dataoffset - offset, typeconvert(readdata)];
-    };
+    }
     return _unserialize((data + ''), 0)[2];
 }
 /// <reference path="rsa.ts" />
+/// <reference path="../response/message.ts" />
 /// <reference path="../polyfill/serialize.ts" />
 var LP;
 /// <reference path="rsa.ts" />
+/// <reference path="../response/message.ts" />
 /// <reference path="../polyfill/serialize.ts" />
 (function (LP) {
     var sec;
@@ -580,7 +695,13 @@ if (!String.prototype.noHTML) {
      * @return {String}
      */
     String.prototype.noHTML = function () {
-        return this.replace(/<script[^>]*?>.*?<\/script>/ig, '').replace(/<[\/\!]*?[^<>]*?>/g, '').replace(/<style[^>]*?>.*?<\/style>/ig, '').replace(/<![\s\S]*?--[ \t\n\r]*>/, '').replace(/([\r\n])[\s]+/, '').replace(/&(quot|#34|amp|#38|lt|#60|gt|#62|nbsp|#160)/i, '');
+        return strip_tags(this + '');
+        /* if (typeof window != 'undefined')
+        {
+            let tmp = document.createElement("DIV");
+            tmp.innerHTML = this + "";
+            return tmp.textContent || tmp.innerText || "";
+        } */
     };
 }
 if (!String.prototype.toHTML) {
@@ -600,7 +721,7 @@ if (!String.prototype.toPre) {
      * 转义字符串的空格、回车、制表符，也就是将textarea输入的文本可以原样显示到屏幕
      * 类似于<pre>标签
      *
-     * var str = " 空格\n第\t二行".toPre();
+     * let str = " 空格\n第\t二行".toPre();
      * 返回 '&nbsp;空格<br />第&nbsp;&nbsp;&nbsp;&nbsp;二行'
      *
      * @return {String}
@@ -609,11 +730,129 @@ if (!String.prototype.toPre) {
         return this.replace(/\040/g, '&nbsp;').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2');
     };
 }
+function _phpCastString(value) {
+    // original by: Rafał Kukawski
+    //   example 1: _phpCastString(true)
+    //   returns 1: '1'
+    //   example 2: _phpCastString(false)
+    //   returns 2: ''
+    //   example 3: _phpCastString('foo')
+    //   returns 3: 'foo'
+    //   example 4: _phpCastString(0/0)
+    //   returns 4: 'NAN'
+    //   example 5: _phpCastString(1/0)
+    //   returns 5: 'INF'
+    //   example 6: _phpCastString(-1/0)
+    //   returns 6: '-INF'
+    //   example 7: _phpCastString(null)
+    //   returns 7: ''
+    //   example 8: _phpCastString(undefined)
+    //   returns 8: ''
+    //   example 9: _phpCastString([])
+    //   returns 9: 'Array'
+    //   example 10: _phpCastString({})
+    //   returns 10: 'Object'
+    //   example 11: _phpCastString(0)
+    //   returns 11: '0'
+    //   example 12: _phpCastString(1)
+    //   returns 12: '1'
+    //   example 13: _phpCastString(3.14)
+    //   returns 13: '3.14'
+    var type = typeof value;
+    switch (type) {
+        case 'boolean':
+            return value ? '1' : '';
+        case 'string':
+            return value;
+        case 'number':
+            if (isNaN(value)) {
+                return 'NAN';
+            }
+            if (!isFinite(value)) {
+                return (value < 0 ? '-' : '') + 'INF';
+            }
+            return value + '';
+        case 'undefined':
+            return '';
+        case 'object':
+            if (Array.isArray(value)) {
+                return 'Array';
+            }
+            if (value !== null) {
+                return 'Object';
+            }
+            return '';
+        case 'function':
+        // fall through
+        default:
+            throw new Error('Unsupported value type');
+    }
+}
+function strip_tags(input, allowed) {
+    //  discuss at: http://locutus.io/php/strip_tags/
+    // original by: Kevin van Zonneveld (http://kvz.io)
+    // improved by: Luke Godfrey
+    // improved by: Kevin van Zonneveld (http://kvz.io)
+    //    input by: Pul
+    //    input by: Alex
+    //    input by: Marc Palau
+    //    input by: Brett Zamir (http://brett-zamir.me)
+    //    input by: Bobby Drake
+    //    input by: Evertjan Garretsen
+    // bugfixed by: Kevin van Zonneveld (http://kvz.io)
+    // bugfixed by: Onno Marsman (https://twitter.com/onnomarsman)
+    // bugfixed by: Kevin van Zonneveld (http://kvz.io)
+    // bugfixed by: Kevin van Zonneveld (http://kvz.io)
+    // bugfixed by: Eric Nagel
+    // bugfixed by: Kevin van Zonneveld (http://kvz.io)
+    // bugfixed by: Tomasz Wesolowski
+    // bugfixed by: Tymon Sturgeon (https://scryptonite.com)
+    // bugfixed by: Tim de Koning (https://www.kingsquare.nl)
+    //  revised by: Rafał Kukawski (http://blog.kukawski.pl)
+    //   example 1: strip_tags('<p>Kevin</p> <br /><b>van</b> <i>Zonneveld</i>', '<i><b>')
+    //   returns 1: 'Kevin <b>van</b> <i>Zonneveld</i>'
+    //   example 2: strip_tags('<p>Kevin <img src="someimage.png" onmouseover="someFunction()">van <i>Zonneveld</i></p>', '<p>')
+    //   returns 2: '<p>Kevin van Zonneveld</p>'
+    //   example 3: strip_tags("<a href='http://kvz.io'>Kevin van Zonneveld</a>", "<a>")
+    //   returns 3: "<a href='http://kvz.io'>Kevin van Zonneveld</a>"
+    //   example 4: strip_tags('1 < 5 5 > 1')
+    //   returns 4: '1 < 5 5 > 1'
+    //   example 5: strip_tags('1 <br/> 1')
+    //   returns 5: '1  1'
+    //   example 6: strip_tags('1 <br/> 1', '<br>')
+    //   returns 6: '1 <br/> 1'
+    //   example 7: strip_tags('1 <br/> 1', '<br><br/>')
+    //   returns 7: '1 <br/> 1'
+    //   example 8: strip_tags('<i>hello</i> <<foo>script>world<</foo>/script>')
+    //   returns 8: 'hello world'
+    //   example 9: strip_tags(4)
+    //   returns 9: '4'
+    // making sure the allowed arg is a string containing only tags in lowercase (<a><b><c>)
+    allowed = (((allowed || '') + '').toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
+    var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
+    var commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
+    var after = _phpCastString(input);
+    // recursively remove tags to ensure that the returned string doesn't contain forbidden tags after previous passes (e.g. '<<bait/>switch/>')
+    while (true) {
+        var before = after;
+        after = before.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
+            return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
+        });
+        // return once no more tags are removed
+        if (before === after) {
+            return after;
+        }
+    }
+}
 /// <reference path="../polyfill/string.ts" />
+/// <reference path="../response/message.ts" />
+/// <reference path="../response/exception.ts" />
 /// <reference path="../http/base.ts" />
 /// <reference path="../lang.ts" />
 var LP;
 /// <reference path="../polyfill/string.ts" />
+/// <reference path="../response/message.ts" />
+/// <reference path="../response/exception.ts" />
 /// <reference path="../http/base.ts" />
 /// <reference path="../lang.ts" />
 (function (LP) {
@@ -623,13 +862,9 @@ var LP;
         tip.alert_interface = null;
         tip.confirm_interface = null;
         tip.prompt_interface = null;
-        function formatMessage(message) {
-            return !(message instanceof Object) ? { content: message } : message;
-        }
-        tip.formatMessage = formatMessage;
         function toast(message, timeout) {
             if (timeout === void 0) { timeout = 1000; }
-            var _message = formatMessage(message);
+            var _message = LP.formatMessage(message);
             return promiseWrap(function () {
                 if (typeof tip.toast_interface == 'function')
                     return tip.toast_interface(_message, timeout);
@@ -639,7 +874,7 @@ var LP;
         }
         tip.toast = toast;
         function alert(message, confirm_callback) {
-            var _message = formatMessage(message);
+            var _message = LP.formatMessage(message);
             return promiseWrap(function () {
                 if (typeof tip.alert_interface == 'function')
                     return tip.alert_interface(_message);
@@ -652,7 +887,7 @@ var LP;
         }
         tip.alert = alert;
         function confirm(message, confirm_callback, cancel_callback) {
-            var _message = formatMessage(message);
+            var _message = LP.formatMessage(message);
             return promiseWrap(function () {
                 if (typeof tip.confirm_interface == 'function')
                     return tip.confirm_interface(_message);
@@ -669,7 +904,7 @@ var LP;
         }
         tip.confirm = confirm;
         function prompt(message, confirm_callback, cancel_callback) {
-            var _message = formatMessage(message);
+            var _message = LP.formatMessage(message);
             return promiseWrap(function () {
                 if (typeof tip.prompt_interface == 'function')
                     return tip.prompt_interface(_message);
@@ -702,7 +937,7 @@ var LP;
     (function (tip) {
         tip.diy_interface = null;
         function diy(message, result, tipType) {
-            var _message = tip.formatMessage(message);
+            var _message = LP.formatMessage(message);
             return promiseWrap(function () {
                 if (typeof tip.diy_interface == 'function')
                     return tip.diy_interface(_message, result, tipType);
@@ -711,11 +946,13 @@ var LP;
             });
         }
         function json(result, message, tipType) {
-            if (typeof message == 'undefined' || typeof tipType != 'object')
+            if (typeof message != 'undefined') {
+                if (typeof message == 'string')
+                    message = LP.formatMessage(message);
+                diy(message, result, tipType);
+            }
+            if (typeof tipType != 'object')
                 return;
-            else if (typeof message == 'string')
-                message = { content: message };
-            diy(message, result, tipType);
             switch (tipType.type) {
                 case 'redirect':
                     setTimeout(function () {
@@ -737,10 +974,14 @@ var LP;
     })(tip = LP.tip || (LP.tip = {}));
 })(LP || (LP = {}));
 /// <reference path="../lang.ts" />
+/// <reference path="../response/message.ts" />
+/// <reference path="../response/exception.ts" />
 /// <reference path="../sec/encryptor.ts" />
 /// <reference path="../tip/json.ts" />
 var LP;
 /// <reference path="../lang.ts" />
+/// <reference path="../response/message.ts" />
+/// <reference path="../response/exception.ts" />
 /// <reference path="../sec/encryptor.ts" />
 /// <reference path="../tip/json.ts" />
 (function (LP) {
@@ -748,7 +989,7 @@ var LP;
     (function (http) {
         var TIP_MASK;
         (function (TIP_MASK) {
-            TIP_MASK[TIP_MASK["ALERT_CLIENT_ERROR"] = 1] = "ALERT_CLIENT_ERROR";
+            TIP_MASK[TIP_MASK["ALERT_RUNTIME_ERROR"] = 1] = "ALERT_RUNTIME_ERROR";
             TIP_MASK[TIP_MASK["ALERT_SERVER_ERROR"] = 2] = "ALERT_SERVER_ERROR";
             TIP_MASK[TIP_MASK["ALERT_SUCCESS"] = 4] = "ALERT_SUCCESS";
             TIP_MASK[TIP_MASK["ALERT_ERROR"] = 3] = "ALERT_ERROR";
@@ -790,12 +1031,12 @@ var LP;
                 this.tipMask = tip ? TIP_MASK.ALERT_ALL : 0;
                 return this;
             };
-            Base.prototype.alertClientError = function (tip) {
+            Base.prototype.alertRuntimeError = function (tip) {
                 if (tip === void 0) { tip = true; }
                 if (tip)
-                    this.tipMask |= TIP_MASK.ALERT_CLIENT_ERROR;
+                    this.tipMask |= TIP_MASK.ALERT_RUNTIME_ERROR;
                 else
-                    this.tipMask ^= TIP_MASK.ALERT_CLIENT_ERROR;
+                    this.tipMask ^= TIP_MASK.ALERT_RUNTIME_ERROR;
                 return this;
             };
             Base.prototype.alertServerError = function (tip) {
@@ -860,16 +1101,19 @@ var LP;
                             return json;
                         }
                         else {
-                            return promiseReject(json);
+                            return promiseReject(new LP.Exception(json));
                         }
                     }
                     return json;
                 }).catch(function (e) {
-                    if ((_this.tipMask & TIP_MASK.ALERT_SERVER_ERROR) && e instanceof Object && typeof e.result != 'undefined')
-                        _this.errorHandler(e);
-                    else if ((_this.tipMask & TIP_MASK.ALERT_CLIENT_ERROR) && typeof e['result'] == 'undefined')
-                        _this.errorHandler(e);
-                    return promiseReject(e);
+                    if (e instanceof LP.Exception) {
+                        if (e.exceptionType == LP.ExceptionType.SERVER && (_this.tipMask & TIP_MASK.ALERT_SERVER_ERROR))
+                            _this.errorHandler(e);
+                        else if (e.exceptionType == LP.ExceptionType.RUNTIME && (_this.tipMask & TIP_MASK.ALERT_RUNTIME_ERROR))
+                            _this.errorHandler(e);
+                        return promiseReject(e);
+                    }
+                    return promiseReject(new LP.Exception(e));
                 });
             };
             Base.prototype.get = function (url, data) {
@@ -963,10 +1207,14 @@ var LP;
                 ];
             };
             axiosAjax.prototype.errorHandler = function (e) {
-                if (e instanceof Error) {
-                }
-                else if (e instanceof Object && typeof e.result != 'undefined') {
+                if (e instanceof LP.Exception) {
                     LP.tip.json(e.result, e.message, e.tipType);
+                }
+                else if (typeof e['toString'] != 'undefined') {
+                    LP.tip.toast(e.toString());
+                }
+                else if (typeof e == 'string') {
+                    LP.tip.toast(e);
                 }
             };
             axiosAjax.get = function (url, data) {
@@ -1008,8 +1256,14 @@ var LP;
 })(LP || (LP = {}));
 if (jQuery) {
     jQuery.fn.extend({
-        query: function (callback, tipMask) {
-            if (tipMask === void 0) { tipMask = LP.http.TIP_MASK.ALERT_ALL; }
+        query: function (callback, failCallback, tipMask) {
+            if (tipMask == null && typeof failCallback == 'number') {
+                tipMask = failCallback;
+                failCallback = undefined;
+            }
+            else if (tipMask == null) { // default value
+                tipMask = LP.http.TIP_MASK.ALERT_ALL;
+            }
             return this.each(function () {
                 var $this = jQuery(this);
                 var is_form = $this.is('form');
@@ -1027,9 +1281,10 @@ if (jQuery) {
                         return false;
                     var selector = $this.attr('selector');
                     var $selector = is_form ? $this.add(selector) : jQuery(selector);
-                    if (validator && !jQuery.isEmptyObject(validator.invalid))
+                    if (validator && !jQuery.isEmptyObject(validator.invalid)) //validator is invalid
                         return false;
-                    if ((selector || is_form) && $selector.serializeArray().length <= 0) {
+                    if ((selector || is_form) && $selector.serializeArray().length <= 0) //selector is set,but nothing to query
+                     {
                         LP.tip.toast(LP.QUERY_LANGUAGE.unselected);
                         return false;
                     }
@@ -1054,7 +1309,10 @@ if (jQuery) {
                         }
                         return LP.http.jQueryAjax.getInstance().alertMask(tipMask).request(method, url, data).then(function (json) {
                             if (typeof callback != 'undefined' && jQuery.isFunction(callback))
-                                callback.call($this, json);
+                                return callback.call($this, json);
+                        }).catch(function (e) {
+                            if (typeof failCallback != 'undefined' && jQuery.isFunction(failCallback))
+                                return failCallback.call($this, e);
                         }).finally(function () {
                             jQuery('.query-loading').remove();
                             $doms.prop('disabled', false).removeAttr('disabled');
@@ -1099,7 +1357,7 @@ var LP;
                     config.method = _data._method;
                     _headers['X-HTTP-Method-Override'] = config.method;
                 }
-                if (_data && _data._token)
+                if (_data && _data._token) //add csrf
                     _headers['X-CSRF-TOKEN'] = _data._token;
                 return new Promise(function (resolve, reject) {
                     var c = {
@@ -1116,7 +1374,12 @@ var LP;
                             resolve(json);
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            reject([].slice.call(arguments));
+                            if (textStatus == 'error' && XMLHttpRequest instanceof Object && typeof XMLHttpRequest.responseJSON != 'undefined') {
+                                reject(new LP.Exception(XMLHttpRequest.responseJSON)); // json 结构，尝试去Exception解析
+                            }
+                            else {
+                                reject(new LP.Exception({ XMLHttpRequest: XMLHttpRequest, textStatus: textStatus, errorThrown: errorThrown }));
+                            }
                         }
                     };
                     var _c = extend(true, {}, c, extra);
@@ -1156,33 +1419,33 @@ var LP;
                 });
             };
             jQueryAjax.prototype.errorHandler = function (e) {
-                if (e instanceof Array) {
-                    var xhr = e[0];
-                    var textStatus = e[1];
-                    switch (textStatus) {
-                        case 'timeout':
-                            LP.tip.toast(LP.QUERY_LANGUAGE.network_timeout);
-                            break;
-                        case 'error':
-                            if (xhr instanceof Object && typeof xhr.responseJSON != 'undefined') {
-                                var json = xhr.responseJSON;
-                                if (json instanceof Object && typeof json.result != 'undefined') {
-                                    LP.tip.json(json.result, json.message, json.tipType);
-                                }
-                            }
-                            break;
-                        case 'parsererror':
-                            LP.tip.toast(LP.QUERY_LANGUAGE.parser_error);
-                            break;
-                        //case 'notmodified':
-                        case 'abort':
-                        default:
-                            LP.tip.toast(LP.QUERY_LANGUAGE.server_error);
-                            break;
+                if (e instanceof LP.Exception) {
+                    var data = e.getData();
+                    if (data && typeof data['XMLHttpRequest'] != 'undefined' && typeof data['textStatus'] != 'undefined') {
+                        var textStatus = data.textStatus;
+                        switch (textStatus) {
+                            case 'timeout':
+                                LP.tip.toast(LP.QUERY_LANGUAGE.network_timeout);
+                                break;
+                            case 'parsererror':
+                                LP.tip.toast(LP.QUERY_LANGUAGE.parser_error);
+                                break;
+                            case 'notmodified':
+                            case 'error':
+                            case 'abort':
+                            default:
+                                LP.tip.toast(LP.QUERY_LANGUAGE.server_error);
+                                break;
+                        }
                     }
+                    else
+                        LP.tip.json(e.getResult(), e.getMessage(), e.getTipType());
                 }
-                else if (e instanceof Object && typeof e.result != 'undefined') {
-                    LP.tip.json(e.result, e.message, e.tipType);
+                else if (typeof e['toString'] != 'undefined') {
+                    LP.tip.toast(e.toString());
+                }
+                else if (typeof e == 'string') {
+                    LP.tip.toast(e);
                 }
             };
             jQueryAjax.get = function (url, data) {
@@ -1272,7 +1535,7 @@ function print_r(array, return_val) {
         }
         else if (obj === null || obj === undefined)
             str = '';
-        else
+        else // for our "resource" class
             str = obj.toString();
         return str;
     };
