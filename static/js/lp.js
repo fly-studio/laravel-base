@@ -136,7 +136,7 @@ var LP;
             this.columnNumber = 0;
             if (typeof result == 'string') {
                 if (message == null) { // 后面没参数了
-                    this.json = {
+                    this.$json = {
                         result: 'error',
                         message: LP.formatMessage(result),
                         data: data,
@@ -144,7 +144,7 @@ var LP;
                     };
                 }
                 else {
-                    this.json = {
+                    this.$json = {
                         result: result,
                         message: LP.formatMessage(message),
                         data: data,
@@ -155,7 +155,7 @@ var LP;
             }
             else if (typeof result == "object") {
                 if (result instanceof Exception || typeof result['exceptionType'] != 'undefined') {
-                    this.json = result.json;
+                    this.$json = result.$json;
                     this.stack = result.stack;
                     this.fileName = result.fileName;
                     this.lineNumber = result.lineNumber;
@@ -168,18 +168,18 @@ var LP;
                     this.lineNumber = result.lineNumber;
                     this.columnNumber = result.columnNumber;
                     this.exceptionType = ExceptionType.RUNTIME;
-                    this.json = {
+                    this.$json = {
                         result: 'error',
                         message: LP.formatMessage(result.message),
                         data: result.stack,
                     };
                 }
                 else if (typeof result == 'object' && typeof result['result'] != 'undefined') {
-                    this.json = result;
+                    this.$json = result;
                     this.exceptionType = ExceptionType.SERVER;
                 }
                 else {
-                    this.json = {
+                    this.$json = {
                         result: 'error',
                         message: '',
                         data: result
@@ -188,7 +188,7 @@ var LP;
                 }
             }
             else {
-                this.json = {
+                this.$json = {
                     result: 'error',
                     message: '',
                     data: result
@@ -247,19 +247,19 @@ var LP;
             configurable: true
         });
         Exception.prototype.getResult = function () {
-            return this.json.result;
+            return this.$json.result;
         };
         Exception.prototype.getData = function () {
-            return this.json.data;
+            return this.$json.data;
         };
         Exception.prototype.toString = function () {
             return this.getMessage().content;
         };
         Exception.prototype.getMessage = function () {
-            return LP.formatMessage(this.json.message);
+            return LP.formatMessage(this.$json.message);
         };
         Exception.prototype.getTipType = function () {
-            return this.json.tipType;
+            return this.$json.tipType;
         };
         return Exception;
     }());
@@ -950,12 +950,11 @@ var LP;
     (function (tip) {
         tip.diy_interface = null;
         function diy(message, result, tipType) {
-            var _message = LP.formatMessage(message);
             return promiseWrap(function () {
                 if (typeof tip.diy_interface == 'function')
-                    return tip.diy_interface(_message, result, tipType);
+                    return tip.diy_interface(message, result, tipType);
                 else
-                    return window.alert(_message.content.noHTML());
+                    return window.alert(message.content.noHTML());
             });
         }
         function json(result, message, tipType) {
@@ -1220,7 +1219,7 @@ var LP;
                 ];
             };
             axiosAjax.prototype.errorHandler = function (e) {
-                if (e instanceof LP.Exception) {
+                if (e instanceof LP.Exception || typeof e['result'] != 'undefined') {
                     LP.tip.json(e.result, e.message, e.tipType);
                 }
                 else if (typeof e['toString'] != 'undefined') {
@@ -1453,6 +1452,9 @@ var LP;
                     }
                     else
                         LP.tip.json(e.getResult(), e.getMessage(), e.getTipType());
+                }
+                else if (typeof e['result'] != 'undefined') {
+                    LP.tip.json(e['result'], e['message'], e['tipType']);
                 }
                 else if (typeof e['toString'] != 'undefined') {
                     LP.tip.toast(e.toString());
