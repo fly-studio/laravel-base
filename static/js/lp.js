@@ -153,30 +153,39 @@ var LP;
                 }
                 this.exceptionType = ExceptionType.RUNTIME;
             }
-            else if (result instanceof Exception) {
-                this.json = result.json;
-                ;
-                this.stack = result.stack;
-                this.fileName = result.fileName;
-                this.lineNumber = result.lineNumber;
-                this.columnNumber = result.columnNumber;
-                this.exceptionType = result.exceptionType;
-            }
-            else if (result instanceof Error) {
-                this.stack = typeof result.stack != 'undefined' ? result.stack.split("\n") : [];
-                this.fileName = result.fileName;
-                this.lineNumber = result.lineNumber;
-                this.columnNumber = result.columnNumber;
-                this.exceptionType = ExceptionType.RUNTIME;
-                this.json = {
-                    result: 'error',
-                    message: LP.formatMessage(result.message),
-                    data: result.stack
-                };
-            }
-            else if (typeof result == 'object' && typeof result['result'] != 'undefined') {
-                this.json = result;
-                this.exceptionType = ExceptionType.SERVER;
+            else if (typeof result == "object") {
+                if (result instanceof Exception || typeof result['exceptionType'] != 'undefined') {
+                    this.json = result.json;
+                    this.stack = result.stack;
+                    this.fileName = result.fileName;
+                    this.lineNumber = result.lineNumber;
+                    this.columnNumber = result.columnNumber;
+                    this.exceptionType = result.exceptionType;
+                }
+                else if (result instanceof Error || typeof result['stack'] != 'undefined') {
+                    this.stack = typeof result.stack != 'undefined' ? result.stack.split("\n") : [];
+                    this.fileName = result.fileName;
+                    this.lineNumber = result.lineNumber;
+                    this.columnNumber = result.columnNumber;
+                    this.exceptionType = ExceptionType.RUNTIME;
+                    this.json = {
+                        result: 'error',
+                        message: LP.formatMessage(result.message),
+                        data: result.stack
+                    };
+                }
+                else if (typeof result == 'object' && typeof result['result'] != 'undefined') {
+                    this.json = result;
+                    this.exceptionType = ExceptionType.SERVER;
+                }
+                else {
+                    this.json = {
+                        result: 'error',
+                        message: '',
+                        data: result
+                    };
+                    this.exceptionType = ExceptionType.RUNTIME;
+                }
             }
             else {
                 this.json = {
