@@ -130,7 +130,7 @@ var LP;
     var Exception /* extends Error */ = /** @class */ (function () {
         function Exception(result, message, data, tipType) {
             this.exceptionType = ExceptionType.RUNTIME;
-            this.stack = new Array;
+            this.stack = '';
             this.fileName = '';
             this.lineNumber = 0;
             this.columnNumber = 0;
@@ -163,7 +163,7 @@ var LP;
                     this.exceptionType = result.exceptionType;
                 }
                 else if (result instanceof Error || typeof result['stack'] != 'undefined') {
-                    this.stack = typeof result.stack != 'undefined' ? result.stack.split("\n") : [];
+                    this.stack = result.stack;
                     this.fileName = result.fileName;
                     this.lineNumber = result.lineNumber;
                     this.columnNumber = result.columnNumber;
@@ -171,7 +171,7 @@ var LP;
                     this.json = {
                         result: 'error',
                         message: LP.formatMessage(result.message),
-                        data: result.stack
+                        data: result.stack,
                     };
                 }
                 else if (typeof result == 'object' && typeof result['result'] != 'undefined') {
@@ -195,13 +195,17 @@ var LP;
                 };
                 this.exceptionType = ExceptionType.RUNTIME;
             }
-            //if (this.stack.length <= 0)
-            //  this.stack = this.stacktrace();
+            if (!this.stack)
+                this.stack = this.stacktrace();
         }
         Exception.prototype.stacktrace = function () {
             var error = new Error();
-            var arr = error.stack ? error.stack.split('\n') : [];
-            return arr.slice(3);
+            if (error.stack) {
+                var arr = error.stack.split('\n');
+                arr.splice(1, 2);
+                return arr.join('\n');
+            }
+            return error.stack;
             /* function st(f: Function): Array<string> {
                 return !f ? [] :
                     st(f.caller)
