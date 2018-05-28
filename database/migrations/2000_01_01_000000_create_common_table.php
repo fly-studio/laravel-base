@@ -40,7 +40,7 @@ class CreateCommonTable extends Migration
 		//日志
 		Schema::create('logs', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->unsignedInteger('user_id')->index()->nullable()->default(0)->comment = '用戶 ID';
+			$table->nullableMorphs('user');
 			$table->string('event')->index()->comment = '事件';
 			$table->integer("auditable_id");
 			$table->string("auditable_type");
