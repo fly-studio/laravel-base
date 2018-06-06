@@ -39,6 +39,7 @@ return [
 		'guards'       => [
 			'web',
 			'api',
+			'admin',
 		],
 	],
 
