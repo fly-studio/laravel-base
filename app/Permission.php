@@ -3,7 +3,7 @@
 namespace App;
 
 use App\Models\Logable;
-use Addons\Elasticsearch\Scout\Searchable;
+use App\Models\Searchable;
 use Addons\Entrust\Models\Permission as BasePermission;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 

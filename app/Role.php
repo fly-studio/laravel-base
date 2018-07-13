@@ -3,8 +3,8 @@
 namespace App;
 
 use App\Models\Logable;
+use App\Models\Searchable;
 use Illuminate\Support\Arr;
-use Addons\Elasticsearch\Scout\Searchable;
 use Addons\Entrust\Models\Role as BaseRole;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 

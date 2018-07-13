@@ -2,9 +2,9 @@
 
 namespace App;
 
+use App\Models\Searchable;
 use App\Models\LogCreatorTrait;
 use OwenIt\Auditing\Models\Audit;
-use Addons\Elasticsearch\Scout\Searchable;
 
 class Log extends Audit
 {

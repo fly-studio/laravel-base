@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repositories;
-//namespace Plugin\Foo\App\Repositories;
+//namespace Plugins\Foo\App\Repositories;
 
 use DB;
 use Illuminate\Http\Request;
@@ -9,7 +9,7 @@ use Addons\Core\Contracts\Repository;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Foobar;
-//use Plugin\XX\App\Foobar;
+//use Plugins\Foo\App\Foobar;
 
 class FoobarRepository extends Repository {
 

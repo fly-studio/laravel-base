@@ -81,4 +81,10 @@ return [
         ],
     ],
 
+    /**
+     * the CRUD observer, Set false to disable the observer
+     * And you can use `go-mysql-elasticsearch` to sync db https://github.com/siddontang/go-mysql-elasticsearch
+     */
+    'observer' => false, //'Laravel\Scout\ModelObserver'
+
 ];

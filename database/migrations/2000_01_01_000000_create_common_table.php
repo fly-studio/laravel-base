@@ -49,7 +49,7 @@ class CreateCommonTable extends Migration
 			$table->text('url')->nullable()->comment = '網址';
 			$table->string('method', 50)->nullable()->comment = '請求方法';
 			$table->longText('request')->nullable()->comment = '序列化后的Request';
-			$table->string('user_agent', 250)->nullable()->comment = 'User Agent';
+			$table->text('user_agent')->nullable()->comment = 'User Agent';
 			$table->string('browser', 50)->nullable()->comment = '瀏覽器';
 			$table->string('platform', 50)->nullable()->comment = '平臺';
 			$table->string('device', 50)->nullable()->comment = '設備';

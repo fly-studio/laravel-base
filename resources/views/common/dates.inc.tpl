@@ -1,3 +1,4 @@
+<{block "at-selector"}>
 <script type="text/x-templete" id="at-selector-tpl">
 <div class="btn-group" style="z-index: 3;">
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,3 +31,4 @@
 </div>
 </script>
 <script src="<{'static/js/laravel.at-selector.min.js'|url nofilter}>"></script>
+<{/block}>

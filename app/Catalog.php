@@ -3,11 +3,12 @@
 namespace App;
 
 use App\Models\Logable;
-use Addons\Elasticsearch\Scout\Searchable;
+use App\Models\Searchable;
 use Plugins\Catalog\App\Catalog as BaseCatalog;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 class Catalog extends BaseCatalog implements AuditableContract {
+
 	use Logable, Searchable;
 
 	public function scope_all(Builder $builder, $keywords)
