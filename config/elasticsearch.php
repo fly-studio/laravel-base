@@ -29,13 +29,6 @@ return [
                 env('ELASTICSEARCH_HOST', 'localhost:9200'),
             ],
             /**
-             * Index
-             * same as Scout's index
-             * eg: same as your database's name
-             * 
-             */
-            'index' => env('ELASTICSEARCH_INDEX', 'laravel'),
-            /**
              * SSL
              *
              * If your Elasticsearch instance uses an out-dated or self-signed SSL
@@ -67,7 +60,7 @@ return [
              *
              * @see https://www.elastic.co/guide/en/elasticsearch/client/php-api/master/_configuration.html#enabling_logger
              */
-            'logging' => true,
+            'logging' => false,
             // If you have an existing instance of Monolog you can use it here.
             'logObject' => 'monolog',
             //'logPath' => storage_path('logs/elasticsearch.log'),
@@ -75,7 +68,7 @@ return [
             /**
              * Logstash's driver
              * value: redis, file, elasticsearch
-             * 
+             *
              * Logstash's config like:
              * [file]
              * input{
@@ -85,7 +78,7 @@ return [
              *         }
              *     }
              * }
-             * 
+             *
              * [redis]
              * input {
              *     redis {
