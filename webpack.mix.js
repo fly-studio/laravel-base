@@ -1,4 +1,4 @@
-let mix = require('laravel-mix');
+const mix = require('laravel-mix');
 mix.autoload({});
 mix.setPublicPath('./');
 mix.options({
