@@ -35,6 +35,7 @@ class User extends Authenticatable implements AuditableContract
 	protected $casts = [
 		'gender' => 'catalog',
 		'avatar_aid' => 'attachment',
+		'email_verified_at' => 'datetime',
 	];
 
 	/*public function xxx_catalogs()

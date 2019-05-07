@@ -32,6 +32,7 @@ return [
 	'boolean'          => '[:attribute] 必须为True/False。',
 	'confirmed'        => '[:attribute] 两次输入不一致。',
 	'date'             => '[:attribute] 不是一个有效的日期。',
+	'date_equals'      => 'The :attribute must be a date equal to :date.',
 	'date_format'      => '[:attribute] 的格式必须为 :format。',
 	'different'        => '[:attribute] 和 :other 必须不同。',
 	'digits'           => '[:attribute] 必须是 :digits 位的数字。',
@@ -42,6 +43,18 @@ return [
 	'exists'           => '[:attribute] 不存在。',
 	'file'             => '[:attribute] 必须是一个有效的文件。',
 	'filled'           => '[:attribute] 不能为空。',
+	'gt' => [
+	 	'numeric' => 'The :attribute must be greater than :value.',
+	 	'file' => 'The :attribute must be greater than :value kilobytes.',
+		'string' => 'The :attribute must be greater than :value characters.',
+	        'array' => 'The :attribute must have more than :value items.',
+	    ],
+	    'gte' => [
+	        'numeric' => 'The :attribute must be greater than or equal :value.',
+	        'file' => 'The :attribute must be greater than or equal :value kilobytes.',
+	        'string' => 'The :attribute must be greater than or equal :value characters.',
+	        'array' => 'The :attribute must have :value items or more.',
+	    ],
 	'image'            => '[:attribute] 必须是图片。',
 	'in'               => '已选的属性 [:attribute] 非法。',
 	'in_array'         => '[:attribute] 必须在 :other 内。',
@@ -50,6 +63,18 @@ return [
 	'ipv4'             => '[:attribute] 必须是有效的 IPv4 地址。',
 	'ipv6'             => '[:attribute] 必须是有效的 IPv6 地址。',
 	'json'             => '[:attribute] 必须是有效的 JSON 字符串。',
+	'lt' => [
+        'numeric' => 'The :attribute must be less than :value.',
+        'file' => 'The :attribute must be less than :value kilobytes.',
+        'string' => 'The :attribute must be less than :value characters.',
+        'array' => 'The :attribute must have less than :value items.',
+    ],
+    'lte' => [
+        'numeric' => 'The :attribute must be less than or equal :value.',
+        'file' => 'The :attribute must be less than or equal :value kilobytes.',
+        'string' => 'The :attribute must be less than or equal :value characters.',
+        'array' => 'The :attribute must not have more than :value items.',
+    ],
 	'max'              => [
 		'numeric' => '[:attribute] 不能大于 :max。',
 		'file'    => '[:attribute] 不能大于 :max kb。',
@@ -65,6 +90,7 @@ return [
 		'array'   => '[:attribute] 至少有 :min 个单元。',
 	],
 	'not_in'           => '已选的属性 [:attribute] 非法。',
+	'not_regex' => 'The :attribute format is invalid.',
 	'numeric'          => '[:attribute] 必须是一个数字。',
 	'present'          => '[:attribute] 不能为空。',
 	'regex'            => '[:attribute] 格式不正确。',
@@ -82,11 +108,13 @@ return [
 		'string'  => '[:attribute] 必须是 :size 个字符。',
 		'array'   => '[:attribute] 必须为 :size 个单元。',
 	],
+	'starts_with' => 'The :attribute must start with one of the following: :values',
 	'string'           => '[:attribute] 必须是一个字符串。',
 	'timezone'         => '[:attribute] 必须是一个合法的时区值。',
 	'unique'           => '[:attribute] 已经存在。',
 	'uploaded'         => '[:attribute] 文件上传失败.',
 	'url'              => '[:attribute] 格式不正确。',
+	'uuid' => 'The :attribute must be a valid UUID.',
 	'phone'            => '[:attribute] 格式不正确。',
 	'id_card'          => '[:attribute] 格式不正确。',
 	'not_zero'         => '[:attribute] 必须有值，或不能为0。',
@@ -116,9 +144,9 @@ return [
 	| Custom Validation Attributes
 	|--------------------------------------------------------------------------
 	|
-	| The following language lines are used to swap attribute place-holders
-	| with something more reader friendly such as E-Mail Address instead
-	| of "email". This simply helps us make messages a little cleaner.
+	| The following language lines are used to swap our attribute placeholder
+	| with something more reader friendly such as "E-Mail Address" instead
+	| of "email". This simply helps us make our message more expressive.
 	|
 	*/
 

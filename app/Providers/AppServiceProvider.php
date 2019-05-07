@@ -8,15 +8,6 @@ use Illuminate\Foundation\Console\PackageDiscoverCommand;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-    }
 
     /**
      * Register any application services.
@@ -29,5 +20,15 @@ class AppServiceProvider extends ServiceProvider
             $path = realpath($GLOBALS['loader']->findFile(get_class($this->app)));
             $this->app->make(PackageManifest::class)->vendorPath = substr($path, 0, strrpos($path, 'vendor') + 6).DIRECTORY_SEPARATOR;
         });
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
     }
 }
