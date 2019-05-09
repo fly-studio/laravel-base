@@ -18,14 +18,14 @@ class FoobarRepository extends Repository {
 		return config('size.models.'.(new Foobar)->getTable(), config('size.common'));
 	}
 
-	public function find($id)
+	public function find($id, array $columns = ['*'])
 	{
-		return Foobar::with([])->find($id);
+		return Foobar::with([])->find($id, $columns);
 	}
 
-	public function findOrFail($id)
+	public function findOrFail($id, array $columns = ['*'])
 	{
-		return Foobar::with([])->findOrFail($id);
+		return Foobar::with([])->findOrFail($id, $columns);
 	}
 
 	public function store(array $data)
@@ -51,26 +51,26 @@ class FoobarRepository extends Repository {
 		});
 	}
 
-	public function data(Request $request)
+	public function data(Request $request, callable $callback = null, array $columns = ['*'])
 	{
 		$model = new Foobar;
 		$builder = $model->newQuery()->with([]);
 
-		$total = $this->_getCount($request, $builder, FALSE);
-		$data = $this->_getData($request, $builder);
+		$total = $this->_getCount($request, $builder, false);
+		$data = $this->_getData($request, $builder, $callback, $columns);
 		$data['recordsTotal'] = $total; //不带 f q 条件的总数
 		$data['recordsFiltered'] = $data['total']; //带 f q 条件的总数
 
 		return $data;
 	}
 
-	public function export(Request $request)
+	public function export(Request $request, callable $callback = null, array $columns = ['*'])
 	{
 		$model = new Foobar;
 		$builder = $model->newQuery()->with([]);
 		$size = $request->input('size') ?: config('size.export', 1000);
 
-		$data = $this->_getExport($request, $builder);
+		$data = $this->_getExport($request, $builder, $callback, $columns);
 
 		return $data;
 	}

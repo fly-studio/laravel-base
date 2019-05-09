@@ -39,19 +39,19 @@ class UserRepository extends Repository {
 		return config('size.models.'.(new User)->getTable(), config('size.common'));
 	}
 
-	public function find($id)
+	public function find($id, array $columns = ['*'])
 	{
-		return User::with(['roles'])->find($id);
+		return User::with(['roles'])->find($id, $columns);
 	}
 
-	public function findByUsername($username)
+	public function findByUsername($username, array $columns = ['*'])
 	{
-		return User::with(['roles'])->findByUsername($username);
+		return User::with(['roles'])->findByUsername($username, $columns);
 	}
 
-	public function findOrFail($id)
+	public function findOrFail($id, array $columns = ['*'])
 	{
-		return User::with(['roles'])->findOrFail($id);
+		return User::with(['roles'])->findOrFail($id, $columns);
 	}
 
 	public function store(array $data, $roleOrName = null)
@@ -119,20 +119,20 @@ class UserRepository extends Repository {
 		});
 	}
 
-	public function data(Request $request)
+	public function data(Request $request, callable $callback = null, array $columns = ['*'])
 	{
 		$user = new User;
 		$builder = $user->newQuery()->with(['roles']);
 
 		$total = $this->_getCount($request, $builder, FALSE);
-		$data = $this->_getData($request, $builder);
+		$data = $this->_getData($request, $builder, $callback, $columns);
 		$data['recordsTotal'] = $total; //不带 f q 条件的总数
 		$data['recordsFiltered'] = $data['total']; //带 f q 条件的总数
 
 		return $data;
 	}
 
-	public function export(Request $request)
+	public function export(Request $request, callable $callback = null, array $columns = ['*'])
 	{
 		$user = new User;
 		$builder = $user->newQuery()->with(['roles']);
@@ -141,7 +141,7 @@ class UserRepository extends Repository {
 		$data = $this->_getExport($request, $builder, function($items){
 			foreach($items as $item)
 				$item['gender'] = !empty($item['gender']) ? $item['gender']['title'] : NULL;
-		});
+		}, $columns);
 
 		return $data;
 	}

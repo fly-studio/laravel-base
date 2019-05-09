@@ -23,6 +23,7 @@ class Handler extends ExceptionHandler
 	protected $dontReport = [
 		\Addons\Entrust\Exception\PermissionException::class,
 	];
+
 	/**
 	 * A list of the inputs that are never flashed for validation exceptions.
 	 *
@@ -32,17 +33,6 @@ class Handler extends ExceptionHandler
 		'password',
 		'password_confirmation',
 	];
-
-	/**
-	 * Report or log an exception.
-	 *
-	 * @param  \Exception  $exception
-	 * @return void
-	 */
-	public function report(Exception $exception)
-	{
-		parent::report($exception);
-	}
 
 	/**
 	 * Render an exception into an HTTP response.
