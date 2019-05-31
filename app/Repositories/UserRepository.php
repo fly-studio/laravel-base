@@ -108,7 +108,7 @@ class UserRepository extends Repository {
 	{
 		DB::transaction(function() use($user, $password) {
 			$password = $this->hashPassword($password);
-			$user->update($data);
+			$user->update(compact('password'));
 		});
 	}
 

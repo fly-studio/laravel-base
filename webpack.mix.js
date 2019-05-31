@@ -1,6 +1,6 @@
 const mix = require('laravel-mix');
 mix.autoload({});
-mix.setPublicPath('./');
+mix.setPublicPath('./public');
 mix.options({
 	//extractVueStyles: false, // Extract .vue component styling to file, rather than inline.
 	//processCssUrls: true, // Process/optimize relative stylesheet url()'s. Set to false, if you don't want them touched.

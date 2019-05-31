@@ -4,25 +4,28 @@
 	</IfModule>
 
 	RewriteEngine On
-	RewriteBase /projects/base/
+	RewriteBase /projects/base/public/
 
 	# Handle Authorization Header
 	RewriteCond %{HTTP:Authorization} .
 	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-	# 304
-	RewriteRule ^(\.env|\.git|artisan)$ - [F]
+	# redirect static to static/common
+	RewriteCond %{REQUEST_URI} .*/static/.*
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^static/(?!common/)(.*)$ static/common/$1 [L]
 
-	RewriteRule ^static/(.*)$ public/$0 [L]
-	RewriteRule ^plugins/(.*)$ public/$0 [L]
+	RewriteRule ^plugins/(.*)$ static/plugins/$1 [L]
 
 	# Redirect Trailing Slashes If Not A Folder...
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteCond %{REQUEST_URI} (.+)/$
 	RewriteRule ^ %1 [L,R=301]
 
-	RewriteCond %{REQUEST_FILENAME} !-d
+	# Handle Front Controller...
 	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule ^ index.php [L]
-
+	#RewriteRule .* index.php/$0 [PT,L]
+	#RewriteRule .* index.php [L,E=PATH_INFO:$1]
 </IfModule>
