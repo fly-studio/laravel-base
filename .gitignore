@@ -10,8 +10,8 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/static/common
-/static/plugins
+/public/static/common
+/public/static/plugins
 /.tags
 /.tags_sorted_by_file
 /.env

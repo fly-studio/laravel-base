@@ -54,8 +54,8 @@ return [
 	*/
 
     'url' => env('APP_URL', 'http://localhost'),
-    'static_path' => env('STATIC_PATH', public_path('static')),
-    'utils_path' => env('UTILS_PATH', public_path('utils')),
+    'static_path' => public_path(env('STATIC_PATH', 'static')),
+    'utils_path' => public_path(env('UTILS_PATH', 'utils')),
     'asset_url' => env('ASSET_URL', null),
 
     /*

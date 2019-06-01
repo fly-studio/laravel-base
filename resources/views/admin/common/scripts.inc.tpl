@@ -33,7 +33,7 @@
 
 <{/block}>
 <{block name="head-scripts-select2"}>
-<link rel="stylesheet" href="<{'js/select2/select2.min.css'|static nofilter}>"></script>
+<link rel="stylesheet" href="<{'js/select2/select2.min.css'|static nofilter}>">
 <script src="<{'js/select2/select2.min.js'|static nofilter}>"></script>
 <script src="<{'js/select2/i18n/zh-CN.js'|static nofilter}>"></script>
 <script src="<{'js/laravel.select.min.js'|static nofilter}>"></script>

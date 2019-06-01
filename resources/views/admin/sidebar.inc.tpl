@@ -11,7 +11,7 @@
 			<!-- Sidebar Navigation -->
 			<ul class="sidebar-nav">
 				<li>
-					<a href="<{''|url}>" class=""><i class="gi gi-stopwatch sidebar-nav-icon"></i>首页</a>
+					<a href="<{'admin'|url}>" class=""><i class="gi gi-stopwatch sidebar-nav-icon"></i>首页</a>
 				</li>
 				<li class="sidebar-header">
 					<span class="sidebar-header-title">基本</span>

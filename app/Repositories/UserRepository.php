@@ -26,7 +26,7 @@ class UserRepository extends Repository {
 		$role_ids = array_pull($data, 'role_ids');
 		$data = array_except($data, array_merge($extraKeys, $multipleKeys));
 
-		return compact('data', 'password', 'role_ids', 'extra', 'multiples');
+		return compact('data', 'role_ids', 'extra', 'multiples');
 	}
 
 	public function hashPassword($password)
