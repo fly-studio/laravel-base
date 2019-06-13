@@ -12,11 +12,12 @@ npm-debug.log
 yarn-error.log
 /public/static/common
 /public/static/plugins
+/public/mix-manifest.json
 /.tags
 /.tags_sorted_by_file
 /.env
 /.htaccess
 /vendor/composer
 /vendor/autoload.php
-/mix-manifest.json
+/laravel-echo-server.lock
 .phpunit.result.cache

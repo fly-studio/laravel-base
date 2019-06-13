@@ -42,6 +42,9 @@ class AuthController extends Controller
 		$keys = [$this->username(), 'password'];
 		$validates = $this->censorScripts('member.store', $keys);
 
+		if ($request->offsetExists('redirect_url'))
+			$request->session()->put('url.intended', $request->input('redirect_url'));
+
 		$socialiteRepo = app(SocialiteRepository::class);
 
 		$this->_validates = $validates;
@@ -55,7 +58,9 @@ class AuthController extends Controller
 
 		$request->session()->invalidate();
 
-		return $this->success_logout(''); // redirect to homepage
+		$redirect_url = $request->input('redirect_url', '');
+
+		return $this->success_logout($redirect_url); // redirect to homepage
 	}
 
 	/**

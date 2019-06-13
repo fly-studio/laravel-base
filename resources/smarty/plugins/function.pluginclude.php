@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Arr;
+
 /**
  * Smarty plugin
  * @package Smarty
@@ -48,7 +51,7 @@ function smarty_function_pluginclude($params, $template)
 		return;
 	}
 	!empty($plugins) && !is_array($plugins) && $plugins = explode(',', $plugins);
-	!empty($plugins) && $_c = array_only($_c, $plugins);
+	!empty($plugins) && $_c = Arr::only($_c, $plugins);
 
 	$names = [];
 	foreach ($_c as $k => $v) {

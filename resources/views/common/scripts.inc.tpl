@@ -1,5 +1,5 @@
 <{block "head-scripts-laravel"}>
-	<script>var Laravel = { csrfToken: '<{csrf_token()}>', baseuri: '<{""|url nofilter}>' };</script>
+	<script>var Laravel = { csrfToken: '<{csrf_token()}>', baseuri: '<{""|url nofilter}>', serverTimeDelta : <{microtime(true)*1000}> - new Date().getTime() };</script>
 <{/block}>
 <{block "head-scripts-jquery"}>
 	<script src="<{'js/jquery-3.3.1.min.js'|static nofilter}>"></script>

@@ -1161,7 +1161,7 @@ var LP;
         var axiosAjax = /** @class */ (function (_super) {
             __extends(axiosAjax, _super);
             function axiosAjax(baseURL, timeout) {
-                if (timeout === void 0) { timeout = 20000; }
+                if (timeout === void 0) { timeout = 30000; }
                 var _this = _super.call(this) || this;
                 _this.instance = axios.create({
                     baseURL: baseURL == null ? '' : baseURL,
@@ -1306,7 +1306,7 @@ if (jQuery) {
                         $doms = $doms.filter(':not(.disabled,[disabled])');
                         $doms.prop('disabled', true).attr('disabled', 'disabled').each(function () {
                             var $t = jQuery(this), o = $t.offset();
-                            jQuery('<div style="position:absolute;left:' + (o.left + $t.width()) + 'px;top:' + (o.top - 16) + 'px;height:32px;width:32px;display:block;z-index:99999" class="query-loading"><img style="width:32px;height:32px;" src="data:image/svg+xml;utf8,%3Csvg width=\'57\' height=\'57\' viewBox=\'0 0 57 57\' xmlns=\'http://www.w3.org/2000/svg\' stroke=\'#fff\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg transform=\'translate(1 1)\' stroke-width=\'2\'%3E%3Ccircle cx=\'5\' cy=\'50\' r=\'5\' stroke=\'#4285F4\'%3E%3Canimate attributeName=\'cy\' begin=\'0s\' dur=\'2.2s\' values=\'50;5;50;50\' calcMode=\'linear\' repeatCount=\'indefinite\' /%3E%3Canimate attributeName=\'cx\' begin=\'0s\' dur=\'2.2s\' values=\'5;27;49;5\' calcMode=\'linear\' repeatCount=\'indefinite\' /%3E%3C/circle%3E%3Ccircle cx=\'27\' cy=\'5\' r=\'5\' stroke=\'#DE3E35\'%3E%3Canimate attributeName=\'cy\' begin=\'0s\' dur=\'2.2s\' from=\'5\' to=\'5\' values=\'5;50;50;5\' calcMode=\'linear\' repeatCount=\'indefinite\' /%3E%3Canimate attributeName=\'cx\' begin=\'0s\' dur=\'2.2s\' from=\'27\' to=\'27\' values=\'27;49;5;27\' calcMode=\'linear\' repeatCount=\'indefinite\' /%3E%3C/circle%3E%3Ccircle cx=\'49\' cy=\'50\' r=\'5\' stroke=\'#F7C223\'%3E%3Canimate attributeName=\'cy\' begin=\'0s\' dur=\'2.2s\' values=\'50;50;5;50\' calcMode=\'linear\' repeatCount=\'indefinite\' /%3E%3Canimate attributeName=\'cx\' from=\'49\' to=\'49\' begin=\'0s\' dur=\'2.2s\' values=\'49;5;27;49\' calcMode=\'linear\' repeatCount=\'indefinite\' /%3E%3C/circle%3E%3C/g%3E%3C/g%3E%3C/svg%3E"></div>').appendTo('body');
+                            jQuery('<div style="position:absolute;left:' + (o.left + $t.width()) + 'px;top:' + (o.top - 16) + 'px;height:32px;width:32px;display:block;z-index:99999" class="query-loading"><img style="width:32px;height:32px;" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nNTcnIGhlaWdodD0nNTcnIHZpZXdCb3g9JzAgMCA1NyA1NycgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyBzdHJva2U9JyNmZmYnPjxnIGZpbGw9J25vbmUnIGZpbGwtcnVsZT0nZXZlbm9kZCc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMSAxKScgc3Ryb2tlLXdpZHRoPScyJz48Y2lyY2xlIGN4PSc1JyBjeT0nNTAnIHI9JzUnIHN0cm9rZT0nIzQyODVGNCc+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0nY3knIGJlZ2luPScwcycgZHVyPScyLjJzJyB2YWx1ZXM9JzUwOzU7NTA7NTAnIGNhbGNNb2RlPSdsaW5lYXInIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJyAvPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9J2N4JyBiZWdpbj0nMHMnIGR1cj0nMi4ycycgdmFsdWVzPSc1OzI3OzQ5OzUnIGNhbGNNb2RlPSdsaW5lYXInIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJyAvPjwvY2lyY2xlPjxjaXJjbGUgY3g9JzI3JyBjeT0nNScgcj0nNScgc3Ryb2tlPScjREUzRTM1Jz48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSdjeScgYmVnaW49JzBzJyBkdXI9JzIuMnMnIGZyb209JzUnIHRvPSc1JyB2YWx1ZXM9JzU7NTA7NTA7NScgY2FsY01vZGU9J2xpbmVhcicgcmVwZWF0Q291bnQ9J2luZGVmaW5pdGUnIC8+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0nY3gnIGJlZ2luPScwcycgZHVyPScyLjJzJyBmcm9tPScyNycgdG89JzI3JyB2YWx1ZXM9JzI3OzQ5OzU7MjcnIGNhbGNNb2RlPSdsaW5lYXInIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJyAvPjwvY2lyY2xlPjxjaXJjbGUgY3g9JzQ5JyBjeT0nNTAnIHI9JzUnIHN0cm9rZT0nI0Y3QzIyMyc+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0nY3knIGJlZ2luPScwcycgZHVyPScyLjJzJyB2YWx1ZXM9JzUwOzUwOzU7NTAnIGNhbGNNb2RlPSdsaW5lYXInIHJlcGVhdENvdW50PSdpbmRlZmluaXRlJyAvPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9J2N4JyBmcm9tPSc0OScgdG89JzQ5JyBiZWdpbj0nMHMnIGR1cj0nMi4ycycgdmFsdWVzPSc0OTs1OzI3OzQ5JyBjYWxjTW9kZT0nbGluZWFyJyByZXBlYXRDb3VudD0naW5kZWZpbml0ZScgLz48L2NpcmNsZT48L2c+PC9nPjwvc3ZnPg=="></div>').appendTo('body');
                         }); //disabled the submit button
                         var data = $selector.serializeArray();
                         var $files = jQuery('input[type="file"]:not([name=""])', $selector); // all files
@@ -1352,7 +1352,7 @@ var LP;
         var jQueryAjax = /** @class */ (function (_super) {
             __extends(jQueryAjax, _super);
             function jQueryAjax(timeout) {
-                if (timeout === void 0) { timeout = 20000; }
+                if (timeout === void 0) { timeout = 30000; }
                 var _this = _super.call(this) || this;
                 jQuery.ajaxSetup({
                     headers: _this.commonHeaders,

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use DB;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Addons\Core\Contracts\Repository;
@@ -20,11 +21,11 @@ class UserRepository extends Repository {
 		$multipleKeys = [/*fill your multiple keys*/];
 
 		isset($data['password']) && $data['password'] = $this->hashPassword($data['password']);
-		$extra = array_only($data, $extraKeys);
-		$multiples = array_only($data, $multipleKeys);
+		$extra = Arr::only($data, $extraKeys);
+		$multiples = Arr::only($data, $multipleKeys);
 
-		$role_ids = array_pull($data, 'role_ids');
-		$data = array_except($data, array_merge($extraKeys, $multipleKeys));
+		$role_ids = Arr::pull($data, 'role_ids');
+		$data = Arr::except($data, array_merge($extraKeys, $multipleKeys));
 
 		return compact('data', 'role_ids', 'extra', 'multiples');
 	}
@@ -41,7 +42,7 @@ class UserRepository extends Repository {
 
 	public function find($id, array $columns = ['*'])
 	{
-		return User::with(['roles'])->find($id, $columns);
+		return User::with(['roles', 'extra'])->find($id, $columns);
 	}
 
 	public function findByUsername($username, array $columns = ['*'])
@@ -72,7 +73,7 @@ class UserRepository extends Repository {
 				}
 			}
 			//update roles
-			!empty($role_ids) && $user->syncRoles(array_wrap($role_ids));
+			!empty($role_ids) && $user->syncRoles(Arr::wrap($role_ids));
 			!empty($roleOrName) && $user->attachRole($roleOrName instanceof Role ? $roleOrName : Role::findByName($roleOrName));
 
 			return $user;
@@ -99,7 +100,7 @@ class UserRepository extends Repository {
 				}
 			}
 			//update roles
-			!empty($role_ids) && $user->syncRoles(array_wrap($role_ids));
+			!empty($role_ids) && $user->syncRoles(Arr::wrap($role_ids));
 			return $user;
 		});
 	}

@@ -36,6 +36,9 @@ class AuthController extends BaseAuthController
 		$keys = [$this->username(), 'password'];
 		$validates = $this->censorScripts('member.store', $keys);
 
+		if ($request->offsetExists('redirect_url'))
+			$request->session()->put('url.intended', $request->input('redirect_url'));
+
 		$this->_validates = $validates;
 		return $this->view('admin/login');
 	}
@@ -46,7 +49,9 @@ class AuthController extends BaseAuthController
 
 		$request->session()->invalidate();
 
-		return $this->success_logout('admin-login'); // redirect to homepage
+		$redirect_url = $request->input('redirect_url', 'admin-login');
+
+		return $this->success_logout($redirect_url); // redirect to admin's homepage
 	}
 
 	public function choose()
