@@ -28,4 +28,4 @@ mix.js('public/static/js/jquery.uploader.js', 'static/js/jquery.uploader.min.js'
 mix.js('public/static/js/laravel.select.js', 'static/js/laravel.select.min.js').sourceMaps();
 mix.js('public/static/js/laravel.editor.js', 'static/js/laravel.editor.min.js').sourceMaps();
 mix.js('public/static/js/laravel.validation.js', 'static/js/laravel.validation.min.js').sourceMaps();
-mix.js('public/static/js/laravel-echo/laravel-echo.node.js', 'static/js/laravel-echo/laravel-echo.min.js').sourceMaps();
+mix.js('public/static/js/laravel-echo/laravel-echo.js', 'static/js/laravel-echo/laravel-echo.min.js').sourceMaps();

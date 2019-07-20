@@ -11,7 +11,7 @@
 	RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 	# 304
-	RewriteRule ^(\.env|\.git|artisan)$ - [F]
+	RewriteRule ^(\.env|\.git|artisan|go)$ - [F]
 
 	RewriteRule ^static/(.*)$ public/$0 [L]
 	RewriteRule ^plugins/(.*)$ public/$0 [L]
