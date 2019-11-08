@@ -57,6 +57,7 @@ go(function() use ($app, &$status) {
 
 	} catch (\Swoole\ExitException $e)
 	{
+		echo 'exit----------------';
 		$status = $e->getStatus();
 		return;
 	}

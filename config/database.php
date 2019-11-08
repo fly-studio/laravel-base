@@ -118,8 +118,11 @@ return [
         'client' => env('REDIS_CLIENT', 'predis'),
 
         'options' => [
-            'cluster' => env('REDIS_CLUSTER', 'predis'),
-            'prefix' => '',//Str::slug(env('APP_NAME', 'laravel'), '_').'_database_',
+            'cluster' => env('REDIS_CLUSTER', 'redis'),
+            'parameters' => [
+                'password' => null
+            ],
+            'prefix' => '', //Str::slug(env('APP_NAME', 'laravel'), '_').'_database_',
         ],
 
         'default' => [
