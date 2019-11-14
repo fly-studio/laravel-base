@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
 	{
 		//用户主表
 		Schema::create('users', function (Blueprint $table) {
-			$table->increments('id');
+			$table->bigIncrements('id');
 			$table->string('username', 150)->unique()->comment = '用户名(账号)';
 			$table->string('password', 60)->nullable()->comment = '密码';
 			$table->string('nickname', 50)->nullable()->comment = '昵称';
@@ -35,7 +35,7 @@ class CreateUsersTable extends Migration
 		});
 		//用户扩展字段表
 		Schema::create('user_extras', function(Blueprint $table) {
-			$table->unsignedInteger('id')->unique()->primary();
+			$table->unsignedBigInteger('id')->unique()->primary();
 
 			$table->timestamps(); //创建/修改时间
 			$table->softDeletes(); //软删除
@@ -44,8 +44,8 @@ class CreateUsersTable extends Migration
 		});
 		//用户可多选的属性表
 		Schema::create('user_multiples', function(Blueprint $table) {
-			$table->increments('id');
-			$table->unsignedInteger('uid')->default(0)->index()->comment = 'UID';
+			$table->bigIncrements('id');
+			$table->unsignedBigInteger('uid')->default(0)->index()->comment = 'UID';
 			$table->unsignedInteger('cid')->default(0)->index()->comment = 'Catalogs ID';
 			$table->unsignedInteger('parent_cid')->default(0)->index()->comment = '父分类英文名';
 			$table->string('extra', 250)->nullable()->comment = '其他值';
@@ -59,7 +59,7 @@ class CreateUsersTable extends Migration
 		});
 		//用户财务表
 		Schema::create('user_finances', function (Blueprint $table) {
-			$table->unsignedInteger('id')->unique()->primary();
+			$table->unsignedBigInteger('id')->unique()->primary();
 			$table->decimal('money', 16, 2)->index()->default(0)->comment = '余额';
 			$table->decimal('used_money', 16, 2)->index()->default(0)->comment = '已消费金额';
 			$table->decimal('coin', 16, 2)->index()->default(0)->comment = '币余额';
@@ -74,8 +74,8 @@ class CreateUsersTable extends Migration
 		});
 		//密码重设
 		Schema::create('password_resets', function (Blueprint $table) {
-			$table->increments('id');
-			$table->unsignedInteger('uid')->comment = '用户ID'; //UID
+			$table->bigIncrements('id');
+			$table->unsignedBigInteger('uid')->comment = '用户ID'; //UID
 			$table->string('email', 150)->index();
 			$table->string('token', 150)->index();
 			$table->timestamp('created_at')->nullable();

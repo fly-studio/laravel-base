@@ -34,7 +34,7 @@ $router->actions([
 
 $router->group(['namespace' => 'Admin', 'prefix' => 'admin'], function($router) {
 
-	$router->get('auth/login', 'Admin\\AuthController@login')->name('admin-login');
+	$router->get('auth/login', 'AuthController@login')->name('admin-login');
 	$router->actions([
 		'auth' => ['index', 'login', 'logout', 'choose', 'authenticate-query'],
 	]);

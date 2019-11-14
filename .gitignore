@@ -16,6 +16,7 @@ yarn-error.log
 /.tags
 /.tags_sorted_by_file
 /.env
+.env.backup
 /.htaccess
 /vendor/composer
 /vendor/autoload.php

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 class EventServiceProvider extends ServiceProvider
 {
     protected $namespace = 'App';
+    
     /**
      * The event listener mappings for the application.
      *
