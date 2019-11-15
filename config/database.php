@@ -65,7 +65,7 @@ return [
 
         'mongodb' => [
             'driver'   => 'mongodb',
-	    'dsn'      => env('MONGODB_DSN'),
+            'dsn'      => env('MONGODB_DSN'),
             'host'     => env('MONGODB_HOST', '127.0.0.1'),
             'port'     => env('MONGODB_PORT', 27017),
             'database' => env('MONGODB_DATABASE'),
@@ -132,7 +132,7 @@ return [
 
     'redis' => [
 
-        'client' => env('REDIS_CLIENT', 'predis'),
+        'client' => env('REDIS_CLIENT', 'phpredis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
@@ -167,7 +167,7 @@ return [
         ],
 
         'broadcast' => [
-	    'url' => env('REDIS_URL'),
+            'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', 6379),
