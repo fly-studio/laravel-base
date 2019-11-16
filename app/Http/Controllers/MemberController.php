@@ -55,7 +55,7 @@ class MemberController extends Controller
 
 		unset($data['accept_license']);
 		$user = $this->repo->store($data, 'user1');
-		return $this->success(NULL, 'auth', $user->toArray());
+		return $this->success(null, $user->toArray())->action('redirect', 'auth');
 	}
 
 	/**

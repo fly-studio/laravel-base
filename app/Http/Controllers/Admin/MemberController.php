@@ -52,7 +52,7 @@ class MemberController extends Controller
 	{
 		$user = $this->userRepo->find($id);
 		if (empty($user))
-			return $this->failure_notexists();
+			return $this->error('document.not_exists')->code(404);
 
 		$this->_data = $user;
 		return !$request->offsetExists('of') ? $this->view('admin.member.show') : $this->api($user->toArray());
@@ -70,14 +70,14 @@ class MemberController extends Controller
 		$data = $this->censor($request, 'member.store', $this->keys);
 
 		$user = $this->userRepo->store($data);
-		return $this->success('', url('admin/member'));
+		return $this->success()->action('redirect', url('admin/member'));
 	}
 
 	public function edit($id)
 	{
 		$user = $this->userRepo->find($id);
 		if (empty($user))
-			return $this->failure_notexists();
+			return $this->error('document.not_exists')->code(404);
 
 		$keys = array_diff($this->keys, [$this->usernameKey, $this->passwordKey]); //except password
 
@@ -90,7 +90,7 @@ class MemberController extends Controller
 	{
 		$user = $this->userRepo->find($id);
 		if (empty($user))
-			return $this->failure_notexists();
+			return $this->error('document.not_exists')->code(404);
 
 		//modify the password
 		if (!empty($request->input($this->passwordKey)))
@@ -111,6 +111,6 @@ class MemberController extends Controller
 		$ids = Arr::wrap($id);
 
 		$this->userRepo->destroy($ids);
-		return $this->success(null, true, ['id' => $ids]);
+		return $this->success(null, ['id' => $ids]);
 	}
 }

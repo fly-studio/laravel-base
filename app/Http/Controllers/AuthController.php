@@ -60,7 +60,7 @@ class AuthController extends Controller
 
 		$redirect_url = $request->input('redirect_url', '');
 
-		return $this->success_logout($redirect_url); // redirect to homepage
+		return $this->success('auth.success_logout')->action('redirect', $redirect_url); // redirect to homepage
 	}
 
 	/**
@@ -149,7 +149,7 @@ class AuthController extends Controller
 	protected function authenticated(Request $request, $user)
 	{
 
-		return  $this->success_login($request->session()->pull('url.intended', $this->redirectPath())); // redirect to the prevpage or url
+		return  $this->success('auth.success_login')->action('redirect', $request->session()->pull('url.intended', $this->redirectPath())); // redirect to the prevpage or url
 	}
 
 	/**
@@ -162,11 +162,11 @@ class AuthController extends Controller
 	 */
 	protected function sendFailedLoginResponse(Request $request)
 	{
-		return $this->failure_login();
+		return $this->error('auth.failure_login');
 
-		throw ValidationException::withMessages([
+		/*throw ValidationException::withMessages([
 			$this->username() => [trans('auth.failed')],
-		]);
+		]);*/
 	}
 
 	/**
@@ -182,11 +182,11 @@ class AuthController extends Controller
 			$this->throttleKey($request)
 		);
 
-		return $this->failure(['content' => Lang::get('auth.throttle', ['seconds' => $seconds])], FALSE, compact('seconds'))->setStatusCode(423);
+		return $this->error(Lang::get('auth.throttle', ['seconds' => $seconds]))->code(423);
 
-		throw ValidationException::withMessages([
+		/*throw ValidationException::withMessages([
 			$this->username() => [Lang::get('auth.throttle', ['seconds' => $seconds])],
-		])->status(423);
+		])->status(423);*/
 	}
 
 	/**

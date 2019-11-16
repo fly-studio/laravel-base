@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Str;
 use Doctrine\DBAL\Driver\PDOException;
 use Illuminate\Database\QueryException;
-use Addons\Core\Http\OutputResponseFactory;
+use Addons\Core\Http\Output\ResponseFactory;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Session\TokenMismatchException;
 use Addons\Entrust\Exception\PermissionException;
@@ -33,7 +33,7 @@ class Handler extends ExceptionHandler
 		'password',
 		'password_confirmation',
 	];
-	
+
 	/**
 	* Report or log an exception.
 	*
@@ -72,7 +72,7 @@ class Handler extends ExceptionHandler
 					{
 						$file = str_replace($replaced_paths, '', $value['file']);
 						$line = $value['line'];
-						return $this->prepareJsonResponse($request, $exception,'document.model_not_exists', [
+						return $this->prepareJsonResponse($request, $exception, 'document.model_not_exists', [
 							'model' => $exception->getModel(),
 							'file' => $file ,
 							'line' => $line,
@@ -96,17 +96,17 @@ class Handler extends ExceptionHandler
 	 * @param  \Exception $e
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	protected function prepareJsonResponse($request, Exception $e, $message_name = null, array $data = [])
+	protected function prepareJsonResponse($request, Exception $e, string $messageName = null)
 	{
-		$status = $this->isHttpException($e) ? $e->getStatusCode() : 500;
+		$code = $this->isHttpException($e) ? $e->getStatusCode() : 500;
 
 		$headers = $this->isHttpException($e) ? $e->getHeaders() : [];
 
-		return app(OutputResponseFactory::class)
-			->exception($e, $message_name ?? $e->getMessage() ?: 'Server Error', false, $data)
-			->setRequest($request)
-			->withHeaders($headers)
-			->setStatusCode($status);
+		return app(ResponseFactory::class)
+			->exception($e, $messageName ?? $e->getMessage() ?: 'Server Error')
+			->request($request)
+			->code($code)
+			->withHeaders($headers);
 	}
 
 	/**

@@ -51,7 +51,7 @@ class AuthController extends BaseAuthController
 
 		$redirect_url = $request->input('redirect_url', 'admin-login');
 
-		return $this->success_logout($redirect_url); // redirect to admin's homepage
+		return $this->success('auth.success_logout')->action('redirect', $redirect_url); // redirect to admin's homepage
 	}
 
 	public function choose()
@@ -72,7 +72,7 @@ class AuthController extends BaseAuthController
 	{
 		$roles = $user->roles;
 		return $roles->count() == 1
-			? $this->success_login($request->session()->pull('url.intended', $roles[0]->url)) // redirect to the prevpage or url
+			? $this->success('auth.success_login')->action('redirect', $request->session()->pull('url.intended', $roles[0]->url)) // redirect to the prevpage or url
 			: false;
 	}
 
