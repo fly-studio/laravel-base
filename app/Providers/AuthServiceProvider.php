@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-//use Laravel\Passport\Passport;
+use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -31,5 +31,10 @@ class AuthServiceProvider extends ServiceProvider
             //'self-show' => 'Get your user info.',
         ]);
         */
+    }
+
+    public function register()
+    {
+        Passport::ignoreMigrations();
     }
 }

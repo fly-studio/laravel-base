@@ -98,8 +98,9 @@ class MemberController extends Controller
 			$data = $this->censor($request, 'member.store', [$this->passwordKey]);
 			$this->userRepo->updatePassword($user, $data['password']);
 		}
+
 		$keys = array_diff($this->keys, [$this->usernameKey, $this->passwordKey]); //except password, username
-		$data = $this->censor($request, 'member.store', $keys, $user);
+		$data = $this->censor($request, 'member.store', $keys, $user->toArray());
 
 		$user = $this->userRepo->update($user, $data);
 		return $this->success();

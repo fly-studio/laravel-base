@@ -118,7 +118,7 @@ class Handler extends ExceptionHandler
 	 */
 	protected function prepareResponse($request, Exception $e)
 	{
-		return in_array('api', $request->route()->middleware()) ? $this->prepareJsonResponse($request, $e) : parent::prepareResponse($request, $e);
+		return $request->route() && in_array('api', $request->route()->middleware()) ? $this->prepareJsonResponse($request, $e) : parent::prepareResponse($request, $e);
 	}
 
 	/**
@@ -130,7 +130,7 @@ class Handler extends ExceptionHandler
 	 */
 	protected function unauthenticated($request, AuthenticationException $exception)
 	{
-		$api = in_array('api', $request->route()->middleware());
+		$api = $request->route() && in_array('api', $request->route()->middleware());
 		$admin = in_array('admin', $exception->guards());
 
 		return $request->expectsJson() || $api

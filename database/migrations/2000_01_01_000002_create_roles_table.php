@@ -26,7 +26,7 @@ class CreateRolesTable extends Migration
 
 		// Create table for associating roles to users and teams (Many To Many Polymorphic)
 		Schema::create('role_user', function (Blueprint $table) {
-			$table->unsignedInteger('user_id')->comment = '用户ID';
+			$table->unsignedBigInteger('user_id')->comment = '用户ID';
 			$table->integer('role_id')->comment = '用户组ID';
 			$table->string('user_type')->comment = '用户表KEY';
 
@@ -63,7 +63,7 @@ class CreateRolesTable extends Migration
 		// Create table for associating permissions to users (Many To Many Polymorphic)
 		Schema::create('permission_user', function (Blueprint $table) {
 			$table->unsignedInteger('permission_id')->comment = '权限ID';
-			$table->unsignedInteger('user_id')->comment = '用户ID';
+			$table->unsignedBigInteger('user_id')->comment = '用户ID';
 			$table->string('user_type')->comment = '用户表KEY';
 
 			$table->foreign('permission_id')->references('id')->on('permissions')
