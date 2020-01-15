@@ -45,9 +45,14 @@ class UserRepository extends Repository {
 		return User::with(['roles', 'extra'])->find($id, $columns);
 	}
 
-	public function findByUsername($username, array $columns = ['*'])
+	public function findByUsername(string $username, array $columns = ['*'])
 	{
 		return User::with(['roles'])->findByUsername($username, $columns);
+	}
+
+	public function authenticate(string $username, string $password)
+	{
+		return User::findByUsernamePassword($username, $this->hashPassword($password));
 	}
 
 	public function findOrFail($id, array $columns = ['*'])
