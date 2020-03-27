@@ -20,9 +20,14 @@ $loader->setPsr4('App\\', [realpath(__DIR__.'/app')]);
 
 $app = require_once __DIR__.'/bootstrap/app.php';
 
-$status = 0;
-\Swoole\Runtime::enableCoroutine(true);
-go(function() use ($app, &$status) {
+\Co::set(['hook_flags' => SWOOLE_HOOK_ALL]);
+
+
+$status = new class {
+	public $code = 0;
+};
+
+go(function() use ($app, $status) {
 	try {
 		/*
 		|--------------------------------------------------------------------------
@@ -37,7 +42,7 @@ go(function() use ($app, &$status) {
 
 		$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
-		$status = $kernel->handle(
+		$status->code = $kernel->handle(
 			$input = new Symfony\Component\Console\Input\ArgvInput,
 			new Symfony\Component\Console\Output\ConsoleOutput
 		);
@@ -58,11 +63,11 @@ go(function() use ($app, &$status) {
 	} catch (\Swoole\ExitException $e)
 	{
 		echo 'exit----------------';
-		$status = $e->getStatus();
+		$status->code = $e->getStatus();
 		return;
 	}
 });
 
 swoole_event_wait();
 
-exit($status);
+exit($status->code);

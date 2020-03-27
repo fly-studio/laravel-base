@@ -15,7 +15,7 @@ class CreateCommonTable extends Migration
 	{
 		Schema::create('sessions', function (Blueprint $table) {
 			$table->string('id')->unique();
-			$table->unsignedInteger('user_id')->nullable();
+			$table->unsignedBigInteger('user_id')->nullable();
 			$table->string('ip_address', 45)->nullable();
 			$table->text('user_agent')->nullable();
 			$table->text('payload');
@@ -23,26 +23,26 @@ class CreateCommonTable extends Migration
 		});
 
 		Schema::create('tags', function (Blueprint $table) {
-			$table->increments('id');
+			$table->id();
 			$table->string('keywords', 100)->index()->comment = "关键词";
 			$table->timestamps();
 		});
 
 		//Tag多态关联表
 		Schema::create('taggables', function (Blueprint $table) {
-			$table->increments('id');
+			$table->id();
 			$table->morphs('taggable');
-			$table->unsignedInteger('tag_id')->index()->comment = 'tags ID';
+			$table->unsignedBigInteger('tag_id')->index()->comment = 'tags ID';
 
 			$table->foreign('tag_id')->references('id')->on('tags')->onUpdate('cascade')->onDelete('cascade');
 		});
 
 		//日志
 		Schema::create('logs', function (Blueprint $table) {
-			$table->bigIncrements('id');
+			$table->id();
 			$table->nullableMorphs('user');
 			$table->string('event')->index()->comment = '事件';
-			$table->integer("auditable_id");
+			$table->bigInteger("auditable_id");
 			$table->string("auditable_type");
 			$table->longText('old_values')->nullable()->comment = '舊數據';
 			$table->longText('new_values')->nullable()->comment = '新數據';

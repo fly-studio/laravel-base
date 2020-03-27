@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
 	{
 		//用户主表
 		Schema::create('users', function (Blueprint $table) {
-			$table->bigIncrements('id');
+			$table->id();
 			$table->string('username', 150)->unique()->comment = '用户名(账号)';
 			$table->string('password', 60)->nullable()->comment = '密码';
 			$table->string('nickname', 50)->nullable()->comment = '昵称';
@@ -44,10 +44,10 @@ class CreateUsersTable extends Migration
 		});
 		//用户可多选的属性表
 		Schema::create('user_multiples', function(Blueprint $table) {
-			$table->bigIncrements('id');
+			$table->id();
 			$table->unsignedBigInteger('uid')->default(0)->index()->comment = 'UID';
-			$table->unsignedInteger('cid')->default(0)->index()->comment = 'Catalogs ID';
-			$table->unsignedInteger('parent_cid')->default(0)->index()->comment = '父分类英文名';
+			$table->unsignedBigInteger('cid')->default(0)->index()->comment = 'Catalogs ID';
+			$table->unsignedBigInteger('parent_cid')->default(0)->index()->comment = '父分类英文名';
 			$table->string('extra', 250)->nullable()->comment = '其他值';
 
 			$table->timestamps(); //创建/修改时间
@@ -74,7 +74,7 @@ class CreateUsersTable extends Migration
 		});
 		//密码重设
 		Schema::create('password_resets', function (Blueprint $table) {
-			$table->bigIncrements('id');
+			$table->id();
 			$table->unsignedBigInteger('uid')->comment = '用户ID'; //UID
 			$table->string('email', 150)->index();
 			$table->string('token', 150)->index();

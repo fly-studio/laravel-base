@@ -15,7 +15,7 @@ class CreateRolesTable extends Migration
 	{
 		// Create table for storing roles
 		Schema::create('roles', function (Blueprint $table) {
-			$table->integer('id', true);
+			$table->bigInteger('id')->primary();
 			$table->string('name', 150)->unique()->comment = '用户组名(英文)';
 			$table->string('display_name')->nullable()->comment = '显示名称';
 			$table->string('description')->nullable()->comment = '摘要';
@@ -27,7 +27,7 @@ class CreateRolesTable extends Migration
 		// Create table for associating roles to users and teams (Many To Many Polymorphic)
 		Schema::create('role_user', function (Blueprint $table) {
 			$table->unsignedBigInteger('user_id')->comment = '用户ID';
-			$table->integer('role_id')->comment = '用户组ID';
+			$table->bigInteger('role_id')->comment = '用户组ID';
 			$table->string('user_type')->comment = '用户表KEY';
 
 			$table->foreign('user_id')->references('id')->on('users')
@@ -40,8 +40,8 @@ class CreateRolesTable extends Migration
 
 		// Create table for storing permissions
 		Schema::create('permissions', function (Blueprint $table) {
-			$table->increments('id');
-			$table->string('name',150)->unique()->comment = '权限名(英文)';
+			$table->id();
+			$table->string('name', 150)->unique()->comment = '权限名(英文)';
 			$table->string('display_name')->nullable()->comment = '显示名称';
 			$table->string('description')->nullable()->comment = '摘要';
 			$table->timestamps();
@@ -50,7 +50,7 @@ class CreateRolesTable extends Migration
 		// Create table for associating permissions to roles (Many-to-Many)
 		Schema::create('permission_role', function (Blueprint $table) {
 			$table->unsignedInteger('permission_id')->comment = '权限ID';
-			$table->integer('role_id')->comment = '用户组ID';
+			$table->bigInteger('role_id')->comment = '用户组ID';
 
 			$table->foreign('permission_id')->references('id')->on('permissions')
 				->onUpdate('cascade')->onDelete('cascade');
@@ -62,7 +62,7 @@ class CreateRolesTable extends Migration
 
 		// Create table for associating permissions to users (Many To Many Polymorphic)
 		Schema::create('permission_user', function (Blueprint $table) {
-			$table->unsignedInteger('permission_id')->comment = '权限ID';
+			$table->unsignedBigInteger('permission_id')->comment = '权限ID';
 			$table->unsignedBigInteger('user_id')->comment = '用户ID';
 			$table->string('user_type')->comment = '用户表KEY';
 
