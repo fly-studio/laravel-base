@@ -103,9 +103,10 @@ class Handler extends ExceptionHandler
 		$headers = $this->isHttpException($e) ? $e->getHeaders() : [];
 
 		return app(ResponseFactory::class)
-			->exception($e, $messageName ?? $e->getMessage() ?: 'Server Error')
+			->exception($e, $messageName ?? ($e->getMessage() ?? 'Server Error'))
 			->request($request)
 			->code($code)
+			->setStatusCode($code)
 			->withHeaders($headers);
 	}
 
@@ -118,6 +119,10 @@ class Handler extends ExceptionHandler
 	 */
 	protected function prepareResponse($request, Exception $e)
 	{
+		// 404 when api/
+		if ($this->isHttpException($e) && $e->getStatusCode() == 404 && strpos($request->path(), 'api/') === 0)
+			return $this->prepareJsonResponse($request, $e);
+
 		return $request->route() && in_array('api', $request->route()->middleware()) ? $this->prepareJsonResponse($request, $e) : parent::prepareResponse($request, $e);
 	}
 
