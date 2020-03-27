@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use Throwable;
 use Illuminate\Support\Str;
 use Doctrine\DBAL\Driver\PDOException;
 use Illuminate\Database\QueryException;
@@ -37,10 +37,10 @@ class Handler extends ExceptionHandler
 	/**
 	* Report or log an exception.
 	*
-	* @param  \Exception  $exception
+	* @param  \Throwable  $exception
 	* @return void
 	*/
-	public function report(Exception $exception)
+	public function report(Throwable $exception)
 	{
 		parent::report($exception);
 	}
@@ -49,10 +49,10 @@ class Handler extends ExceptionHandler
 	 * Render an exception into an HTTP response.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \Exception  $exception
+	 * @param  \Throwable  $exception
 	 * @return \Illuminate\Http\Response
 	 */
-	public function render($request, Exception $exception)
+	public function render($request, Throwable $exception)
 	{
 		if($exception instanceof PermissionException)
 			return $this->prepareJsonResponse($request, $exception, 'auth.permission_forbidden');
@@ -93,10 +93,10 @@ class Handler extends ExceptionHandler
 	 * Prepare a JSON response for the given exception.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \Exception $e
+	 * @param  \Throwable $e
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	protected function prepareJsonResponse($request, Exception $e, string $messageName = null)
+	protected function prepareJsonResponse($request, Throwable $e, string $messageName = null)
 	{
 		$code = $this->isHttpException($e) ? $e->getStatusCode() : 500;
 
@@ -117,7 +117,7 @@ class Handler extends ExceptionHandler
 	 * @param  \Exception $e
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-	protected function prepareResponse($request, Exception $e)
+	protected function prepareResponse($request, Throwable $e)
 	{
 		// 404 when api/
 		if ($this->isHttpException($e) && $e->getStatusCode() == 404 && strpos($request->path(), 'api/') === 0)

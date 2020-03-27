@@ -20,8 +20,8 @@ class CreateUsersTable extends Migration
 			$table->string('password', 60)->nullable()->comment = '密码';
 			$table->string('nickname', 50)->nullable()->comment = '昵称';
 			$table->string('realname', 50)->nullable()->comment = '真实姓名';
-			$table->unsignedInteger('avatar_aid')->default(0)->comment = '头像AID';
-			$table->unsignedInteger('gender')->default(0)->comment = '性别';
+			$table->unsignedBigInteger('avatar_aid')->default(0)->comment = '头像AID';
+			$table->unsignedBigInteger('gender')->default(0)->comment = '性别';
 			$table->string('email')->nullable()->comment = 'Email';
 			$table->string('phone', 20)->nullable()->index()->comment = '电话';
 			$table->string('idcard', 50)->nullable()->index()->comment = '身份证';

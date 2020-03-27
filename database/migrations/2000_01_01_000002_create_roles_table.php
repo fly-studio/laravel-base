@@ -15,7 +15,7 @@ class CreateRolesTable extends Migration
 	{
 		// Create table for storing roles
 		Schema::create('roles', function (Blueprint $table) {
-			$table->bigInteger('id')->primary();
+			$table->bigInteger('id', true);
 			$table->string('name', 150)->unique()->comment = '用户组名(英文)';
 			$table->string('display_name')->nullable()->comment = '显示名称';
 			$table->string('description')->nullable()->comment = '摘要';
@@ -49,7 +49,7 @@ class CreateRolesTable extends Migration
 
 		// Create table for associating permissions to roles (Many-to-Many)
 		Schema::create('permission_role', function (Blueprint $table) {
-			$table->unsignedInteger('permission_id')->comment = '权限ID';
+			$table->unsignedBigInteger('permission_id')->comment = '权限ID';
 			$table->bigInteger('role_id')->comment = '用户组ID';
 
 			$table->foreign('permission_id')->references('id')->on('permissions')
