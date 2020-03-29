@@ -13,18 +13,18 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use App\Role;
 use App\Models\Logable;
 use App\Models\Searchable;
-use App\Models\CatalogCastTrait;
 use Addons\Core\Models\CacheTrait;
-use App\Models\AttachmentCastTrait;
 use Addons\Core\Models\BuilderTrait;
 use Addons\Entrust\Traits\UserTrait;
 use Addons\Core\Models\PolyfillTrait;
+use App\Casts\Catalog as CatalogCast;
+use App\Casts\Attachment as AttachmentCast;
 
 class User extends Authenticatable implements AuditableContract
 {
-	use HasApiTokens, SoftDeletes, Notifiable, UserTrait;
+	use HasApiTokens, UserTrait;
+	use SoftDeletes, Notifiable;
 	use CacheTrait, BuilderTrait, PolyfillTrait;
-	use CatalogCastTrait, AttachmentCastTrait;
 	use Searchable, Logable;
 
 	//不能批量赋值
@@ -33,8 +33,8 @@ class User extends Authenticatable implements AuditableContract
 	protected $dates = ['lastlogin_at'];
 	protected $touches = ['roles'];
 	protected $casts = [
-		'gender' => 'catalog',
-		'avatar_aid' => 'attachment',
+		'gender' => CatalogCast::class,
+		'avatar_aid' => AttachmentCast::class,
 		'email_verified_at' => 'datetime',
 	];
 
@@ -57,6 +57,7 @@ class User extends Authenticatable implements AuditableContract
 	public function scopeOfRole(Builder $builder, $roleIdOrName, $withSelf = true)
 	{
 		$role = Role::searchRole($roleIdOrName);
+
 		if (empty($role))
 			$role = Role::findByName($roleIdOrName);
 		else
@@ -65,7 +66,8 @@ class User extends Authenticatable implements AuditableContract
 		if (empty($role))
 			return;
 
-		$roles = $role->getLeaves();
+		$roles = $role->getOffspring();
+
 		if ($withSelf) $roles = $roles->prepend($role);
 
 		return $builder->join('role_user', 'role_user.user_id', '=', 'users.id', 'LEFT')->whereIn('role_user.role_id', $roles->modelKeys());
@@ -74,6 +76,7 @@ class User extends Authenticatable implements AuditableContract
 	public function scope_all(Builder $builder, $keywords)
 	{
 		if (empty($keywords)) return;
+
 		$users = static::search()->where(['username', 'nickname', 'realname', 'phone', 'email'], $keywords)->take(2000)->keys();
 		return $builder->whereIn($this->getKeyName(), $users);
 	}
