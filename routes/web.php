@@ -28,7 +28,7 @@ $router->group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['a
 
 });
 
-$router->get('/', 'HomeController@index')->name('index');
+$router->any('/', 'HomeController@index')->name('index');
 $router->get('auth/login', 'AuthController@login')->name('login');
 $router->actions([
 	'auth' => ['index', 'login', 'logout', 'authenticate-query'],

@@ -4,7 +4,7 @@ namespace App;
 
 use App\Model;
 
-class Tag extends Model{
+class Tag extends Model {
 
 	protected $guarded = ['id'];
 	protected $hidden = [];
@@ -13,7 +13,8 @@ class Tag extends Model{
 	public static function covertToIds($keywords_list)
 	{
 		$id = array();
-		if (empty($keywords_list)) return $id;
+		if (empty($keywords_list)) 
+			return $id;
 		foreach ($keywords_list as $keywords)
 			$id[] = self::firstOrCreate(compact('keywords'))->getKey();
 		return $id;
